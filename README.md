@@ -2,10 +2,10 @@
 
 ## sfsf
 
-ssfsf
+sfsff
 
-![Resim](https://res.cloudinary.com/dbdbvgrl2/image/upload/v1732822539/d1wlxmre9loisrreyala.png)
+![Resim](https://res.cloudinary.com/dbdbvgrl2/image/upload/v1732822555/y5bfwvbiyhsulax7lzil.png)
 
-Tags: asfasf
+Tags: sfsf
 
 GitHub: [sfsf](sfsf)
