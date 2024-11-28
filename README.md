@@ -11,5 +11,18 @@
         "githubLink": "asf"
       }
     ]
+  },
+  {
+    "Project 2": [
+      {
+        "title": "asfasf",
+        "description": "asfasf",
+        "imgSrc": "https://res.cloudinary.com/dbbtdnneh/image/upload/v1732830387/q7uzywc9tr2pnayisskf.jpg",
+        "tags": [
+          "asfasf"
+        ],
+        "githubLink": "asfasf"
+      }
+    ]
   }
 ]
