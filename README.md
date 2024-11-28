@@ -1,19 +1,10 @@
 [
   {
-    "title": "salam",
-    "description": "safasf",
-    "imgSrc": "https://res.cloudinary.com/dbbtdnneh/image/upload/v1732827085/ujh7fxztkwaibz6tj0f6.jpg",
+    "title": "saf",
+    "description": "asf",
+    "imgSrc": "https://res.cloudinary.com/dbbtdnneh/image/upload/v1732829840/idropuivsl9rt99ar2u7.png",
     "tags": [
-      "asfasf"
-    ],
-    "githubLink": "asfasf"
-  },
-  {
-    "title": "asfasf",
-    "description": "asfasf",
-    "imgSrc": "https://res.cloudinary.com/dbbtdnneh/image/upload/v1732827336/jypbkvz2aszu8weml76y.png",
-    "tags": [
-      "asfasf"
+      "asfsaf"
     ],
     "githubLink": "asfsf"
   }
