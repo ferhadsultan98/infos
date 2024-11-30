@@ -11,5 +11,16 @@
       ],
       "githubLink": "https://github.com/ferhadsultan98/infos/blob/main/projects.json"
     }
+  },
+  {
+    "Project 2": {
+      "title": "hrteam",
+      "description": "hrteamuptadet",
+      "imgSrc": "https://res.cloudinary.com/dbbtdnneh/image/upload/v1733004261/lplvpwcvnto4agztljpc.png",
+      "tags": [
+        "salam salam salm"
+      ],
+      "githubLink": "https://github.com/ferhadsultan98/infos/blob/main/projects.json"
+    }
   }
 ]
