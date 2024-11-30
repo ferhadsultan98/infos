@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "Project 1": {
+      "title": "Project1",
+      "description": "salamlar",
+      "imgSrc": "https://res.cloudinary.com/dbbtdnneh/image/upload/v1733004194/fswlifj4hl9bmpvqur90.png",
+      "tags": [
+        "125",
+        "236",
+        "254"
+      ],
+      "githubLink": "https://github.com/ferhadsultan98/infos/blob/main/projects.json"
+    }
+  }
+]
