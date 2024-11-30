@@ -22,5 +22,16 @@
       ],
       "githubLink": "https://github.com/ferhadsultan98/infos/blob/main/projects.json"
     }
+  },
+  {
+    "Project 3": {
+      "title": "asfa",
+      "description": "asf",
+      "imgSrc": "https://res.cloudinary.com/dbbtdnneh/image/upload/v1733004361/p1ght4sc5ncpeeayw2re.png",
+      "tags": [
+        "sfsf"
+      ],
+      "githubLink": "https://github.com/ferhadsultan98/infos/blob/main/projects.json"
+    }
   }
 ]
