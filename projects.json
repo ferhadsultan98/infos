@@ -9,5 +9,16 @@
       ],
       "githubLink": "asf"
     }
+  },
+  {
+    "Project 2": {
+      "title": "salam",
+      "description": "salamlar",
+      "imgSrc": "https://res.cloudinary.com/dbbtdnneh/image/upload/v1733004848/ptm5ygcdukpxgyhw33sk.png",
+      "tags": [
+        "salamlar"
+      ],
+      "githubLink": "salamlar"
+    }
   }
 ]
