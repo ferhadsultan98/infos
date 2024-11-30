@@ -9,5 +9,16 @@
       ],
       "githubLink": "http://localhost:5173/#"
     }
+  },
+  {
+    "Project 2": {
+      "title": "safs",
+      "description": "asfasf",
+      "imgSrc": "https://res.cloudinary.com/dbbtdnneh/image/upload/v1733008261/t6y8chco1szlssbid1bl.jpg",
+      "tags": [
+        "sfasf"
+      ],
+      "githubLink": "http://localhost:5173/#"
+    }
   }
 ]
