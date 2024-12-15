@@ -1,1 +1,9 @@
-
+[
+  {
+    "name": "Hacemi",
+    "price": "20 AZN",
+    "image": "https://res.cloudinary.com/dbbtdnneh/image/upload/v1734292230/vednwzcqblvpbmfh9g9v.jpg",
+    "discount": "3 AZN",
+    "category": "men"
+  }
+]
