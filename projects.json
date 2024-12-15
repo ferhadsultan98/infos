@@ -12,5 +12,12 @@
     "resim": "https://res.cloudinary.com/dbbtdnneh/image/upload/v1734291489/c4i52axctborm4id7mtj.png",
     "endirim": "2 AZN",
     "cins": "women"
+  },
+  {
+    "name": "sfasf",
+    "price": "5 AZN",
+    "image": "https://res.cloudinary.com/dbbtdnneh/image/upload/v1734291943/d7o85yrg6k1ylzpcwuzv.png",
+    "discount": "1.5 AZN",
+    "category": "women"
   }
 ]
