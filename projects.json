@@ -1,1 +1,9 @@
-
+[
+  {
+    "name": "Laliga",
+    "price": "2 AZN",
+    "image": "https://res.cloudinary.com/dbbtdnneh/image/upload/v1734291228/t1qg4hmkjgepraeen5ar.png",
+    "discount": "2 AZN",
+    "category": "women"
+  }
+]
