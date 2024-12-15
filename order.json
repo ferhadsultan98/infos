@@ -14,5 +14,13 @@
     "discount": "1.5 USD",
     "category": "women",
     "quantity": 1
+  },
+  {
+    "name": "hacemi",
+    "price": "5 AZN",
+    "image": "https://res.cloudinary.com/dbbtdnneh/image/upload/v1734287956/tsln3wcsxyg39kddtfqu.jpg",
+    "discount": "2 AZN",
+    "category": "men",
+    "quantity": 2
   }
 ]
