@@ -6,5 +6,13 @@
     "discount": "3 AZN",
     "category": "women",
     "quantity": 1
+  },
+  {
+    "name": "yjj",
+    "price": "2 AZN",
+    "image": "https://res.cloudinary.com/dbbtdnneh/image/upload/v1734367225/dk3hkftt7k3gnh3h2afy.png",
+    "discount": "2 AZN",
+    "category": "women",
+    "quantity": 1
   }
 ]
