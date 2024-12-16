@@ -5,5 +5,12 @@
     "image": "https://res.cloudinary.com/dbbtdnneh/image/upload/v1734292230/vednwzcqblvpbmfh9g9v.jpg",
     "discount": "3 AZN",
     "category": "men"
+  },
+  {
+    "name": "Haki",
+    "price": "125 USD",
+    "image": "https://res.cloudinary.com/dbbtdnneh/image/upload/v1734323993/jl6dblnfrawhufu0oc1g.jpg",
+    "discount": "10 USD",
+    "category": "men"
   }
 ]
