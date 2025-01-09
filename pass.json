@@ -1,1 +1,12 @@
-
+{
+  "userCredentials": [
+    {
+      "username": "farhadsultan",
+      "password": "farhad2025"
+    },
+    {
+      "username": "alisultan",
+      "password": "ali2025"
+    }
+  ]
+}
