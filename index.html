@@ -3,24 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HRM Pro - İnsan Resursları İdarəetmə Sistemi</title>
+    <title>HR İdarəetmə Sistemi</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
-
-        :root {
-            --primary-color: #4a69bd;
-            --secondary-color: #1e3799;
-            --background-color: #f4f7fa;
-            --sidebar-bg: #ffffff;
-            --text-color: #333;
-            --light-text-color: #777;
-            --border-color: #e0e0e0;
-            --white-color: #fff;
-            --danger-color: #e74c3c;
-            --success-color: #2ecc71;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -28,581 +13,1473 @@
         }
 
         body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
 
-        /* --- Login Page Styles --- */
-        #login-container {
-            width: 100%;
-            height: 100%;
+        .login-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            min-height: 100vh;
+            padding: 20px;
         }
 
         .login-box {
-            background: var(--white-color);
+            background: rgba(255, 255, 255, 0.95);
             padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
             width: 100%;
             max-width: 400px;
             text-align: center;
-            transition: transform 0.3s ease;
-        }
-
-        .login-box:hover {
-            transform: translateY(-5px);
         }
 
         .login-box h1 {
-            color: var(--secondary-color);
-            margin-bottom: 10px;
-            font-size: 24px;
-        }
-
-        .login-box p {
-            color: var(--light-text-color);
+            color: #333;
             margin-bottom: 30px;
+            font-size: 2.5em;
         }
 
-        .input-group {
+        .login-box .logo {
+            font-size: 4em;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
             margin-bottom: 20px;
             position: relative;
         }
 
-        .input-group input {
+        .form-group input {
             width: 100%;
-            padding: 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
             font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-
-        .input-group input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        #login-btn {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            background: var(--primary-color);
-            color: var(--white-color);
-            border-radius: 8px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        #login-btn:hover {
-            background: var(--secondary-color);
-        }
-
-        #error-message {
-            color: var(--danger-color);
-            margin-top: 15px;
-            height: 20px;
-            font-weight: 500;
-        }
-
-        /* --- Dashboard Styles --- */
-        #dashboard-container {
-            display: none;
-            width: 100%;
-            height: 100vh;
-            display: flex;
-        }
-
-        .sidebar {
-            width: 260px;
-            background-color: var(--sidebar-bg);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
-            border-right: 1px solid var(--border-color);
-        }
-
-        .sidebar-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .sidebar-header h2 {
-            color: var(--primary-color);
-            font-size: 28px;
-        }
-        .sidebar-header h2 span {
-            font-weight: 400;
-        }
-
-        .sidebar nav ul {
-            list-style: none;
-            flex-grow: 1;
-        }
-
-        .sidebar nav li a {
-            display: block;
-            padding: 15px 20px;
-            color: var(--light-text-color);
-            text-decoration: none;
-            border-radius: 8px;
-            margin-bottom: 5px;
-            font-weight: 500;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .sidebar nav li a:hover,
-        .sidebar nav li a.active {
-            background-color: var(--primary-color);
-            color: var(--white-color);
-        }
-        
-        #logout-btn {
-            display: block;
-            width: 100%;
-            padding: 15px 20px;
-            background: #fbe9e7;
-            color: #d84315;
-            text-decoration: none;
-            border-radius: 8px;
-            margin-top: 20px;
-            font-weight: 600;
-            text-align: center;
-            cursor: pointer;
-            border: 1px solid #ffccbc;
-            transition: all 0.3s;
-        }
-        
-        #logout-btn:hover {
-            background: #ff7043;
-            color: var(--white-color);
-        }
-
-
-        .main-content {
-            flex-grow: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        .page-content {
-            display: none;
-        }
-
-        .page-content.active {
-            display: block;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            font-size: 28px;
-            color: var(--secondary-color);
-        }
-
-        .card {
-            background-color: var(--white-color);
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: var(--shadow);
-            margin-bottom: 25px;
-        }
-        
-        .card h3 {
-            margin-bottom: 20px;
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 10px;
-        }
-        
-        /* --- Forms & Tables --- */
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .form-group input,
-        .form-group select {
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 15px;
+            transition: all 0.3s ease;
         }
 
         .form-group input:focus {
+            border-color: #667eea;
             outline: none;
-            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
         }
-        
-        .btn {
-            padding: 12px 25px;
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .main-container {
+            display: none;
+            min-height: 100vh;
+            background: #f5f7fa;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            padding: 20px 0;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #34495e;
+            text-align: center;
+        }
+
+        .sidebar-header h2 {
+            color: white;
+            font-size: 1.5em;
+            margin-top: 10px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .sidebar-menu li {
+            margin: 5px 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: #3498db;
+        }
+
+        .sidebar-menu i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2em;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        .content-section {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card:nth-child(2) {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.3);
+        }
+
+        .stat-card:nth-child(3) {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            box-shadow: 0 10px 30px rgba(243, 156, 18, 0.3);
+        }
+
+        .stat-card:nth-child(4) {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            box-shadow: 0 10px 30px rgba(39, 174, 96, 0.3);
+        }
+
+        .stat-card i {
+            font-size: 3em;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+
+        .stat-card h3 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 15px;
-            font-weight: 600;
+            font-size: 14px;
             transition: all 0.3s ease;
+            margin-right: 10px;
         }
-        
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: var(--white-color);
+
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
         }
-        
-        .btn-primary:hover {
-            background-color: var(--secondary-color);
+
+        .btn-success {
+            background: #27ae60;
         }
-        
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
         .btn-danger {
-            background-color: var(--danger-color);
-            color: var(--white-color);
+            background: #e74c3c;
         }
-        
-        table {
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 25px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
-        
-        table th, table td {
+
+        .data-table th {
+            background: #34495e;
+            color: white;
             padding: 15px;
             text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        table th {
-            background-color: #f2f4f6;
             font-weight: 600;
-            color: var(--secondary-color);
         }
 
-        table tr:last-child td {
-            border-bottom: none;
+        .data-table td {
+            padding: 15px;
+            border-bottom: 1px solid #ecf0f1;
         }
 
-        table tr:hover {
-            background-color: #e9efff;
+        .data-table tr:hover {
+            background: #f8f9fa;
         }
-        
-        .placeholder-content {
-            text-align: center;
-            padding: 50px;
-            color: var(--light-text-color);
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
         }
-        .placeholder-content h2 {
-            font-size: 22px;
-            margin-bottom: 10px;
+
+        .action-buttons button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn {
+            background: #f39c12;
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background: #e67e22;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+        }
+
+        .modal-content {
+            position: relative;
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 30px;
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .search-box:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #27ae60;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 3000;
+            display: none;
+        }
+
+        .notification.error {
+            background: #e74c3c;
+        }
+
+        .notification.warning {
+            background: #f39c12;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-
-    <div id="login-container">
+    <!-- Login Ekranı -->
+    <div id="loginContainer" class="login-container">
         <div class="login-box">
-            <h1>HRM Pro</h1>
-            <p>Davam etmək üçün sistemə daxil olun</p>
-            <form id="login-form">
-                <div class="input-group">
+            <div class="logo">
+                <i class="fas fa-users-cog"></i>
+            </div>
+            <h1>HR Sistemi</h1>
+            <form id="loginForm">
+                <div class="form-group">
                     <input type="text" id="username" placeholder="İstifadəçi adı" required>
                 </div>
-                <div class="input-group">
+                <div class="form-group">
                     <input type="password" id="password" placeholder="Şifrə" required>
                 </div>
-                <button type="submit" id="login-btn" class="btn btn-primary">Daxil Ol</button>
-                <div id="error-message"></div>
+                <button type="submit" class="login-btn">
+                    <span id="loginText">Giriş</span>
+                    <span id="loginLoading" class="loading" style="display: none;"></span>
+                </button>
             </form>
         </div>
     </div>
 
-    <div id="dashboard-container" style="display: none;">
-        <aside class="sidebar">
+    <!-- Ana Sistem -->
+    <div id="mainContainer" class="main-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
             <div class="sidebar-header">
-                <h2>HRM<span>Pro</span></h2>
+                <i class="fas fa-users-cog" style="font-size: 2em; color: #3498db;"></i>
+                <h2>HR Sistemi</h2>
             </div>
-            <nav>
-                <ul>
-                    <li><a href="#" class="nav-link active" data-target="dashboard">Ana Səhifə</a></li>
-                    <li><a href="#" class="nav-link" data-target="employees">İşçi Məlumat Bazası</a></li>
-                    <li><a href="#" class="nav-link" data-target="documents">Sənəd İdarəsi</a></li>
-                    <li><a href="#" class="nav-link" data-target="recruitment">İşə Qəbul</a></li>
-                    <li><a href="#" class="nav-link" data-target="training">Təlim və İnkişaf</a></li>
-                    <li><a href="#" class="nav-link" data-target="performance">Performans Qiymətləndirmə</a></li>
-                    <li><a href="#" class="nav-link" data-target="attendance">Davamiyyət</a></li>
-                    <li><a href="#" class="nav-link" data-target="leave">Məzuniyyət və İcazə</a></li>
-                    <li><a href="#" class="nav-link" data-target="payroll">Əməkhaqqı</a></li>
-                    <li><a href="#" class="nav-link" data-target="rewards">Motivasiya və Mükafat</a></li>
-                    <li><a href="#" class="nav-link" data-target="compliance">Qanunvericilik</a></li>
-                    <li><a href="#" class="nav-link" data-target="surveys">Sorğular və Kommunikasiya</a></li>
-                </ul>
-            </nav>
-            <a id="logout-btn">Çıxış</a>
-        </aside>
+            <ul class="sidebar-menu">
+                <li><a href="#" data-section="dashboard" class="active"><i class="fas fa-tachometer-alt"></i> Ana Səhifə</a></li>
+                <li><a href="#" data-section="employees"><i class="fas fa-users"></i> İşçilər</a></li>
+                <li><a href="#" data-section="recruitment"><i class="fas fa-user-plus"></i> İşə Qəbul</a></li>
+                <li><a href="#" data-section="attendance"><i class="fas fa-clock"></i> Davamiyyət</a></li>
+                <li><a href="#" data-section="leave"><i class="fas fa-calendar-alt"></i> Məzuniyyət</a></li>
+                <li><a href="#" data-section="performance"><i class="fas fa-chart-line"></i> Performans</a></li>
+                <li><a href="#" data-section="training"><i class="fas fa-graduation-cap"></i> Təlim</a></li>
+                <li><a href="#" data-section="payroll"><i class="fas fa-money-bill-wave"></i> Əməkhaqqı</a></li>
+                <li><a href="#" data-section="documents"><i class="fas fa-file-alt"></i> Sənədlər</a></li>
+                <li><a href="#" data-section="reports"><i class="fas fa-chart-bar"></i> Hesabatlar</a></li>
+            </ul>
+        </nav>
 
+        <!-- Ana Məzmun -->
         <main class="main-content">
-            <div id="dashboard" class="page-content active">
-                <div class="header"><h1>Ana Səhifə</h1></div>
-                <div class="card">
-                    <h3>Xoş Gəldiniz, Admin!</h3>
-                    <p>HRM Pro idarəetmə panelinə xoş gəlmisiniz. Lazımi modulu soldakı menyudan seçərək işinizə başlaya bilərsiniz.</p>
+            <header class="header">
+                <h1 id="pageTitle">Ana Səhifə</h1>
+                <div class="user-info">
+                    <span>Admin</span>
+                    <button class="logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Çıxış
+                    </button>
                 </div>
-            </div>
+            </header>
 
-            <div id="employees" class="page-content">
-                <div class="header"><h1>İşçi Məlumat Bazası</h1></div>
-                <div class="card">
-                    <h3>Yeni İşçi Əlavə Et</h3>
-                    <form id="add-employee-form">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="employee-name">Ad</label>
-                                <input type="text" id="employee-name" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="employee-surname">Soyad</label>
-                                <input type="text" id="employee-surname" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="employee-position">Vəzifə</label>
-                                <input type="text" id="employee-position" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="employee-department">Şöbə</label>
-                                <input type="text" id="employee-department" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="employee-email">Email</label>
-                                <input type="email" id="employee-email" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="employee-phone">Telefon</label>
-                                <input type="tel" id="employee-phone" required>
-                            </div>
-                             <div class="form-group">
-                                <label for="employee-hire-date">İşə qəbul tarixi</label>
-                                <input type="date" id="employee-hire-date" required>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Əlavə Et</button>
-                    </form>
-                </div>
-                <div class="card">
-                    <h3>Mövcud İşçilər</h3>
-                    <div style="overflow-x: auto;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Ad Soyad</th>
-                                    <th>Vəzifə</th>
-                                    <th>Şöbə</th>
-                                    <th>Email</th>
-                                    <th>Telefon</th>
-                                    <th>İşə Qəbul</th>
-                                    <th>Əməliyyat</th>
-                                </tr>
-                            </thead>
-                            <tbody id="employee-list">
-                                </tbody>
-                        </table>
+            <!-- Dashboard -->
+            <section id="dashboard" class="content-section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <h3 id="totalEmployees">0</h3>
+                        <p>Ümumi İşçi</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-user-plus"></i>
+                        <h3 id="newHires">0</h3>
+                        <p>Yeni İşə Qəbul</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-calendar-times"></i>
+                        <h3 id="onLeave">0</h3>
+                        <p>Məzuniyyətdə</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-trophy"></i>
+                        <h3 id="topPerformers">0</h3>
+                        <p>Yüksek Performans</p>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div id="documents" class="page-content"><div class="placeholder-content"><h2>Sənəd İdarəsi</h2><p>Bu modul hələ aktiv deyil.</p></div></div>
-             <div id="recruitment" class="page-content"><div class="placeholder-content"><h2>İşə Qəbul</h2><p>Bu modul hələ aktiv deyil.</p></div></div>
-             <div id="training" class="page-content"><div class="placeholder-content"><h2>Təlim və İnkişaf</h2><p>Bu modul hələ aktiv deyil.</p></div></div>
-             <div id="performance" class="page-content"><div class="placeholder-content"><h2>Performans Qiymətləndirmə</h2><p>Bu modul hələ aktiv deyil.</p></div></div>
-             <div id="attendance" class="page-content"><div class="placeholder-content"><h2>Davamiyyət</h2><p>Bu modul hələ aktiv deyil.</p></div></div>
-             <div id="leave" class="page-content"><div class="placeholder-content"><h2>Məzuniyyət və İcazə</h2><p>Bu modul hələ aktiv deyil.</p></div></div>
-             <div id="payroll" class="page-content"><div class="placeholder-content"><h2>Əməkhaqqı</h2><p>Bu modul hələ aktiv deyil.</p></div></div>
-             <div id="rewards" class="page-content"><div class="placeholder-content"><h2>Motivasiya və Mükafat</h2><p>Bu modul hələ aktiv deyil.</p></div></div>
-             <div id="compliance" class="page-content"><div class="placeholder-content"><h2>Qanunvericilik</h2><p>Bu modul hələ aktiv deyil.</p></div></div>
-             <div id="surveys" class="page-content"><div class="placeholder-content"><h2>Sorğular və Kommunikasiya</h2><p>Bu modul hələ aktiv deyil.</p></div></div>
+            <!-- İşçilər -->
+            <section id="employees" class="content-section">
+                <div class="form-container">
+                    <h3>Yeni İşçi Əlavə Et</h3>
+                    <form id="employeeForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Ad</label>
+                                <input type="text" name="firstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Soyad</label>
+                                <input type="text" name="lastName" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Telefon</label>
+                                <input type="tel" name="phone" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Vəzifə</label>
+                                <input type="text" name="position" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Şöbə</label>
+                                <select name="department" required>
+                                    <option value="">Seçin</option>
+                                    <option value="IT">İnformasiya Texnologiyaları</option>
+                                    <option value="HR">İnsan Resursları</option>
+                                    <option value="Finance">Maliyyə</option>
+                                    <option value="Marketing">Marketinq</option>
+                                    <option value="Sales">Satış</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>İşə Qəbul Tarixi</label>
+                                <input type="date" name="hireDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Əməkhaqqı</label>
+                                <input type="number" name="salary" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success">İşçi Əlavə Et</button>
+                    </form>
+                </div>
+
+                <input type="text" class="search-box" placeholder="İşçi axtarın..." onkeyup="searchEmployees(this.value)">
+                
+                <table class="data-table" id="employeesTable">
+                    <thead>
+                        <tr>
+                            <th>Ad Soyad</th>
+                            <th>Email</th>
+                            <th>Vəzifə</th>
+                            <th>Şöbə</th>
+                            <th>İşə Qəbul</th>
+                            <th>Əməllər</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeesBody">
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- İşə Qəbul -->
+            <section id="recruitment" class="content-section">
+                <div class="form-container">
+                    <h3>Yeni Vakansiya</h3>
+                    <form id="jobForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Vəzifə Adı</label>
+                                <input type="text" name="jobTitle" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Şöbə</label>
+                                <select name="department" required>
+                                    <option value="">Seçin</option>
+                                    <option value="IT">İnformasiya Texnologiyaları</option>
+                                    <option value="HR">İnsan Resursları</option>
+                                    <option value="Finance">Maliyyə</option>
+                                    <option value="Marketing">Marketinq</option>
+                                    <option value="Sales">Satış</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Tələblər</label>
+                            <textarea name="requirements" rows="4" required></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Əməkhaqqı Aralığı (Min)</label>
+                                <input type="number" name="minSalary" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Əməkhaqqı Aralığı (Max)</label>
+                                <input type="number" name="maxSalary" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success">Vakansiya Əlavə Et</button>
+                    </form>
+                </div>
+
+                <table class="data-table" id="jobsTable">
+                    <thead>
+                        <tr>
+                            <th>Vəzifə</th>
+                            <th>Şöbə</th>
+                            <th>Əməkhaqqı Aralığı</th>
+                            <th>Tarix</th>
+                            <th>Əməllər</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jobsBody">
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Davamiyyət -->
+            <section id="attendance" class="content-section">
+                <div class="form-container">
+                    <h3>Davamiyyət Qeydiyyatı</h3>
+                    <form id="attendanceForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>İşçi</label>
+                                <select name="employeeId" id="attendanceEmployee" required>
+                                    <option value="">İşçi seçin</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Tarix</label>
+                                <input type="date" name="date" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Giriş Vaxtı</label>
+                                <input type="time" name="clockIn" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Çıxış Vaxtı</label>
+                                <input type="time" name="clockOut" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success">Davamiyyət Əlavə Et</button>
+                    </form>
+                </div>
+
+                <table class="data-table" id="attendanceTable">
+                    <thead>
+                        <tr>
+                            <th>İşçi</th>
+                            <th>Tarix</th>
+                            <th>Giriş</th>
+                            <th>Çıxış</th>
+                            <th>İş Saatı</th>
+                            <th>Əməllər</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceBody">
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Məzuniyyət -->
+            <section id="leave" class="content-section">
+                <div class="form-container">
+                    <h3>Məzuniyyət Müraciəti</h3>
+                    <form id="leaveForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>İşçi</label>
+                                <select name="employeeId" id="leaveEmployee" required>
+                                    <option value="">İşçi seçin</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Məzuniyyət Növü</label>
+                                <select name="leaveType" required>
+                                    <option value="">Seçin</option>
+                                    <option value="annual">İllik məzuniyyət</option>
+                                    <option value="sick">Xəstəlik</option>
+                                    <option value="personal">Şəxsi</option>
+                                    <option value="emergency">Fövqəladə</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Başlama Tarixi</label>
+                                <input type="date" name="startDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Bitmə Tarixi</label>
+                                <input type="date" name="endDate" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Səbəb</label>
+                            <textarea name="reason" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">Müraciət Et</button>
+                    </form>
+                </div>
+
+                <table class="data-table" id="leaveTable">
+                    <thead>
+                        <tr>
+                            <th>İşçi</th>
+                            <th>Məzuniyyət Növü</th>
+                            <th>Başlama</th>
+                            <th>Bitmə</th>
+                            <th>Günlər</th>
+                            <th>Status</th>
+                            <th>Əməllər</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaveBody">
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Performans -->
+            <section id="performance" class="content-section">
+                <div class="form-container">
+                    <h3>Performans Qiymətləndirmə</h3>
+                    <form id="performanceForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>İşçi</label>
+                                <select name="employeeId" id="performanceEmployee" required>
+                                    <option value="">İşçi seçin</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Qiymətləndirmə Dövri</label>
+                                <select name="period" required>
+                                    <option value="">Seçin</option>
+                                    <option value="monthly">Aylıq</option>
+                                    <option value="quarterly">Rüblük</option>
+                                    <option value="annual">İllik</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Performans Xalı (1-100)</label>
+                                <input type="number" name="score" min="1" max="100" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Tarix</label>
+                                <input type="date" name="date" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Rəy</label>
+                            <textarea name="comments" rows="4" placeholder="Performans haqqında rəy yazın"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">Qiymətləndirmə Əlavə Et</button>
+                    </form>
+                </div>
+
+                <table class="data-table" id="performanceTable">
+                    <thead>
+                        <tr>
+                            <th>İşçi</th>
+                            <th>Dövr</th>
+                            <th>Xal</th>
+                            <th>Tarix</th>
+                            <th>Rəy</th>
+                            <th>Əməllər</th>
+                        </tr>
+                    </thead>
+                    <tbody id="performanceBody">
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Təlim -->
+            <section id="training" class="content-section">
+                <div class="form-container">
+                    <h3>Təlim Əlavə Et</h3>
+                    <form id="trainingForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Təlim Adı</label>
+                                <input type="text" name="trainingName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>İşçi</label>
+                                <select name="employeeId" id="trainingEmployee" required>
+                                    <option value="">İşçi seçin</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Başlama Tarixi</label>
+                                <input type="date" name="startDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Bitmə Tarixi</label>
+                                <input type="date" name="endDate" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Təsvir</label>
+                            <textarea name="description" rows="3" placeholder="Təlim haqqında təsvir"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">Təlim Əlavə Et</button>
+                    </form>
+                </div>
+
+                <table class="data-table" id="trainingTable">
+                    <thead>
+                        <tr>
+                            <th>Təlim Adı</th>
+                            <th>İşçi</th>
+                            <th>Başlama</th>
+                            <th>Bitmə</th>
+                            <th>Əməllər</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trainingBody">
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Əməkhaqqı -->
+            <section id="payroll" class="content-section">
+                <div class="form-container">
+                    <h3>Əməkhaqqı Əlavə Et</h3>
+                    <form id="payrollForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>İşçi</label>
+                                <select name="employeeId" id="payrollEmployee" required>
+                                    <option value="">İşçi seçin</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Ödəniş Dövri</label>
+                                <select name="period" required>
+                                    <option value="">Seçin</option>
+                                    <option value="monthly">Aylıq</option>
+                                    <option value="quarterly">Rüblük</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Əsas Əməkhaqqı</label>
+                                <input type="number" name="baseSalary" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Bonus</label>
+                                <input type="number" name="bonus" value="0">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Ödəniş Tarixi</label>
+                                <input type="date" name="paymentDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Vergi (%)</label>
+                                <input type="number" name="tax" min="0" max="100" value="0">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success">Əməkhaqqı Əlavə Et</button>
+                    </form>
+                </div>
+
+                <table class="data-table" id="payrollTable">
+                    <thead>
+                        <tr>
+                            <th>İşçi</th>
+                            <th>Dövr</th>
+                            <th>Əsas Əməkhaqqı</th>
+                            <th>Bonus</th>
+                            <th>Vergi</th>
+                            <th>Ümumi</th>
+                            <th>Tarix</th>
+                            <th>Əməllər</th>
+                        </tr>
+                    </thead>
+                    <tbody id="payrollBody">
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Sənədlər -->
+            <section id="documents" class="content-section">
+                <div class="form-container">
+                    <h3>Sənəd Əlavə Et</h3>
+                    <form id="documentForm" enctype="multipart/form-data">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>İşçi</label>
+                                <select name="employeeId" id="documentEmployee" required>
+                                    <option value="">İşçi seçin</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Sənəd Növü</label>
+                                <select name="documentType" required>
+                                    <option value="">Seçin</option>
+                                    <option value="contract">Müqavilə</option>
+                                    <option value="certificate">Sertifikat</option>
+                                    <option value="id">Şəxsiyyət Vəsiqəsi</option>
+                                    <option value="other">Digər</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Sənəd</label>
+                            <input type="file" name="documentFile" accept=".pdf,.doc,.docx,.jpg,.png" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Təsvir</label>
+                            <textarea name="description" rows="3" placeholder="Sənəd haqqında təsvir"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">Sənəd Əlavə Et</button>
+                    </form>
+                </div>
+
+                <table class="data-table" id="documentsTable">
+                    <thead>
+                        <tr>
+                            <th>İşçi</th>
+                            <th>Sənəd Növü</th>
+                            <th>Təsvir</th>
+                            <th>Tarix</th>
+                            <th>Əməllər</th>
+                        </tr>
+                    </thead>
+                    <tbody id="documentsBody">
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Hesabatlar -->
+            <section id="reports" class="content-section">
+                <h3>Hesabatlar</h3>
+                <div class="form-container">
+                    <h4>Hesabat Yarat</h4>
+                    <form id="reportForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Hesabat Növü</label>
+                                <select name="reportType" required>
+                                    <option value="">Seçin</option>
+                                    <option value="employee">İşçi Hesabatı</option>
+                                    <option value="attendance">Davamiyyət Hesabatı</option>
+                                    <option value="payroll">Əməkhaqqı Hesabatı</option>
+                                    <option value="performance">Performans Hesabatı</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Tarix Aralığı (Başlama)</label>
+                                <input type="date" name="startDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Tarix Aralığı (Bitmə)</label>
+                                <input type="date" name="endDate" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success">Hesabat Yarat</button>
+                    </form>
+                </div>
+
+                <table class="data-table" id="reportsTable">
+                    <thead>
+                        <tr>
+                            <th>Hesabat Növü</th>
+                            <th>Tarix Aralığı</th>
+                            <th>Yaradılma Tarixi</th>
+                            <th>Əməllər</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportsBody">
+                    </tbody>
+                </table>
+            </section>
         </main>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span id="notificationText"></span>
+    </div>
 
     <script>
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCOvdvFHbwji_yhzPjAlGTtjlIJNLC2y_Q",
-            authDomain: "hrteam-afad9.firebaseapp.com",
-            databaseURL: "https://hrteam-afad9-default-rtdb.firebaseio.com",
-            projectId: "hrteam-afad9",
-            storageBucket: "hrteam-afad9.firebasestorage.app",
-            messagingSenderId: "1066969486587",
-            appId: "1:1066969486587:web:f557ca9c162ac7ae620c5e",
-            measurementId: "G-THQZTV493J"
-        };
+        // Dummy data for testing
+        let employees = [];
+        let jobs = [];
+        let attendance = [];
+        let leaves = [];
+        let performance = [];
+        let trainings = [];
+        let payrolls = [];
+        let documents = [];
+        let reports = [];
 
-        // Initialize Firebase
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const database = firebase.database();
+        // Login functionality
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginText = document.getElementById('loginText');
+            const loginLoading = document.getElementById('loginLoading');
 
-        document.addEventListener('DOMContentLoaded', () => {
+            loginText.style.display = 'none';
+            loginLoading.style.display = 'inline-block';
 
-            // --- DOM Elements ---
-            const loginContainer = document.getElementById('login-container');
-            const dashboardContainer = document.getElementById('dashboard-container');
-            const loginForm = document.getElementById('login-form');
-            const usernameInput = document.getElementById('username');
-            const passwordInput = document.getElementById('password');
-            const errorMessage = document.getElementById('error-message');
-            const logoutBtn = document.getElementById('logout-btn');
-
-            const navLinks = document.querySelectorAll('.nav-link');
-            const pageContents = document.querySelectorAll('.page-content');
-
-            const addEmployeeForm = document.getElementById('add-employee-form');
-            const employeeList = document.getElementById('employee-list');
-            
-            // --- Login Logic ---
-            loginForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const username = usernameInput.value;
-                const password = passwordInput.value;
-
-                if (username === 'admin' && password === 'admin') {
-                    loginContainer.style.display = 'none';
-                    dashboardContainer.style.display = 'flex';
-                    loadEmployees();
+            setTimeout(() => {
+                if (username === 'admin' && password === 'admin123') {
+                    document.getElementById('loginContainer').style.display = 'none';
+                    document.getElementById('mainContainer').style.display = 'block';
+                    showNotification('Uğurla daxil oldunuz!', 'success');
                 } else {
-                    errorMessage.textContent = 'İstifadəçi adı və ya şifrə yanlışdır.';
-                    setTimeout(() => errorMessage.textContent = '', 3000);
+                    showNotification('İstifadəçi adı və ya şifrə səhvdir!', 'error');
                 }
-            });
-            
-            // --- Logout Logic ---
-            logoutBtn.addEventListener('click', () => {
-                loginContainer.style.display = 'flex';
-                dashboardContainer.style.display = 'none';
-                loginForm.reset();
-            });
-
-
-            // --- Navigation Logic ---
-            navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-
-                    // Update active link
-                    navLinks.forEach(nav => nav.classList.remove('active'));
-                    link.classList.add('active');
-                    
-                    // Show target content
-                    const targetId = link.getAttribute('data-target');
-                    pageContents.forEach(content => {
-                        content.classList.remove('active');
-                        if (content.id === targetId) {
-                            content.classList.add('active');
-                        }
-                    });
-                });
-            });
-
-
-            // --- Firebase CRUD for Employees ---
-
-            // CREATE: Add new employee
-            addEmployeeForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                const newEmployee = {
-                    name: document.getElementById('employee-name').value,
-                    surname: document.getElementById('employee-surname').value,
-                    position: document.getElementById('employee-position').value,
-                    department: document.getElementById('employee-department').value,
-                    email: document.getElementById('employee-email').value,
-                    phone: document.getElementById('employee-phone').value,
-                    hireDate: document.getElementById('employee-hire-date').value
-                };
-                
-                database.ref('employees').push(newEmployee)
-                    .then(() => {
-                        alert('İşçi uğurla əlavə edildi!');
-                        addEmployeeForm.reset();
-                    })
-                    .catch((error) => {
-                        console.error("Error adding employee: ", error);
-                        alert('Xəta baş verdi. Zəhmət olmasa, yenidən cəhd edin.');
-                    });
-            });
-            
-            // READ: Load and display employees
-            function loadEmployees() {
-                const employeesRef = database.ref('employees');
-                employeesRef.on('value', (snapshot) => {
-                    employeeList.innerHTML = '';
-                    const data = snapshot.val();
-                    if (data) {
-                        Object.keys(data).forEach(key => {
-                            const employee = data[key];
-                            const tr = document.createElement('tr');
-                            tr.innerHTML = `
-                                <td>${employee.name} ${employee.surname}</td>
-                                <td>${employee.position}</td>
-                                <td>${employee.department}</td>
-                                <td>${employee.email}</td>
-                                <td>${employee.phone}</td>
-                                <td>${employee.hireDate}</td>
-                                <td>
-                                    <button class="btn btn-danger" onclick="deleteEmployee('${key}')">Sil</button>
-                                </td>
-                            `;
-                            employeeList.appendChild(tr);
-                        });
-                    } else {
-                        employeeList.innerHTML = '<tr><td colspan="7" style="text-align:center;">Heç bir işçi tapılmadı.</td></tr>';
-                    }
-                });
-            }
-            
-            // DELETE: Remove employee
-            window.deleteEmployee = function(key) {
-                if (confirm('Bu işçini silmək istədiyinizə əminsiniz?')) {
-                    database.ref('employees/' + key).remove()
-                    .then(() => {
-                        alert('İşçi silindi.');
-                    })
-                    .catch((error) => {
-                        console.error("Error deleting employee: ", error);
-                        alert('Xəta baş verdi.');
-                    });
-                }
-            }
-
+                loginText.style.display = 'inline';
+                loginLoading.style.display = 'none';
+            }, 1000);
         });
+
+        // Logout functionality
+        function logout() {
+            document.getElementById('mainContainer').style.display = 'none';
+            document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('loginForm').reset();
+            showNotification('Uğurla çıxış etdiniz!', 'success');
+        }
+
+        // Sidebar navigation
+        document.querySelectorAll('.sidebar-menu a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+
+                const section = this.getAttribute('data-section');
+                document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+                document.getElementById(section).classList.add('active');
+
+                document.getElementById('pageTitle').textContent = this.textContent.trim();
+            });
+        });
+
+        // Notification
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            notificationText.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // Modal
+        function openModal(content) {
+            document.getElementById('modalContent').innerHTML = content;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        // Employee form submission
+        document.getElementById('employeeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const employee = {
+                id: employees.length + 1,
+                firstName: formData.get('firstName'),
+                lastName: formData.get('lastName'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                position: formData.get('position'),
+                department: formData.get('department'),
+                hireDate: formData.get('hireDate'),
+                salary: formData.get('salary')
+            };
+            employees.push(employee);
+            updateEmployeeTable();
+            updateEmployeeSelects();
+            this.reset();
+            showNotification('İşçi uğurla əlavə edildi!', 'success');
+            updateDashboardStats();
+        });
+
+        // Update employee table
+        function updateEmployeeTable() {
+            const tbody = document.getElementById('employeesBody');
+            tbody.innerHTML = '';
+            employees.forEach(emp => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${emp.firstName} ${emp.lastName}</td>
+                        <td>${emp.email}</td>
+                        <td>${emp.position}</td>
+                        <td>${emp.department}</td>
+                        <td>${emp.hireDate}</td>
+                        <td class="action-buttons">
+                            <button class="edit-btn" onclick="editEmployee(${emp.id})">Düzəlt</button>
+                            <button class="delete-btn" onclick="deleteEmployee(${emp.id})">Sil</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Search employees
+        function searchEmployees(query) {
+            const filtered = employees.filter(emp =>
+                `${emp.firstName} ${emp.lastName}`.toLowerCase().includes(query.toLowerCase()) ||
+                emp.email.toLowerCase().includes(query.toLowerCase())
+            );
+            const tbody = document.getElementById('employeesBody');
+            tbody.innerHTML = '';
+            filtered.forEach(emp => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${emp.firstName} ${emp.lastName}</td>
+                        <td>${emp.email}</td>
+                        <td>${emp.position}</td>
+                        <td>${emp.department}</td>
+                        <td>${emp.hireDate}</td>
+                        <td class="action-buttons">
+                            <button class="edit-btn" onclick="editEmployee(${emp.id})">Düzəlt</button>
+                            <button class="delete-btn" onclick="deleteEmployee(${emp.id})">Sil</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Edit employee
+        function editEmployee(id) {
+            const employee = employees.find(emp => emp.id === id);
+            if (employee) {
+                openModal(`
+                    <h3>İşçi Məlumatlarını Düzəlt</h3>
+                    <form id="editEmployeeForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Ad</label>
+                                <input type="text" name="firstName" value="${employee.firstName}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Soyad</label>
+                                <input type="text" name="lastName" value="${employee.lastName}" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" name="email" value="${employee.email}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Telefon</label>
+                                <input type="tel" name="phone" value="${employee.phone}" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Vəzifə</label>
+                                <input type="text" name="position" value="${employee.position}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Şöbə</label>
+                                <select name="department" required>
+                                    <option value="IT" ${employee.department === 'IT' ? 'selected' : ''}>İnformasiya Texnologiyaları</option>
+                                    <option value="HR" ${employee.department === 'HR' ? 'selected' : ''}>İnsan Resursları</option>
+                                    <option value="Finance" ${employee.department === 'Finance' ? 'selected' : ''}>Maliyyə</option>
+                                    <option value="Marketing" ${employee.department === 'Marketing' ? 'selected' : ''}>Marketinq</option>
+                                    <option value="Sales" ${employee.department === 'Sales' ? 'selected' : ''}>Satış</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>İşə Qəbul Tarixi</label>
+                                <input type="date" name="hireDate" value="${employee.hireDate}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Əməkhaqqı</label>
+                                <input type="number" name="salary" value="${employee.salary}" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success">Yadda Saxla</button>
+                    </form>
+                `);
+
+                document.getElementById('editEmployeeForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(this);
+                    employees = employees.map(emp => emp.id === id ? {
+                        ...emp,
+                        firstName: formData.get('firstName'),
+                        lastName: formData.get('lastName'),
+                        email: formData.get('email'),
+                        phone: formData.get('phone'),
+                        position: formData.get('position'),
+                        department: formData.get('department'),
+                        hireDate: formData.get('hireDate'),
+                        salary: formData.get('salary')
+                    } : emp);
+                    updateEmployeeTable();
+                    updateEmployeeSelects();
+                    closeModal();
+                    showNotification('İşçi məlumatları uğurla yeniləndi!', 'success');
+                    updateDashboardStats();
+                });
+            }
+        }
+
+        // Delete employee
+        function deleteEmployee(id) {
+            if (confirm('Bu işçini silmək istədiyinizə əminsiniz?')) {
+                employees = employees.filter(emp => emp.id !== id);
+                updateEmployeeTable();
+                updateEmployeeSelects();
+                showNotification('İşçi uğurla silindi!', 'success');
+                updateDashboardStats();
+            }
+        }
+
+        // Update employee selects
+        function updateEmployeeSelects() {
+            const selects = [
+                document.getElementById('attendanceEmployee'),
+                document.getElementById('leaveEmployee'),
+                document.getElementById('performanceEmployee'),
+                document.getElementById('trainingEmployee'),
+                document.getElementById('payrollEmployee'),
+                document.getElementById('documentEmployee')
+            ];
+            selects.forEach(select => {
+                select.innerHTML = '<option value="">İşçi seçin</option>';
+                employees.forEach(emp => {
+                    select.innerHTML += `<option value="${emp.id}">${emp.firstName} ${emp.lastName}</option>`;
+                });
+            });
+        }
+
+        // Update dashboard stats
+        function updateDashboardStats() {
+            document.getElementById('totalEmployees').textContent = employees.length;
+            document.getElementById('newHires').textContent = employees.filter(emp => {
+                const hireDate = new Date(emp.hireDate);
+                const today = new Date();
+                return (today - hireDate) / (1000 * 60 * 60 * 24) <= 30;
+            }).length;
+            document.getElementById('onLeave').textContent = leaves.filter(leave => leave.status === 'approved').length;
+            document.getElementById('topPerformers').textContent = performance.filter(p => p.score >= 90).length;
+        }
+
+        // Job form submission
+        document.getElementById('jobForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const job = {
+                id: jobs.length + 1,
+                jobTitle: formData.get('jobTitle'),
+                department: formData.get('department'),
+                requirements: formData.get('requirements'),
+                minSalary: formData.get('minSalary'),
+                maxSalary: formData.get('maxSalary'),
+                date: new Date().toISOString().split('T')[0]
+            };
+            jobs.push(job);
+            updateJobTable();
+            this.reset();
+            showNotification('Vakansiya uğurla əlavə edildi!', 'success');
+        });
+
+        // Update job table
+        function updateJobTable() {
+            const tbody = document.getElementById('jobsBody');
+            tbody.innerHTML = '';
+            jobs.forEach(job => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${job.jobTitle}</td>
+                        <td>${job.department}</td>
+                        <td>${job.minSalary} - ${job.maxSalary}</td>
+                        <td>${job.date}</td>
+                        <td class="action-buttons">
+                            <button class="edit-btn" onclick="editJob(${job.id})">Düzəlt</button>
+                            <button class="delete-btn" onclick="deleteJob(${job.id})">Sil</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Edit job
+        function editJob(id) {
+            const job = jobs.find(j => j.id === id);
+            if (job) {
+                openModal(`
+                    <h3>Vakansiya Düzəlt</h3>
+                    <form id="editJobForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Vəzifə Adı</label>
+                                <input type="text" name="jobTitle" value="${job.jobTitle}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Şöbə</label>
+                                <select name="department" required>
+                                    <option value="IT" ${job.department === 'IT' ? 'selected' : ''}>İnformasiya Texnologiyaları</option>
+                                    <option value="HR" ${job.department === 'HR' ? 'selected' : ''}>İnsan Resursları</option>
+                                    <option value="Finance" ${job.department === 'Finance' ? 'selected' : ''}>Maliyyə</option>
+                                    <option value="Marketing" ${job.department === 'Marketing' ? 'selected' : ''}>Marketinq</option>
+                                    <option value="Sales" ${job.department === 'Sales' ? 'selected' : ''}>Satış</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Tələblər</label>
+                            <textarea name="requirements" rows="4" required>${job.requirements}</textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Əməkhaqqı Aralığı (Min)</label>
+                                <input type="number" name="minSalary" value="${job.minSalary}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Əməkhaqqı Aralığı (Max)</label>
+                                <input type="number" name="maxSalary" value="${job.maxSalary}" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success">Yadda Saxla</button>
+                    </form>
+                `);
+
+                document.getElementById('editJobForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(this);
+                    jobs = jobs.map(j => j.id === id ? {
+                        ...j,
+                        jobTitle: formData.get('jobTitle'),
+                        department: formData.get('department'),
+                        requirements: formData.get('requirements'),
+                        minSalary: formData.get('minSalary'),
+                        maxSalary: formData.get('maxSalary'),
+                        date: new Date().toISOString().split('T')[0]
+                    } : j);
+                    updateJobTable();
+                    closeModal();
+                    showNotification('Vakansiya uğurla yeniləndi!', 'success');
+                });
+            }
+        }
+
+        // Delete job
+        function deleteJob(id) {
+            if (confirm('Bu vakansiyanı silmək istədiyinizə əminsiniz?')) {
+                jobs = jobs.filter(j => j.id !== id);
+                updateJobTable();
+                showNotification('Vakansiya uğurla silindi!', 'success');
+            }
+        }
+
+        // Add similar event listeners and functions for other sections (attendance, leave, performance, training, payroll, documents, reports) as needed.
+
+        // Initialize dashboard
+        updateDashboardStats();
     </script>
 </body>
 </html>
