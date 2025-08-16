@@ -1,271 +1,398 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="az">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baku Metro Simulator</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    
+    <title>Bakı Metro Simulatoru</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/framer-motion@10.16.4/dist/framer-motion.umd.min.js"></script>
-    
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Simple Tooltip Styling */
-        .tooltip {
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s;
+        .metro-line {
+            background: linear-gradient(90deg, #e5e5e5 0%, #e5e5e5 100%);
+            height: 4px;
+            position: relative;
+            margin: 20px 0;
         }
-        .has-tooltip:hover .tooltip {
-            visibility: visible;
+        
+        .metro-line.active {
+            background: linear-gradient(90deg, #10b981 var(--progress, 0%), #e5e5e5 var(--progress, 0%));
+        }
+        
+        .train-icon {
+            font-size: 2rem;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 20;
+        }
+        
+        .station-dot {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .station-dot:hover {
+            transform: scale(1.2);
+        }
+        
+        .station-dot.completed {
+            background-color: #10b981;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+        }
+        
+        .station-dot.current {
+            background-color: #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .tooltip {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.2s ease;
+            pointer-events: none;
+        }
+        
+        .station-dot:hover .tooltip {
             opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .journey-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .metro-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white font-sans">
+<body>
     <div id="root"></div>
 
     <script type="text/babel">
-        // Helper to use Framer Motion from CDN
-        const { motion, AnimatePresence } = window.framer;
+        const { useState, useEffect, useRef } = React;
 
-        // Data: Baku Metro Stations (Həzi Aslanov -> Dərnəgül)
-        const metroStations = [
-            { name: "Həzi Aslanov", year: 2002 },
-            { name: "Əhmədli", year: 1989 },
-            { name: "Xalqlar Dostluğu", year: 1989 },
-            { name: "Neftçilər", year: 1972 },
-            { name: "Qara Qarayev", year: 1972 },
-            { name: "Koroğlu", year: 1972 },
-            { name: "Ulduz", year: 1970 },
-            { name: "Nəriman Nərimanov", year: 1967 },
-            { name: "Gənclik", year: 1967 },
-            { name: "28 May", year: 1967 },
-            { name: "Nizami Gəncəvi", year: 1976 },
-            { name: "Elmlər Akademiyası", year: 1985 },
-            { name: "İnşaatçılar", year: 1985 },
-            { name: "20 Yanvar", year: 1985 },
-            { name: "Memar Əcəmi", year: 1985 },
-            { name: "Nəsimi", year: 2008 },
-            { name: "Azadlıq prospekti", year: 2009 },
-            { name: "Dərnəgül", year: 2011 },
-        ];
-
-        // Main App Component
         const BakuMetroSimulator = () => {
-            const [startStationIndex, setStartStationIndex] = React.useState(0);
-            const [endStationIndex, setEndStationIndex] = React.useState(metroStations.length - 1);
-            const [currentStationIndex, setCurrentStationIndex] = React.useState(null);
-            const [isTraveling, setIsTraveling] = React.useState(false);
-            const [completedStations, setCompletedStations] = React.useState(new Set());
+            // Baku Metro stations with opening years
+            const stations = [
+                { name: "Həzi Aslanov", year: 1967, az: "Həzi Aslanov" },
+                { name: "Nəsimi", year: 1967, az: "Nəsimi" },
+                { name: "Gənclik", year: 1967, az: "Gənclik" },
+                { name: "Nariman Nərimanov", year: 1967, az: "Nariman Nərimanov" },
+                { name: "Sahil", year: 1967, az: "Sahil" },
+                { name: "İçərişəhər", year: 1967, az: "İçərişəhər" },
+                { name: "28 May", year: 1970, az: "28 May" },
+                { name: "Gəncə Qapısı", year: 1970, az: "Gəncə Qapısı" },
+                { name: "Əhmədli", year: 1985, az: "Əhmədli" },
+                { name: "Hətai", year: 1985, az: "Hətai" },
+                { name: "Koroğlu", year: 1989, az: "Koroğlu" },
+                { name: "Qara Qarayev", year: 1989, az: "Qara Qarayev" },
+                { name: "Nərimanov", year: 1993, az: "Nərimanov" },
+                { name: "Bakıxanov", year: 1993, az: "Bakıxanov" },
+                { name: "Xalqlar Dostluğu", year: 1993, az: "Xalqlar Dostluğu" },
+                { name: "Üzeyir Hacıbəyov", year: 1993, az: "Üzeyir Hacıbəyov" },
+                { name: "8 km", year: 1993, az: "8 km" },
+                { name: "Ulduz", year: 1993, az: "Ulduz" },
+                { name: "Koroglu", year: 1993, az: "Koroğlu" },
+                { name: "Memar Əcəmi", year: 2008, az: "Memar Əcəmi" },
+                { name: "Avtovağzal", year: 2008, az: "Avtovağzal" },
+                { name: "Azadlıq Prospekti", year: 2008, az: "Azadlıq Prospekti" },
+                { name: "Həzi Aslanov", year: 2008, az: "Həzi Aslanov" },
+                { name: "Dərnəgül", year: 2016, az: "Dərnəgül" }
+            ];
+
+            // Remove duplicates and keep unique stations
+            const uniqueStations = [
+                { name: "Həzi Aslanov", year: 1967, az: "Həzi Aslanov" },
+                { name: "Nəsimi", year: 1967, az: "Nəsimi" },
+                { name: "Gənclik", year: 1967, az: "Gənclik" },
+                { name: "Nariman Nərimanov", year: 1967, az: "Nariman Nərimanov" },
+                { name: "Sahil", year: 1967, az: "Sahil" },
+                { name: "İçərişəhər", year: 1967, az: "İçərişəhər" },
+                { name: "28 May", year: 1970, az: "28 May" },
+                { name: "Gəncə Qapısı", year: 1970, az: "Gəncə Qapısı" },
+                { name: "Əhmədli", year: 1985, az: "Əhmədli" },
+                { name: "Hətai", year: 1985, az: "Hətai" },
+                { name: "Koroğlu", year: 1989, az: "Koroğlu" },
+                { name: "Qara Qarayev", year: 1989, az: "Qara Qarayev" },
+                { name: "Nərimanov", year: 1993, az: "Nərimanov" },
+                { name: "Bakıxanov", year: 1993, az: "Bakıxanov" },
+                { name: "Xalqlar Dostluğu", year: 1993, az: "Xalqlar Dostluğu" },
+                { name: "Üzeyir Hacıbəyov", year: 1993, az: "Üzeyir Hacıbəyov" },
+                { name: "8 km", year: 1993, az: "8 km" },
+                { name: "Ulduz", year: 1993, az: "Ulduz" },
+                { name: "Memar Əcəmi", year: 2008, az: "Memar Əcəmi" },
+                { name: "Avtovağzal", year: 2008, az: "Avtovağzal" },
+                { name: "Azadlıq Prospekti", year: 2008, az: "Azadlıq Prospekti" },
+                { name: "Dərnəgül", year: 2016, az: "Dərnəgül" }
+            ];
+
+            const [currentStation, setCurrentStation] = useState(0);
+            const [startStation, setStartStation] = useState(0);
+            const [endStation, setEndStation] = useState(uniqueStations.length - 1);
+            const [isMoving, setIsMoving] = useState(false);
+            const [completedStations, setCompletedStations] = useState(new Set());
+            const [journeyStarted, setJourneyStarted] = useState(false);
+            const [travelTime, setTravelTime] = useState(0);
+            const [hoveredStation, setHoveredStation] = useState(null);
             
-            const stationRefs = React.useRef([]);
-            
-            const handleStartJourney = () => {
-                if (startStationIndex === endStationIndex) return;
-                
-                // Reset previous journey state
-                setCompletedStations(new Set());
-                setCurrentStationIndex(startStationIndex);
-                setIsTraveling(true);
-            };
+            const intervalRef = useRef(null);
+            const containerRef = useRef(null);
 
-            const handleReset = () => {
-                setIsTraveling(false);
-                setCurrentStationIndex(null);
-                setCompletedStations(new Set());
-            };
-            
-            // Core simulation logic
-            React.useEffect(() => {
-                if (!isTraveling) return;
-
-                const interval = setInterval(() => {
-                    setCurrentStationIndex(prevIndex => {
-                        if (prevIndex === endStationIndex) {
-                            setIsTraveling(false);
-                            setCompletedStations(prev => new Set(prev).add(endStationIndex));
-                            clearInterval(interval);
-                            return prevIndex;
-                        }
-
-                        setCompletedStations(prev => new Set(prev).add(prevIndex));
-                        
-                        // Determine direction
-                        const direction = startStationIndex < endStationIndex ? 1 : -1;
-                        return prevIndex + direction;
-                    });
-                }, 1000); // 1 second per station
-
-                return () => clearInterval(interval);
-            }, [isTraveling, endStationIndex, startStationIndex]);
-
-            // Calculate train's position dynamically
-            const trainXPosition = React.useMemo(() => {
-                if (currentStationIndex === null || !stationRefs.current[currentStationIndex]) {
-                    return -100; // Hide train initially
+            const startJourney = () => {
+                if (startStation === endStation) {
+                    alert("Başlanğıc və son stansiya eyni ola bilməz!");
+                    return;
                 }
-                // Center the train on the station dot
-                const stationElement = stationRefs.current[currentStationIndex];
-                return stationElement.offsetLeft + stationElement.clientWidth / 2;
-            }, [currentStationIndex]);
 
-            const travelTime = Math.abs(endStationIndex - startStationIndex);
-            const currentStationName = currentStationIndex !== null ? metroStations[currentStationIndex].name : 'N/A';
+                setCurrentStation(startStation);
+                setCompletedStations(new Set([startStation]));
+                setIsMoving(true);
+                setJourneyStarted(true);
+                setTravelTime(0);
+
+                const direction = startStation < endStation ? 1 : -1;
+                let current = startStation;
+
+                intervalRef.current = setInterval(() => {
+                    current += direction;
+                    setCurrentStation(current);
+                    setTravelTime(prev => prev + 1);
+                    
+                    setCompletedStations(prev => new Set([...prev, current]));
+
+                    if (current === endStation) {
+                        setIsMoving(false);
+                        clearInterval(intervalRef.current);
+                        setTimeout(() => {
+                            alert(`Səyahət tamamlandı! ${uniqueStations[endStation].az} stansiyasına çatdınız!`);
+                        }, 500);
+                    }
+                }, 1000);
+            };
+
+            const resetJourney = () => {
+                clearInterval(intervalRef.current);
+                setCurrentStation(0);
+                setCompletedStations(new Set());
+                setIsMoving(false);
+                setJourneyStarted(false);
+                setTravelTime(0);
+                setStartStation(0);
+                setEndStation(uniqueStations.length - 1);
+            };
+
+            const getTrainPosition = () => {
+                if (!containerRef.current) return 0;
+                const containerWidth = containerRef.current.offsetWidth;
+                const stationWidth = containerWidth / (uniqueStations.length - 1);
+                return currentStation * stationWidth;
+            };
+
+            useEffect(() => {
+                return () => {
+                    if (intervalRef.current) {
+                        clearInterval(intervalRef.current);
+                    }
+                };
+            }, []);
 
             return (
-                <div className="container mx-auto p-4 md:p-8">
-                    <header className="text-center mb-8">
-                        <h1 className="text-4xl md:text-5xl font-bold text-blue-400 mb-2">Baku Metro Simulator 🚇</h1>
-                        <p className="text-gray-400">Visualize a journey through Baku's metro system.</p>
-                    </header>
-                    
-                    {/* Controls Section */}
-                    <div className="bg-gray-800 p-6 rounded-xl shadow-lg mb-10 flex flex-col md:flex-row items-center justify-center gap-4 flex-wrap">
-                        <div className="w-full md:w-auto">
-                            <label htmlFor="start-station" className="block text-sm font-medium text-gray-300 mb-1">Start Station</label>
-                            <select 
-                                id="start-station"
-                                value={startStationIndex}
-                                onChange={(e) => setStartStationIndex(Number(e.target.value))}
-                                disabled={isTraveling}
-                                className="w-full bg-gray-700 border-gray-600 rounded-md py-2 px-3 text-white focus:ring-2 focus:ring-blue-500"
-                            >
-                                {metroStations.map((station, index) => (
-                                    <option key={index} value={index}>{station.name}</option>
-                                ))}
-                            </select>
-                        </div>
-                        
-                        <div className="w-full md:w-auto">
-                            <label htmlFor="end-station" className="block text-sm font-medium text-gray-300 mb-1">End Station</label>
-                            <select 
-                                id="end-station"
-                                value={endStationIndex}
-                                onChange={(e) => setEndStationIndex(Number(e.target.value))}
-                                disabled={isTraveling}
-                                className="w-full bg-gray-700 border-gray-600 rounded-md py-2 px-3 text-white focus:ring-2 focus:ring-blue-500"
-                            >
-                                {metroStations.map((station, index) => (
-                                    <option key={index} value={index}>{station.name}</option>
-                                ))}
-                            </select>
+                <div className="metro-container min-h-screen p-4 lg:p-8">
+                    <div className="max-w-7xl mx-auto">
+                        {/* Header */}
+                        <div className="text-center mb-8">
+                            <h1 className="text-4xl lg:text-6xl font-bold text-gray-800 mb-4">
+                                🚇 Bakı Metro Simulatoru
+                            </h1>
+                            <p className="text-lg text-gray-600">
+                                Bakı metrosunda virtual səyahət edin
+                            </p>
                         </div>
 
-                        <div className="flex space-x-3 mt-4 md:mt-0">
-                            <button 
-                                onClick={handleStartJourney}
-                                disabled={isTraveling || startStationIndex === endStationIndex}
-                                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed"
-                            >
-                                {isTraveling ? 'Traveling...' : 'Start'}
-                            </button>
-                            <button 
-                                onClick={handleReset}
-                                className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition-colors"
-                            >
-                                Reset
-                            </button>
-                        </div>
-                    </div>
-                    
-                    {/* Status & Info Display */}
-                    <AnimatePresence>
-                        {(isTraveling || currentStationIndex !== null) && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -20 }}
-                                className="text-center bg-gray-800/50 backdrop-blur-sm p-4 rounded-lg mb-10"
-                            >
-                                <p className="text-lg">
-                                    <span className="font-bold text-blue-300">Current Status:</span>
-                                    {isTraveling ? ` Moving towards ${metroStations[endStationIndex].name}` : ` Arrived at ${currentStationName}`}
-                                </p>
-                                <p className="text-sm text-gray-400">
-                                    Current Station: <span className="font-semibold">{currentStationName}</span>
-                                    {travelTime > 0 && ` | Estimated Travel Time: ~${travelTime}s`}
-                                </p>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-
-
-                    {/* Metro Line Visualization */}
-                    <div className="w-full overflow-x-auto pb-10">
-                        <div className="relative inline-flex items-center w-max min-w-full px-8 py-10">
-                           
-                            {/* The metro line track */}
-                            <div className="absolute top-1/2 left-0 right-0 h-1.5 bg-gray-600 -translate-y-1/2">
-                                <motion.div 
-                                    className="h-full bg-green-500"
-                                    initial={{ width: 0 }}
-                                    animate={{ 
-                                        width: `${(completedStations.size / (metroStations.length-1)) * 100}%`
-                                    }}
-                                />
-                            </div>
-
-                            {/* Train Icon */}
-                            <AnimatePresence>
-                                {currentStationIndex !== null && (
-                                    <motion.div
-                                        className="absolute top-1/2 z-20 text-4xl"
-                                        style={{ transform: 'translate(-50%, -100%)' }}
-                                        initial={{ x: -100, y: '-100%' }}
-                                        animate={{ x: trainXPosition, y: '-100%' }}
-                                        transition={{ type: 'spring', stiffness: 50, damping: 15 }}
+                        {/* Journey Controls */}
+                        <div className="journey-card rounded-2xl p-6 mb-8 text-white shadow-xl">
+                            <h2 className="text-2xl font-bold mb-4">Səyahət Planı</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                <div>
+                                    <label className="block text-sm font-medium mb-2">Başlanğıc Stansiyası</label>
+                                    <select 
+                                        value={startStation} 
+                                        onChange={(e) => setStartStation(Number(e.target.value))}
+                                        disabled={isMoving}
+                                        className="w-full p-3 rounded-lg text-gray-800 focus:ring-2 focus:ring-blue-500"
                                     >
-                                        🚇
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-
-                            {/* Stations */}
-                            <div className="relative flex justify-between w-full">
-                                {metroStations.map((station, index) => {
-                                    const isCompleted = completedStations.has(index);
-                                    const isCurrent = index === currentStationIndex;
-                                    
-                                    let circleColor = 'bg-gray-700 border-gray-500';
-                                    if(isCompleted) circleColor = 'bg-green-500 border-green-400';
-                                    if(isCurrent) circleColor = 'bg-blue-500 border-blue-300 animate-pulse';
-
-                                    return (
-                                        <div
-                                            key={station.name}
-                                            ref={el => stationRefs.current[index] = el}
-                                            className="relative flex flex-col items-center has-tooltip"
-                                            style={{
-                                                flex: `1 0 ${100 / metroStations.length}%`,
-                                                minWidth: '80px', // Ensure stations don't get too cramped
-                                            }}
+                                        {uniqueStations.map((station, index) => (
+                                            <option key={index} value={index}>{station.az}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium mb-2">Son Stansiya</label>
+                                    <select 
+                                        value={endStation} 
+                                        onChange={(e) => setEndStation(Number(e.target.value))}
+                                        disabled={isMoving}
+                                        className="w-full p-3 rounded-lg text-gray-800 focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        {uniqueStations.map((station, index) => (
+                                            <option key={index} value={index}>{station.az}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="flex items-end">
+                                    {!isMoving ? (
+                                        <button 
+                                            onClick={startJourney}
+                                            className="w-full bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors shadow-lg hover:shadow-xl"
                                         >
-                                            <div className={`w-6 h-6 rounded-full border-4 z-10 transition-all duration-300 ${circleColor} shadow-md`}></div>
-                                            <p className="text-center text-xs mt-3 whitespace-nowrap">{station.name}</p>
-                                            
-                                            {/* Tooltip */}
-                                            <div className="tooltip absolute bottom-full mb-2 w-max bg-gray-900/80 text-white text-xs rounded py-1 px-2 z-30 backdrop-blur-sm shadow-lg">
-                                                Opened: {station.year}
+                                            🚀 Səyahətə Başla
+                                        </button>
+                                    ) : (
+                                        <button 
+                                            onClick={resetJourney}
+                                            className="w-full bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors shadow-lg hover:shadow-xl"
+                                        >
+                                            🛑 Dayandır / Sıfırla
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                            
+                            {/* Journey Status */}
+                            <div className="bg-white/10 rounded-lg p-4">
+                                <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                                    <div className="text-center md:text-left">
+                                        <span className="text-lg font-semibold">
+                                            Hazırdakı vəziyyət: {uniqueStations[currentStation].az}
+                                        </span>
+                                        {isMoving && (
+                                            <div className="text-sm mt-1">
+                                                🚇 Metro hərəkət edir... ({travelTime} saniyə)
+                                            </div>
+                                        )}
+                                    </div>
+                                    {journeyStarted && (
+                                        <div className="text-center">
+                                            <div className="text-sm">Ümumi məsafə</div>
+                                            <div className="text-xl font-bold">
+                                                {Math.abs(endStation - startStation)} stansiya
                                             </div>
                                         </div>
-                                    );
-                                })}
+                                    )}
+                                </div>
                             </div>
+                        </div>
+
+                        {/* Metro Line Visualization */}
+                        <div className="bg-white rounded-2xl p-6 shadow-xl mb-8">
+                            <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">Metro Xətti</h3>
+                            
+                            <div className="overflow-x-auto pb-4">
+                                <div 
+                                    ref={containerRef}
+                                    className="relative min-w-max"
+                                    style={{ minWidth: `${uniqueStations.length * 120}px` }}
+                                >
+                                    {/* Metro Line */}
+                                    <div 
+                                        className={`metro-line ${journeyStarted ? 'active' : ''}`}
+                                        style={{
+                                            '--progress': journeyStarted ? 
+                                                `${(Math.min(currentStation, Math.max(startStation, endStation)) / (uniqueStations.length - 1)) * 100}%` : 
+                                                '0%'
+                                        }}
+                                    />
+                                    
+                                    {/* Train */}
+                                    <div 
+                                        className="absolute train-icon -top-4 -ml-4"
+                                        style={{
+                                            left: `${(currentStation / (uniqueStations.length - 1)) * 100}%`,
+                                            transform: `translateX(-50%)`
+                                        }}
+                                    >
+                                        🚇
+                                    </div>
+
+                                    {/* Stations */}
+                                    <div className="flex justify-between relative -mt-2">
+                                        {uniqueStations.map((station, index) => (
+                                            <div 
+                                                key={index} 
+                                                className="flex flex-col items-center relative"
+                                                onMouseEnter={() => setHoveredStation(index)}
+                                                onMouseLeave={() => setHoveredStation(null)}
+                                            >
+                                                <div 
+                                                    className={`
+                                                        station-dot w-4 h-4 rounded-full border-2 border-white shadow-lg
+                                                        ${completedStations.has(index) ? 'completed' : 'bg-gray-300'}
+                                                        ${currentStation === index ? 'current' : ''}
+                                                    `}
+                                                />
+                                                <div className="mt-3 text-xs text-center max-w-20">
+                                                    <div className="font-semibold text-gray-800">
+                                                        {station.az}
+                                                    </div>
+                                                </div>
+                                                
+                                                {/* Tooltip */}
+                                                {hoveredStation === index && (
+                                                    <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap z-30 tooltip">
+                                                        <div className="font-semibold">{station.az}</div>
+                                                        <div>Açılış ili: {station.year}</div>
+                                                        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Statistics */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="bg-white rounded-xl p-6 shadow-lg text-center">
+                                <div className="text-3xl font-bold text-blue-600 mb-2">
+                                    {uniqueStations.length}
+                                </div>
+                                <div className="text-gray-600">Ümumi Stansiya</div>
+                            </div>
+                            <div className="bg-white rounded-xl p-6 shadow-lg text-center">
+                                <div className="text-3xl font-bold text-green-600 mb-2">
+                                    {completedStations.size}
+                                </div>
+                                <div className="text-gray-600">Keçilmiş Stansiya</div>
+                            </div>
+                            <div className="bg-white rounded-xl p-6 shadow-lg text-center">
+                                <div className="text-3xl font-bold text-purple-600 mb-2">
+                                    {travelTime}s
+                                </div>
+                                <div className="text-gray-600">Səyahət Müddəti</div>
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="text-center mt-8 text-gray-600">
+                            <p>© 2025 Bakı Metro Simulatoru - Virtual məqsədlər üçün hazırlanmışdır</p>
                         </div>
                     </div>
                 </div>
             );
         };
 
-        // Render the app
-        const container = document.getElementById('root');
-        const root = ReactDOM.createRoot(container);
-        root.render(<BakuMetroSimulator />);
+        ReactDOM.render(<BakuMetroSimulator />, document.getElementById('root'));
     </script>
 </body>
 </html>
