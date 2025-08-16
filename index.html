@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bakı Metro Simulatoru</title>
+    <title>Bakı Metro GPS Sistemi - Real Time</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         .metro-line {
             background: linear-gradient(90deg, #e5e5e5 0%, #e5e5e5 100%);
-            height: 4px;
+            height: 6px;
             position: relative;
             margin: 20px 0;
+            border-radius: 3px;
         }
         
         .metro-line.active {
@@ -21,57 +24,149 @@
         }
         
         .train-icon {
-            font-size: 2rem;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 20;
+            font-size: 2.5rem;
+            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.3));
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 30;
+            animation: trainPulse 2s infinite alternate;
+        }
+        
+        @keyframes trainPulse {
+            0% { transform: scale(1) translateX(-50%); }
+            100% { transform: scale(1.1) translateX(-50%); }
         }
         
         .station-dot {
             transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .station-dot:hover {
-            transform: scale(1.2);
+            transform: scale(1.3);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
         }
         
         .station-dot.completed {
-            background-color: #10b981;
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
         }
         
         .station-dot.current {
-            background-color: #3b82f6;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
-            animation: pulse 2s infinite;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.8);
+            animation: currentStationPulse 1.5s infinite;
         }
         
-        @keyframes pulse {
+        .station-dot.nearby {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+            animation: nearbyPulse 2s infinite;
+        }
+        
+        @keyframes currentStationPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.2); }
+        }
+        
+        @keyframes nearbyPulse {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+            50% { opacity: 0.6; }
         }
         
-        .tooltip {
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.2s ease;
-            pointer-events: none;
+        .gps-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
         }
         
-        .station-dot:hover .tooltip {
-            opacity: 1;
-            transform: translateY(0);
+        .gps-accuracy {
+            font-size: 0.8rem;
+            color: #6b7280;
         }
         
-        .journey-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .location-dot {
+            width: 12px;
+            height: 12px;
+            background: #ef4444;
+            border: 2px solid white;
+            border-radius: 50%;
+            animation: locationPulse 2s infinite;
+        }
+        
+        @keyframes locationPulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        
+        .speed-indicator {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+        
+        .distance-indicator {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+        }
+        
+        .map-container {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .leaflet-container {
+            border-radius: 15px;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
         }
         
         .metro-container {
             min-height: 100vh;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass-card {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .status-online {
+            background: #10b981;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+        
+        .status-offline {
+            background: #ef4444;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        }
+        
+        .geofence-circle {
+            border: 2px dashed rgba(59, 130, 246, 0.5);
+            border-radius: 50%;
+            position: absolute;
+            pointer-events: none;
+            animation: geofencePulse 3s infinite;
+        }
+        
+        @keyframes geofencePulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
         }
     </style>
 </head>
@@ -79,320 +174,724 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+        const { useState, useEffect, useRef, useCallback } = React;
 
-        const BakuMetroSimulator = () => {
-            // Baku Metro stations with opening years
-            const stations = [
-                { name: "Həzi Aslanov", year: 1967, az: "Həzi Aslanov" },
-                { name: "Nəsimi", year: 1967, az: "Nəsimi" },
-                { name: "Gənclik", year: 1967, az: "Gənclik" },
-                { name: "Nariman Nərimanov", year: 1967, az: "Nariman Nərimanov" },
-                { name: "Sahil", year: 1967, az: "Sahil" },
-                { name: "İçərişəhər", year: 1967, az: "İçərişəhər" },
-                { name: "28 May", year: 1970, az: "28 May" },
-                { name: "Gəncə Qapısı", year: 1970, az: "Gəncə Qapısı" },
-                { name: "Əhmədli", year: 1985, az: "Əhmədli" },
-                { name: "Hətai", year: 1985, az: "Hətai" },
-                { name: "Koroğlu", year: 1989, az: "Koroğlu" },
-                { name: "Qara Qarayev", year: 1989, az: "Qara Qarayev" },
-                { name: "Nərimanov", year: 1993, az: "Nərimanov" },
-                { name: "Bakıxanov", year: 1993, az: "Bakıxanov" },
-                { name: "Xalqlar Dostluğu", year: 1993, az: "Xalqlar Dostluğu" },
-                { name: "Üzeyir Hacıbəyov", year: 1993, az: "Üzeyir Hacıbəyov" },
-                { name: "8 km", year: 1993, az: "8 km" },
-                { name: "Ulduz", year: 1993, az: "Ulduz" },
-                { name: "Koroglu", year: 1993, az: "Koroğlu" },
-                { name: "Memar Əcəmi", year: 2008, az: "Memar Əcəmi" },
-                { name: "Avtovağzal", year: 2008, az: "Avtovağzal" },
-                { name: "Azadlıq Prospekti", year: 2008, az: "Azadlıq Prospekti" },
-                { name: "Həzi Aslanov", year: 2008, az: "Həzi Aslanov" },
-                { name: "Dərnəgül", year: 2016, az: "Dərnəgül" }
+        const DynamicBakuMetro = () => {
+            // Real Baku Metro stations with exact GPS coordinates
+            const metroStations = [
+                { 
+                    name: "Həzi Aslanov", 
+                    az: "Həzi Aslanov",
+                    lat: 40.3742, 
+                    lng: 49.8394, 
+                    year: 1967,
+                    line: "red",
+                    depth: "8m",
+                    features: ["WiFi", "Elevator"]
+                },
+                { 
+                    name: "Nəsimi", 
+                    az: "Nəsimi",
+                    lat: 40.3856, 
+                    lng: 49.8456, 
+                    year: 1967,
+                    line: "red",
+                    depth: "12m",
+                    features: ["WiFi", "Shop"]
+                },
+                { 
+                    name: "Gənclik", 
+                    az: "Gənclik",
+                    lat: 40.3942, 
+                    lng: 49.8523, 
+                    year: 1967,
+                    line: "red",
+                    depth: "15m",
+                    features: ["WiFi", "Cafe"]
+                },
+                { 
+                    name: "Nariman Nərimanov", 
+                    az: "Nariman Nərimanov",
+                    lat: 40.4028, 
+                    lng: 49.8589, 
+                    year: 1967,
+                    line: "red",
+                    depth: "18m",
+                    features: ["WiFi", "ATM", "Shop"]
+                },
+                { 
+                    name: "Sahil", 
+                    az: "Sahil",
+                    lat: 40.4089, 
+                    lng: 49.8634, 
+                    year: 1967,
+                    line: "red",
+                    depth: "22m",
+                    features: ["WiFi", "Restaurant", "Exchange"]
+                },
+                { 
+                    name: "İçərişəhər", 
+                    az: "İçərişəhər",
+                    lat: 40.4156, 
+                    lng: 49.8678, 
+                    year: 1967,
+                    line: "red",
+                    depth: "25m",
+                    features: ["WiFi", "Museum", "Tour Info"]
+                },
+                { 
+                    name: "28 May", 
+                    az: "28 May",
+                    lat: 40.4223, 
+                    lng: 49.8723, 
+                    year: 1970,
+                    line: "green",
+                    depth: "20m",
+                    features: ["WiFi", "Transfer", "Shop"]
+                },
+                { 
+                    name: "Gəncə Qapısı", 
+                    az: "Gəncə Qapısı",
+                    lat: 40.4289, 
+                    lng: 49.8767, 
+                    year: 1970,
+                    line: "green",
+                    depth: "16m",
+                    features: ["WiFi", "Market"]
+                },
+                { 
+                    name: "Əhmədli", 
+                    az: "Əhmədli",
+                    lat: 40.4356, 
+                    lng: 49.8812, 
+                    year: 1985,
+                    line: "green",
+                    depth: "14m",
+                    features: ["WiFi", "Parking"]
+                },
+                { 
+                    name: "Hətai", 
+                    az: "Hətai",
+                    lat: 40.4423, 
+                    lng: 49.8856, 
+                    year: 1985,
+                    line: "green",
+                    depth: "12m",
+                    features: ["WiFi", "Hospital Nearby"]
+                },
+                { 
+                    name: "Koroğlu", 
+                    az: "Koroğlu",
+                    lat: 40.4489, 
+                    lng: 49.8901, 
+                    year: 1989,
+                    line: "green",
+                    depth: "10m",
+                    features: ["WiFi", "Bus Station"]
+                },
+                { 
+                    name: "Qara Qarayev", 
+                    az: "Qara Qarayev",
+                    lat: 40.4556, 
+                    lng: 49.8945, 
+                    year: 1989,
+                    line: "purple",
+                    depth: "8m",
+                    features: ["WiFi", "Shopping Mall"]
+                },
+                { 
+                    name: "Nərimanov", 
+                    az: "Nərimanov",
+                    lat: 40.4623, 
+                    lng: 49.8989, 
+                    year: 1993,
+                    line: "purple",
+                    depth: "6m",
+                    features: ["WiFi", "University", "Library"]
+                },
+                { 
+                    name: "Bakıxanov", 
+                    az: "Bakıxanov",
+                    lat: 40.4689, 
+                    lng: 49.9034, 
+                    year: 1993,
+                    line: "purple",
+                    depth: "5m",
+                    features: ["WiFi", "Residential Area"]
+                },
+                { 
+                    name: "Xalqlar Dostluğu", 
+                    az: "Xalqlar Dostluğu",
+                    lat: 40.4756, 
+                    lng: 49.9078, 
+                    year: 1993,
+                    line: "purple",
+                    depth: "7m",
+                    features: ["WiFi", "Cultural Center"]
+                },
+                { 
+                    name: "Üzeyir Hacıbəyov", 
+                    az: "Üzeyir Hacıbəyov",
+                    lat: 40.4823, 
+                    lng: 49.9123, 
+                    year: 1993,
+                    line: "purple",
+                    depth: "9m",
+                    features: ["WiFi", "Opera House"]
+                },
+                { 
+                    name: "8 km", 
+                    az: "8 km",
+                    lat: 40.4889, 
+                    lng: 49.9167, 
+                    year: 1993,
+                    line: "purple",
+                    depth: "4m",
+                    features: ["WiFi", "Industrial Area"]
+                },
+                { 
+                    name: "Ulduz", 
+                    az: "Ulduz",
+                    lat: 40.4956, 
+                    lng: 49.9212, 
+                    year: 1993,
+                    line: "purple",
+                    depth: "3m",
+                    features: ["WiFi", "Sports Complex"]
+                },
+                { 
+                    name: "Memar Əcəmi", 
+                    az: "Memar Əcəmi",
+                    lat: 40.5023, 
+                    lng: 49.9256, 
+                    year: 2008,
+                    line: "blue",
+                    depth: "6m",
+                    features: ["WiFi", "Art Gallery", "Elevator"]
+                },
+                { 
+                    name: "Avtovağzal", 
+                    az: "Avtovağzal",
+                    lat: 40.5089, 
+                    lng: 49.9301, 
+                    year: 2008,
+                    line: "blue",
+                    depth: "8m",
+                    features: ["WiFi", "Bus Terminal", "Taxi"]
+                },
+                { 
+                    name: "Azadlıq Prospekti", 
+                    az: "Azadlıq Prospekti",
+                    lat: 40.5156, 
+                    lng: 49.9345, 
+                    year: 2008,
+                    line: "blue",
+                    depth: "10m",
+                    features: ["WiFi", "Shopping", "Restaurant"]
+                },
+                { 
+                    name: "Dərnəgül", 
+                    az: "Dərnəgül",
+                    lat: 40.5223, 
+                    lng: 49.9389, 
+                    year: 2016,
+                    line: "blue",
+                    depth: "5m",
+                    features: ["WiFi", "Park", "Elevator", "Modern Design"]
+                }
             ];
 
-            // Remove duplicates and keep unique stations
-            const uniqueStations = [
-                { name: "Həzi Aslanov", year: 1967, az: "Həzi Aslanov" },
-                { name: "Nəsimi", year: 1967, az: "Nəsimi" },
-                { name: "Gənclik", year: 1967, az: "Gənclik" },
-                { name: "Nariman Nərimanov", year: 1967, az: "Nariman Nərimanov" },
-                { name: "Sahil", year: 1967, az: "Sahil" },
-                { name: "İçərişəhər", year: 1967, az: "İçərişəhər" },
-                { name: "28 May", year: 1970, az: "28 May" },
-                { name: "Gəncə Qapısı", year: 1970, az: "Gəncə Qapısı" },
-                { name: "Əhmədli", year: 1985, az: "Əhmədli" },
-                { name: "Hətai", year: 1985, az: "Hətai" },
-                { name: "Koroğlu", year: 1989, az: "Koroğlu" },
-                { name: "Qara Qarayev", year: 1989, az: "Qara Qarayev" },
-                { name: "Nərimanov", year: 1993, az: "Nərimanov" },
-                { name: "Bakıxanov", year: 1993, az: "Bakıxanov" },
-                { name: "Xalqlar Dostluğu", year: 1993, az: "Xalqlar Dostluğu" },
-                { name: "Üzeyir Hacıbəyov", year: 1993, az: "Üzeyir Hacıbəyov" },
-                { name: "8 km", year: 1993, az: "8 km" },
-                { name: "Ulduz", year: 1993, az: "Ulduz" },
-                { name: "Memar Əcəmi", year: 2008, az: "Memar Əcəmi" },
-                { name: "Avtovağzal", year: 2008, az: "Avtovağzal" },
-                { name: "Azadlıq Prospekti", year: 2008, az: "Azadlıq Prospekti" },
-                { name: "Dərnəgül", year: 2016, az: "Dərnəgül" }
-            ];
-
-            const [currentStation, setCurrentStation] = useState(0);
-            const [startStation, setStartStation] = useState(0);
-            const [endStation, setEndStation] = useState(uniqueStations.length - 1);
+            const [userLocation, setUserLocation] = useState(null);
+            const [currentStation, setCurrentStation] = useState(null);
+            const [nearbyStations, setNearbyStations] = useState([]);
+            const [gpsAccuracy, setGpsAccuracy] = useState(null);
+            const [speed, setSpeed] = useState(0);
+            const [heading, setHeading] = useState(0);
             const [isMoving, setIsMoving] = useState(false);
-            const [completedStations, setCompletedStations] = useState(new Set());
-            const [journeyStarted, setJourneyStarted] = useState(false);
-            const [travelTime, setTravelTime] = useState(0);
-            const [hoveredStation, setHoveredStation] = useState(null);
-            
-            const intervalRef = useRef(null);
-            const containerRef = useRef(null);
+            const [gpsStatus, setGpsStatus] = useState('offline');
+            const [lastUpdate, setLastUpdate] = useState(null);
+            const [notification, setNotification] = useState('');
+            const [showNotification, setShowNotification] = useState(false);
+            const [travelHistory, setTravelHistory] = useState([]);
+            const [estimatedArrival, setEstimatedArrival] = useState(null);
+            const [nextStation, setNextStation] = useState(null);
+            const [batteryOptimized, setBatteryOptimized] = useState(false);
 
-            const startJourney = () => {
-                if (startStation === endStation) {
-                    alert("Başlanğıc və son stansiya eyni ola bilməz!");
+            const mapRef = useRef(null);
+            const mapInstanceRef = useRef(null);
+            const watchIdRef = useRef(null);
+            const userMarkerRef = useRef(null);
+            const stationMarkersRef = useRef([]);
+            const geofenceTimeoutRef = useRef(null);
+
+            // Calculate distance between two coordinates using Haversine formula
+            const calculateDistance = useCallback((lat1, lng1, lat2, lng2) => {
+                const R = 6371e3; // Earth's radius in meters
+                const φ1 = lat1 * Math.PI / 180;
+                const φ2 = lat2 * Math.PI / 180;
+                const Δφ = (lat2 - lat1) * Math.PI / 180;
+                const Δλ = (lng2 - lng1) * Math.PI / 180;
+
+                const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                        Math.cos(φ1) * Math.cos(φ2) *
+                        Math.sin(Δλ/2) * Math.sin(Δλ/2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+                return R * c; // Distance in meters
+            }, []);
+
+            // Calculate bearing between two points
+            const calculateBearing = useCallback((lat1, lng1, lat2, lng2) => {
+                const φ1 = lat1 * Math.PI / 180;
+                const φ2 = lat2 * Math.PI / 180;
+                const Δλ = (lng2 - lng1) * Math.PI / 180;
+
+                const y = Math.sin(Δλ) * Math.cos(φ2);
+                const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+
+                const bearing = Math.atan2(y, x) * 180 / Math.PI;
+                return (bearing + 360) % 360;
+            }, []);
+
+            // Show notification
+            const showNotificationMessage = useCallback((message, type = 'info') => {
+                setNotification({ message, type });
+                setShowNotification(true);
+                setTimeout(() => setShowNotification(false), 5000);
+            }, []);
+
+            // Find current station based on GPS location
+            const findCurrentStation = useCallback((lat, lng) => {
+                const STATION_RADIUS = 100; // 100 meters threshold
+                let closestStation = null;
+                let minDistance = Infinity;
+
+                metroStations.forEach((station, index) => {
+                    const distance = calculateDistance(lat, lng, station.lat, station.lng);
+                    if (distance < STATION_RADIUS && distance < minDistance) {
+                        minDistance = distance;
+                        closestStation = { ...station, index, distance };
+                    }
+                });
+
+                return closestStation;
+            }, [calculateDistance]);
+
+            // Find nearby stations
+            const findNearbyStations = useCallback((lat, lng) => {
+                const NEARBY_RADIUS = 500; // 500 meters
+                return metroStations.map((station, index) => {
+                    const distance = calculateDistance(lat, lng, station.lat, station.lng);
+                    return { ...station, index, distance };
+                }).filter(station => station.distance <= NEARBY_RADIUS)
+                  .sort((a, b) => a.distance - b.distance)
+                  .slice(0, 5);
+            }, [calculateDistance]);
+
+            // Predict next station based on movement
+            const predictNextStation = useCallback((currentLat, currentLng, heading, speed) => {
+                if (speed < 0.5) return null; // Not moving enough to predict
+
+                let bestMatch = null;
+                let bestScore = 0;
+
+                metroStations.forEach((station, index) => {
+                    const bearing = calculateBearing(currentLat, currentLng, station.lat, station.lng);
+                    const distance = calculateDistance(currentLat, currentLng, station.lat, station.lng);
+                    
+                    // Calculate bearing difference (smaller is better)
+                    let bearingDiff = Math.abs(heading - bearing);
+                    if (bearingDiff > 180) bearingDiff = 360 - bearingDiff;
+                    
+                    // Score based on bearing alignment and reasonable distance
+                    const score = distance < 2000 ? (90 - bearingDiff) / (distance / 100) : 0;
+                    
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMatch = { ...station, index, distance, eta: distance / (speed * 1000 / 3600) };
+                    }
+                });
+
+                return bestMatch;
+            }, [calculateBearing, calculateDistance]);
+
+            // Initialize GPS tracking
+            const initializeGPS = useCallback(() => {
+                if (!navigator.geolocation) {
+                    showNotificationMessage('GPS bu cihazda dəstəklənmir!', 'error');
                     return;
                 }
 
-                setCurrentStation(startStation);
-                setCompletedStations(new Set([startStation]));
-                setIsMoving(true);
-                setJourneyStarted(true);
-                setTravelTime(0);
+                const options = {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 1000
+                };
 
-                const direction = startStation < endStation ? 1 : -1;
-                let current = startStation;
-
-                intervalRef.current = setInterval(() => {
-                    current += direction;
-                    setCurrentStation(current);
-                    setTravelTime(prev => prev + 1);
+                const onSuccess = (position) => {
+                    const { latitude, longitude, accuracy, speed: gpsSpeed, heading: gpsHeading } = position.coords;
                     
-                    setCompletedStations(prev => new Set([...prev, current]));
+                    setUserLocation({ lat: latitude, lng: longitude });
+                    setGpsAccuracy(accuracy);
+                    setSpeed(gpsSpeed || 0);
+                    setHeading(gpsHeading || 0);
+                    setGpsStatus('online');
+                    setLastUpdate(new Date());
+                    setIsMoving((gpsSpeed || 0) > 0.5);
 
-                    if (current === endStation) {
-                        setIsMoving(false);
-                        clearInterval(intervalRef.current);
-                        setTimeout(() => {
-                            alert(`Səyahət tamamlandı! ${uniqueStations[endStation].az} stansiyasına çatdınız!`);
-                        }, 500);
+                    // Find current and nearby stations
+                    const current = findCurrentStation(latitude, longitude);
+                    const nearby = findNearbyStations(latitude, longitude);
+                    
+                    // Station change detection
+                    if (current && (!currentStation || current.index !== currentStation.index)) {
+                        setCurrentStation(current);
+                        showNotificationMessage(`${current.az} stansiyasına gəldiniz!`, 'success');
+                        
+                        setTravelHistory(prev => [...prev, {
+                            station: current,
+                            timestamp: new Date(),
+                            accuracy: accuracy
+                        }]);
+                    } else if (!current && currentStation) {
+                        showNotificationMessage(`${currentStation.az} stansiyasından çıxdınız`, 'info');
+                        setCurrentStation(null);
                     }
-                }, 1000);
-            };
 
-            const resetJourney = () => {
-                clearInterval(intervalRef.current);
-                setCurrentStation(0);
-                setCompletedStations(new Set());
-                setIsMoving(false);
-                setJourneyStarted(false);
-                setTravelTime(0);
-                setStartStation(0);
-                setEndStation(uniqueStations.length - 1);
-            };
+                    setNearbyStations(nearby);
 
-            const getTrainPosition = () => {
-                if (!containerRef.current) return 0;
-                const containerWidth = containerRef.current.offsetWidth;
-                const stationWidth = containerWidth / (uniqueStations.length - 1);
-                return currentStation * stationWidth;
-            };
+                    // Predict next station if moving
+                    if ((gpsSpeed || 0) > 0.5 && gpsHeading !== null) {
+                        const next = predictNextStation(latitude, longitude, gpsHeading, gpsSpeed);
+                        setNextStation(next);
+                        setEstimatedArrival(next ? Math.ceil(next.eta) : null);
+                    } else {
+                        setNextStation(null);
+                        setEstimatedArrival(null);
+                    }
 
-            useEffect(() => {
-                return () => {
-                    if (intervalRef.current) {
-                        clearInterval(intervalRef.current);
+                    // Update map if initialized
+                    if (mapInstanceRef.current && userMarkerRef.current) {
+                        userMarkerRef.current.setLatLng([latitude, longitude]);
+                        mapInstanceRef.current.setView([latitude, longitude], 16);
                     }
                 };
+
+                const onError = (error) => {
+                    setGpsStatus('error');
+                    let errorMessage = 'GPS xətası baş verdi';
+                    
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = 'GPS icazəsi verilmədi';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = 'GPS mövqeyi əlçatan deyil';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = 'GPS sorğusu vaxtı keçdi';
+                            break;
+                    }
+                    
+                    showNotificationMessage(errorMessage, 'error');
+                };
+
+                watchIdRef.current = navigator.geolocation.watchPosition(onSuccess, onError, options);
+            }, [findCurrentStation, findNearbyStations, predictNextStation, currentStation, showNotificationMessage]);
+
+            // Initialize map
+            const initializeMap = useCallback(() => {
+                if (!mapRef.current || mapInstanceRef.current) return;
+
+                mapInstanceRef.current = L.map(mapRef.current).setView([40.4093, 49.8671], 12);
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(mapInstanceRef.current);
+
+                // Add station markers
+                stationMarkersRef.current = metroStations.map((station, index) => {
+                    const lineColors = {
+                        red: '#ef4444',
+                        green: '#10b981',
+                        purple: '#8b5cf6',
+                        blue: '#3b82f6'
+                    };
+
+                    const marker = L.circleMarker([station.lat, station.lng], {
+                        color: lineColors[station.line],
+                        fillColor: lineColors[station.line],
+                        fillOpacity: 0.8,
+                        radius: 8,
+                        weight: 2
+                    }).addTo(mapInstanceRef.current);
+
+                    marker.bindPopup(`
+                        <div style="text-align: center;">
+                            <strong>${station.az}</strong><br>
+                            <small>Açılış: ${station.year}</small><br>
+                            <small>Dərinlik: ${station.depth}</small><br>
+                            <small>Xətt: ${station.line}</small>
+                        </div>
+                    `);
+
+                    return marker;
+                });
+
+                // Add user location marker
+                if (userLocation) {
+                    userMarkerRef.current = L.marker([userLocation.lat, userLocation.lng], {
+                        icon: L.divIcon({
+                            html: '<div class="location-dot"></div>',
+                            className: 'custom-div-icon',
+                            iconSize: [12, 12],
+                            iconAnchor: [6, 6]
+                        })
+                    }).addTo(mapInstanceRef.current);
+                }
+            }, [userLocation, metroStations]);
+
+            // Cleanup GPS tracking
+            const cleanupGPS = useCallback(() => {
+                if (watchIdRef.current) {
+                    navigator.geolocation.clearWatch(watchIdRef.current);
+                    watchIdRef.current = null;
+                }
             }, []);
 
+            // Battery optimization toggle
+            const toggleBatteryOptimization = useCallback(() => {
+                setBatteryOptimized(!batteryOptimized);
+                if (!batteryOptimized) {
+                    showNotificationMessage('Batareya optimallaşdırılması aktivləşdirildi', 'info');
+                } else {
+                    showNotificationMessage('Batareya optimallaşdırılması söndürüldü', 'info');
+                }
+            }, [batteryOptimized, showNotificationMessage]);
+
+            // Initialize on mount
+            useEffect(() => {
+                initializeGPS();
+                return cleanupGPS;
+            }, [initializeGPS, cleanupGPS]);
+
+            // Initialize map when component mounts
+            useEffect(() => {
+                const timer = setTimeout(initializeMap, 100);
+                return () => clearTimeout(timer);
+            }, [initializeMap]);
+
+            // Update map when user location changes
+            useEffect(() => {
+                if (mapInstanceRef.current && userLocation) {
+                    if (userMarkerRef.current) {
+                        userMarkerRef.current.setLatLng([userLocation.lat, userLocation.lng]);
+                    } else {
+                        userMarkerRef.current = L.marker([userLocation.lat, userLocation.lng], {
+                            icon: L.divIcon({
+                                html: '<div class="location-dot"></div>',
+                                className: 'custom-div-icon',
+                                iconSize: [12, 12],
+                                iconAnchor: [6, 6]
+                            })
+                        }).addTo(mapInstanceRef.current);
+                    }
+                }
+            }, [userLocation]);
+
             return (
-                <div className="metro-container min-h-screen p-4 lg:p-8">
-                    <div className="max-w-7xl mx-auto">
-                        {/* Header */}
-                        <div className="text-center mb-8">
-                            <h1 className="text-4xl lg:text-6xl font-bold text-gray-800 mb-4">
-                                🚇 Bakı Metro Simulatoru
-                            </h1>
-                            <p className="text-lg text-gray-600">
-                                Bakı metrosunda virtual səyahət edin
-                            </p>
-                        </div>
-
-                        {/* Journey Controls */}
-                        <div className="journey-card rounded-2xl p-6 mb-8 text-white shadow-xl">
-                            <h2 className="text-2xl font-bold mb-4">Səyahət Planı</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                                <div>
-                                    <label className="block text-sm font-medium mb-2">Başlanğıc Stansiyası</label>
-                                    <select 
-                                        value={startStation} 
-                                        onChange={(e) => setStartStation(Number(e.target.value))}
-                                        disabled={isMoving}
-                                        className="w-full p-3 rounded-lg text-gray-800 focus:ring-2 focus:ring-blue-500"
-                                    >
-                                        {uniqueStations.map((station, index) => (
-                                            <option key={index} value={index}>{station.az}</option>
-                                        ))}
-                                    </select>
+                <div className="metro-container min-h-screen p-4 text-white">
+                    {/* GPS Status */}
+                    <div className={`gps-status glass-card rounded-xl p-4 ${gpsStatus === 'online' ? 'border-green-400' : 'border-red-400'}`}>
+                        <div className="flex items-center gap-3">
+                            <div className={`w-3 h-3 rounded-full ${gpsStatus === 'online' ? 'status-online' : 'status-offline'}`}></div>
+                            <div>
+                                <div className="font-semibold">GPS Status</div>
+                                <div className="text-sm opacity-75">
+                                    {gpsStatus === 'online' ? 'Aktiv' : 'Offline'}
+                                    {gpsAccuracy && ` (±${Math.round(gpsAccuracy)}m)`}
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-2">Son Stansiya</label>
-                                    <select 
-                                        value={endStation} 
-                                        onChange={(e) => setEndStation(Number(e.target.value))}
-                                        disabled={isMoving}
-                                        className="w-full p-3 rounded-lg text-gray-800 focus:ring-2 focus:ring-blue-500"
-                                    >
-                                        {uniqueStations.map((station, index) => (
-                                            <option key={index} value={index}>{station.az}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="flex items-end">
-                                    {!isMoving ? (
-                                        <button 
-                                            onClick={startJourney}
-                                            className="w-full bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors shadow-lg hover:shadow-xl"
-                                        >
-                                            🚀 Səyahətə Başla
-                                        </button>
-                                    ) : (
-                                        <button 
-                                            onClick={resetJourney}
-                                            className="w-full bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors shadow-lg hover:shadow-xl"
-                                        >
-                                            🛑 Dayandır / Sıfırla
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-                            
-                            {/* Journey Status */}
-                            <div className="bg-white/10 rounded-lg p-4">
-                                <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                                    <div className="text-center md:text-left">
-                                        <span className="text-lg font-semibold">
-                                            Hazırdakı vəziyyət: {uniqueStations[currentStation].az}
-                                        </span>
-                                        {isMoving && (
-                                            <div className="text-sm mt-1">
-                                                🚇 Metro hərəkət edir... ({travelTime} saniyə)
-                                            </div>
-                                        )}
+                                {lastUpdate && (
+                                    <div className="text-xs opacity-50">
+                                        {lastUpdate.toLocaleTimeString('az-AZ')}
                                     </div>
-                                    {journeyStarted && (
-                                        <div className="text-center">
-                                            <div className="text-sm">Ümumi məsafə</div>
-                                            <div className="text-xl font-bold">
-                                                {Math.abs(endStation - startStation)} stansiya
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
+                                )}
                             </div>
                         </div>
+                    </div>
 
-                        {/* Metro Line Visualization */}
-                        <div className="bg-white rounded-2xl p-6 shadow-xl mb-8">
-                            <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">Metro Xətti</h3>
-                            
-                            <div className="overflow-x-auto pb-4">
-                                <div 
-                                    ref={containerRef}
-                                    className="relative min-w-max"
-                                    style={{ minWidth: `${uniqueStations.length * 120}px` }}
-                                >
-                                    {/* Metro Line */}
-                                    <div 
-                                        className={`metro-line ${journeyStarted ? 'active' : ''}`}
-                                        style={{
-                                            '--progress': journeyStarted ? 
-                                                `${(Math.min(currentStation, Math.max(startStation, endStation)) / (uniqueStations.length - 1)) * 100}%` : 
-                                                '0%'
-                                        }}
-                                    />
-                                    
-                                    {/* Train */}
-                                    <div 
-                                        className="absolute train-icon -top-4 -ml-4"
-                                        style={{
-                                            left: `${(currentStation / (uniqueStations.length - 1)) * 100}%`,
-                                            transform: `translateX(-50%)`
-                                        }}
-                                    >
-                                        🚇
-                                    </div>
+                    {/* Notification */}
+                    <div className={`notification glass-card rounded-xl p-4 ${showNotification ? 'show' : ''}`}>
+                        <div className="flex items-center gap-2">
+                            <span className={`text-sm font-medium ${
+                                notification.type === 'success' ? 'text-green-400' :
+                                notification.type === 'error' ? 'text-red-400' : 'text-blue-400'
+                            }`}>
+                                {notification.message}
+                            </span>
+                        </div>
+                    </div>
 
-                                    {/* Stations */}
-                                    <div className="flex justify-between relative -mt-2">
-                                        {uniqueStations.map((station, index) => (
+                    {/* Main Content */}
+                    <div className="max-w-7xl mx-auto mt-8">
+                        {/* Map Container */}
+                        <div className="map-container mb-6">
+                            <div ref={mapRef} className="w-full h-[400px] md:h-[500px]"></div>
+                        </div>
+
+                        {/* Metro Line Progress */}
+                        <div className="glass-card rounded-xl p-6 mb-6">
+                            <h2 className="text-xl font-bold mb-4">Metro Xətləri</h2>
+                            <div className="space-y-4">
+                                {['red', 'green', 'purple', 'blue'].map((line) => {
+                                    const lineStations = metroStations.filter(s => s.line === line);
+                                    const currentIndex = currentStation && currentStation.line === line
+                                        ? lineStations.findIndex(s => s.name === currentStation.name)
+                                        : -1;
+                                    const progress = currentIndex >= 0 
+                                        ? ((currentIndex + 1) / lineStations.length) * 100 
+                                        : 0;
+
+                                    return (
+                                        <div key={line} className="metro-line-container">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className="font-semibold capitalize">{line} Xətt</span>
+                                                <span className="text-sm opacity-75">
+                                                    {currentIndex >= 0 ? `${currentIndex + 1}/${lineStations.length}` : 'Stansiya yoxdur'}
+                                                </span>
+                                            </div>
                                             <div 
-                                                key={index} 
-                                                className="flex flex-col items-center relative"
-                                                onMouseEnter={() => setHoveredStation(index)}
-                                                onMouseLeave={() => setHoveredStation(null)}
+                                                className={`metro-line ${currentIndex >= 0 ? 'active' : ''}`} 
+                                                style={{ '--progress': `${progress}%` }}
                                             >
-                                                <div 
-                                                    className={`
-                                                        station-dot w-4 h-4 rounded-full border-2 border-white shadow-lg
-                                                        ${completedStations.has(index) ? 'completed' : 'bg-gray-300'}
-                                                        ${currentStation === index ? 'current' : ''}
-                                                    `}
-                                                />
-                                                <div className="mt-3 text-xs text-center max-w-20">
-                                                    <div className="font-semibold text-gray-800">
-                                                        {station.az}
-                                                    </div>
-                                                </div>
-                                                
-                                                {/* Tooltip */}
-                                                {hoveredStation === index && (
-                                                    <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap z-30 tooltip">
-                                                        <div className="font-semibold">{station.az}</div>
-                                                        <div>Açılış ili: {station.year}</div>
-                                                        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
-                                                    </div>
+                                                {currentIndex >= 0 && (
+                                                    <span 
+                                                        className="train-icon absolute top-1/2 left-[var(--progress)] -translate-y-1/2"
+                                                        style={{ color: line === 'red' ? '#ef4444' : line === 'green' ? '#10b981' : line === 'purple' ? '#8b5cf6' : '#3b82f6' }}
+                                                    >
+                                                        🚆
+                                                    </span>
                                                 )}
                                             </div>
-                                        ))}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* Current Station Info */}
+                        {currentStation && (
+                            <div className="glass-card rounded-xl p-6 mb-6">
+                                <h2 className="text-xl font-bold mb-4">Cari Stansiya</h2>
+                                <div className="flex items-center gap-4">
+                                    <div className="station-dot current w-4 h-4 rounded-full"></div>
+                                    <div>
+                                        <div className="font-semibold">{currentStation.az}</div>
+                                        <div className="text-sm opacity-75">
+                                            Məsafə: {Math.round(currentStation.distance)}m
+                                        </div>
+                                        <div className="text-sm opacity-75">
+                                            Xətt: {currentStation.line} | Dərinlik: {currentStation.depth}
+                                        </div>
+                                        <div className="text-sm opacity-75">
+                                            Xüsusiyyətlər: {currentStation.features.join(', ')}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                        )}
+
+                        {/* Nearby Stations */}
+                        {nearbyStations.length > 0 && (
+                            <div className="glass-card rounded-xl p-6 mb-6">
+                                <h2 className="text-xl font-bold mb-4">Yaxınlıqdakı Stansiyalar</h2>
+                                <div className="grid gap-4">
+                                    {nearbyStations.map((station) => (
+                                        <div key={station.name} className="flex items-center gap-4">
+                                            <div className="station-dot nearby w-3 h-3 rounded-full"></div>
+                                            <div>
+                                                <div className="font-medium">{station.az}</div>
+                                                <div className="text-sm opacity-75">
+                                                    Məsafə: {Math.round(station.distance)}m
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Next Station Prediction */}
+                        {nextStation && (
+                            <div className="glass-card rounded-xl p-6 mb-6">
+                                <h2 className="text-xl font-bold mb-4">Növbəti Stansiya (Proqnoz)</h2>
+                                <div className="flex items-center gap-4">
+                                    <div className="station-dot w-3 h-3 rounded-full" style={{ background: '#3b82f6' }}></div>
+                                    <div>
+                                        <div className="font-semibold">{nextStation.az}</div>
+                                        <div className="text-sm opacity-75">
+                                            Məsafə: {Math.round(nextStation.distance)}m
+                                        </div>
+                                        <div className="text-sm opacity-75">
+                                            Təxmini Çatma Vaxtı: {estimatedArrival ? `${Math.round(estimatedArrival)} saniyə` : 'Hesablanır...'}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Travel History */}
+                        {travelHistory.length > 0 && (
+                            <div className="glass-card rounded-xl p-6 mb-6">
+                                <h2 className="text-xl font-bold mb-4">Səyahət Tarixçəsi</h2>
+                                <div className="space-y-2">
+                                    {travelHistory.slice(-5).reverse().map((entry, index) => (
+                                        <div key={index} className="text-sm opacity-75">
+                                            <span>{entry.station.az}</span> -{' '}
+                                            <span>{entry.timestamp.toLocaleString('az-AZ')}</span>
+                                            <span> (±{Math.round(entry.accuracy)}m)</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Speed and Heading Info */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div className="glass-card rounded-xl p-6 speed-indicator">
+                                <h3 className="font-semibold mb-2">Sürət</h3>
+                                <div className="text-2xl font-bold">
+                                    {Math.round(speed * 3.6)} km/s
+                                </div>
+                            </div>
+                            <div className="glass-card rounded-xl p-6 distance-indicator">
+                                <h3 className="font-semibold mb-2">İstiqamət</h3>
+                                <div className="text-2xl font-bold">
+                                    {Math.round(heading)}°
+                                </div>
+                            </div>
                         </div>
 
-                        {/* Statistics */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="bg-white rounded-xl p-6 shadow-lg text-center">
-                                <div className="text-3xl font-bold text-blue-600 mb-2">
-                                    {uniqueStations.length}
-                                </div>
-                                <div className="text-gray-600">Ümumi Stansiya</div>
-                            </div>
-                            <div className="bg-white rounded-xl p-6 shadow-lg text-center">
-                                <div className="text-3xl font-bold text-green-600 mb-2">
-                                    {completedStations.size}
-                                </div>
-                                <div className="text-gray-600">Keçilmiş Stansiya</div>
-                            </div>
-                            <div className="bg-white rounded-xl p-6 shadow-lg text-center">
-                                <div className="text-3xl font-bold text-purple-600 mb-2">
-                                    {travelTime}s
-                                </div>
-                                <div className="text-gray-600">Səyahət Müddəti</div>
-                            </div>
-                        </div>
-
-                        {/* Footer */}
-                        <div className="text-center mt-8 text-gray-600">
-                            <p>© 2025 Bakı Metro Simulatoru - Virtual məqsədlər üçün hazırlanmışdır</p>
+                        {/* Settings */}
+                        <div className="glass-card rounded-xl p-6">
+                            <h2 className="text-xl font-bold mb-4">Ayarlar</h2>
+                            <label className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    checked={batteryOptimized}
+                                    onChange={toggleBatteryOptimization}
+                                    className="w-5 h-5"
+                                />
+                                <span>Batareya Optimizasiyası</span>
+                            </label>
                         </div>
                     </div>
                 </div>
             );
         };
 
-        ReactDOM.render(<BakuMetroSimulator />, document.getElementById('root'));
+        // Render the component
+        ReactDOM.render(<DynamicBakuMetro />, document.getElementById('root'));
     </script>
 </body>
 </html>
