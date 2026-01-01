@@ -1,897 +1,725 @@
 <!DOCTYPE html>
-<html lang="az">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bakı Metro GPS Sistemi - Real Time</title>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <title>AURA | Luxury Fragrances</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        .metro-line {
-            background: linear-gradient(90deg, #e5e5e5 0%, #e5e5e5 100%);
-            height: 6px;
-            position: relative;
-            margin: 20px 0;
-            border-radius: 3px;
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --primary: #0F0F14;
+            --secondary: #C9A35E;
+            --secondary-hover: #b08d4b;
+            --background: #F6F6F8;
+            --accent: #8C6A3F;
+            --text-dark: #1B1B1E;
+            --text-light: #FFFFFF;
+            --text-gray: #666666;
+            
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Inter', sans-serif;
+            
+            --shadow-soft: 0 10px 40px -10px rgba(0,0,0,0.08);
+            --shadow-hover: 0 20px 50px -10px rgba(0,0,0,0.15);
+            --glass: rgba(255, 255, 255, 0.85);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.3);
+            
+            --container-width: 1200px;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        .metro-line.active {
-            background: linear-gradient(90deg, #10b981 var(--progress, 0%), #e5e5e5 var(--progress, 0%));
+        body {
+            font-family: var(--font-body);
+            background-color: var(--background);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
-        
-        .train-icon {
-            font-size: 2.5rem;
-            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.3));
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 30;
-            animation: trainPulse 2s infinite alternate;
-        }
-        
-        @keyframes trainPulse {
-            0% { transform: scale(1) translateX(-50%); }
-            100% { transform: scale(1.1) translateX(-50%); }
-        }
-        
-        .station-dot {
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .station-dot:hover {
-            transform: scale(1.3);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-        }
-        
-        .station-dot.completed {
-            background: linear-gradient(135deg, #10b981, #059669);
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
-        }
-        
-        .station-dot.current {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            box-shadow: 0 0 25px rgba(59, 130, 246, 0.8);
-            animation: currentStationPulse 1.5s infinite;
-        }
-        
-        .station-dot.nearby {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
-            animation: nearbyPulse 2s infinite;
-        }
-        
-        @keyframes currentStationPulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.2); }
-        }
-        
-        @keyframes nearbyPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-        
-        .gps-status {
-            position: fixed;
-            top: 20px;
-            right: 20px;
+
+        h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--primary); }
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
+        img { max-width: 100%; display: block; }
+        button { cursor: pointer; border: none; outline: none; transition: 0.3s; font-family: var(--font-body); }
+
+        /* --- UTILITIES --- */
+        .container { max-width: var(--container-width); margin: 0 auto; padding: 0 20px; }
+        .flex { display: flex; align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .grid { display: grid; gap: 30px; }
+        .text-center { text-align: center; }
+        .hidden { display: none !important; }
+
+        /* --- HEADER --- */
+        header {
+            position: sticky;
+            top: 0;
             z-index: 1000;
-            backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 15px 0;
         }
+
+        .nav-wrapper { justify-content: space-between; }
         
-        .gps-accuracy {
-            font-size: 0.8rem;
-            color: #6b7280;
+        .logo {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--primary);
         }
+
+        .nav-links { gap: 40px; }
+        .nav-links a { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 500; }
+        .nav-links a:hover { color: var(--secondary); }
+
+        .nav-icons { gap: 20px; font-size: 1.2rem; }
+        .nav-icons i { cursor: pointer; transition: 0.2s; position: relative; }
+        .nav-icons i:hover { color: var(--secondary); }
         
-        .location-dot {
-            width: 12px;
-            height: 12px;
-            background: #ef4444;
-            border: 2px solid white;
-            border-radius: 50%;
-            animation: locationPulse 2s infinite;
-        }
-        
-        @keyframes locationPulse {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
-        
-        .speed-indicator {
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-        }
-        
-        .distance-indicator {
-            background: linear-gradient(135deg, #06b6d4, #0891b2);
-        }
-        
-        .map-container {
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        
-        .leaflet-container {
-            border-radius: 15px;
-        }
-        
-        .notification {
-            position: fixed;
-            top: 90px;
-            right: 20px;
-            z-index: 1000;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-        }
-        
-        .notification.show {
-            transform: translateX(0);
-        }
-        
-        .metro-container {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
-        .glass-card {
-            backdrop-filter: blur(20px);
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .status-online {
-            background: #10b981;
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
-        }
-        
-        .status-offline {
-            background: #ef4444;
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-        }
-        
-        .geofence-circle {
-            border: 2px dashed rgba(59, 130, 246, 0.5);
-            border-radius: 50%;
+        .cart-count {
             position: absolute;
-            pointer-events: none;
-            animation: geofencePulse 3s infinite;
+            top: -8px;
+            right: -8px;
+            background: var(--secondary);
+            color: white;
+            font-size: 0.6rem;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+
+        /* --- HERO --- */
+        .hero {
+            height: 85vh;
+            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1595425232924-f3c0512534a1?q=80&w=2000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            background: var(--secondary);
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover { background: var(--secondary-hover); transform: translateY(-2px); }
+        .btn-outline { background: transparent; border: 1px solid white; margin-left: 10px; }
+        .btn-outline:hover { background: white; color: var(--primary); }
+
+        /* --- FILTERS --- */
+        .filters {
+            padding: 40px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: 1px solid #ddd;
+            padding: 10px 25px;
+            border-radius: 30px;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            border-color: var(--secondary);
+            background: var(--secondary);
+            color: white;
+        }
+
+        /* --- PRODUCT GRID --- */
+        .shop-section { padding: 20px 0 80px 0; }
         
-        @keyframes geofencePulse {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.1); }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 40px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: var(--shadow-soft);
+            transition: 0.3s;
+            group: ;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-img-wrapper {
+            position: relative;
+            height: 350px;
+            overflow: hidden;
+            background: #f0f0f0;
+        }
+
+        .card-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+
+        .product-card:hover .card-img-wrapper img { transform: scale(1.05); }
+
+        .card-actions {
+            position: absolute;
+            bottom: -50px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(5px);
+            transition: 0.3s;
+        }
+
+        .product-card:hover .card-actions { bottom: 0; }
+
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn:hover { background: var(--secondary); }
+
+        .card-info { padding: 20px; text-align: center; }
+        .card-brand { color: var(--text-gray); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .card-title { font-size: 1.2rem; margin-bottom: 8px; font-weight: 600; }
+        .card-price { color: var(--secondary); font-weight: 600; font-size: 1.1rem; }
+
+        /* --- CART SIDEBAR --- */
+        .cart-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.3s;
+        }
+
+        .cart-overlay.open { opacity: 1; pointer-events: all; }
+
+        .cart-sidebar {
+            position: fixed;
+            top: 0; right: -400px;
+            width: 400px;
+            height: 100%;
+            background: white;
+            z-index: 2001;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+        }
+
+        .cart-sidebar.open { right: 0; }
+
+        .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
+        .cart-items { flex: 1; overflow-y: auto; }
+        
+        .cart-item { display: flex; gap: 15px; margin-bottom: 20px; }
+        .cart-item img { width: 70px; height: 70px; object-fit: cover; border-radius: 4px; }
+        .cart-item-details { flex: 1; }
+        .cart-item-title { font-family: var(--font-heading); font-size: 1rem; }
+        .cart-item-price { color: var(--secondary); font-size: 0.9rem; margin-top: 5px; }
+        
+        .cart-footer { border-top: 1px solid #eee; padding-top: 20px; }
+        .cart-total { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; font-family: var(--font-heading); }
+        .btn-block { width: 100%; text-align: center; display: block; }
+
+        /* --- FLOATING CONTACT --- */
+        .floating-contact {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 990;
+        }
+
+        .contact-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: 0.3s;
+        }
+
+        .whatsapp { background: #25D366; }
+        .telegram { background: #0088cc; }
+        .contact-btn:hover { transform: scale(1.1); }
+
+        /* --- FEATURES --- */
+        .features { background: white; padding: 60px 0; border-top: 1px solid #eee; }
+        .features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; text-align: center; }
+        .feature-item i { font-size: 2rem; color: var(--secondary); margin-bottom: 15px; }
+        .feature-item h4 { margin-bottom: 10px; font-size: 1rem; }
+        .feature-item p { font-size: 0.9rem; color: var(--text-gray); }
+
+        /* --- FOOTER --- */
+        footer { background: var(--primary); color: white; padding: 60px 0 20px; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 40px; margin-bottom: 40px; }
+        .footer-col h4 { color: white; margin-bottom: 20px; }
+        .footer-col ul li { margin-bottom: 10px; opacity: 0.7; font-size: 0.9rem; cursor: pointer; }
+        .footer-col ul li:hover { opacity: 1; color: var(--secondary); }
+        .newsletter input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+        }
+        .copyright { text-align: center; opacity: 0.5; font-size: 0.8rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+
+        /* --- CHECKOUT MODAL --- */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 3000;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: 0.3s;
+        }
+        .modal.open { opacity: 1; pointer-events: all; }
+        .modal-content {
+            background: white; width: 90%; max-width: 600px;
+            padding: 40px; border-radius: 8px; position: relative;
+        }
+        .close-modal { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 1.5rem; }
+        .payment-methods { display: flex; gap: 10px; margin: 20px 0; }
+        .pay-option { 
+            flex: 1; border: 1px solid #ddd; padding: 10px; 
+            text-align: center; border-radius: 4px; cursor: pointer;
+        }
+        .pay-option.selected { border-color: var(--secondary); background: rgba(201, 163, 94, 0.1); }
+
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero-content h1 { font-size: 2.5rem; }
+            .nav-links { display: none; } /* Simplified for demo */
+            .features-grid, .footer-grid { grid-template-columns: 1fr; }
+            .cart-sidebar { width: 100%; right: -100%; }
         }
     </style>
 </head>
 <body>
-    <div id="root"></div>
 
-    <script type="text/babel">
-        const { useState, useEffect, useRef, useCallback } = React;
+    <header>
+        <div class="container flex nav-wrapper">
+            <div class="logo">AURA.</div>
+            <nav class="nav-links flex">
+                <a href="#home">Home</a>
+                <a href="#shop">Collection</a>
+                <a href="#about">Our Story</a>
+                <a href="#contact">Contact</a>
+            </nav>
+            <div class="nav-icons flex">
+                <i class="fas fa-search"></i>
+                <i class="fas fa-user"></i>
+                <i class="fas fa-shopping-bag" onclick="toggleCart()">
+                    <span class="cart-count" id="cart-count">0</span>
+                </i>
+            </div>
+        </div>
+    </header>
 
-        const DynamicBakuMetro = () => {
-            // Real Baku Metro stations with exact GPS coordinates
-            const metroStations = [
-                { 
-                    name: "Həzi Aslanov", 
-                    az: "Həzi Aslanov",
-                    lat: 40.3742, 
-                    lng: 49.8394, 
-                    year: 1967,
-                    line: "red",
-                    depth: "8m",
-                    features: ["WiFi", "Elevator"]
-                },
-                { 
-                    name: "Nəsimi", 
-                    az: "Nəsimi",
-                    lat: 40.3856, 
-                    lng: 49.8456, 
-                    year: 1967,
-                    line: "red",
-                    depth: "12m",
-                    features: ["WiFi", "Shop"]
-                },
-                { 
-                    name: "Gənclik", 
-                    az: "Gənclik",
-                    lat: 40.3942, 
-                    lng: 49.8523, 
-                    year: 1967,
-                    line: "red",
-                    depth: "15m",
-                    features: ["WiFi", "Cafe"]
-                },
-                { 
-                    name: "Nariman Nərimanov", 
-                    az: "Nariman Nərimanov",
-                    lat: 40.4028, 
-                    lng: 49.8589, 
-                    year: 1967,
-                    line: "red",
-                    depth: "18m",
-                    features: ["WiFi", "ATM", "Shop"]
-                },
-                { 
-                    name: "Sahil", 
-                    az: "Sahil",
-                    lat: 40.4089, 
-                    lng: 49.8634, 
-                    year: 1967,
-                    line: "red",
-                    depth: "22m",
-                    features: ["WiFi", "Restaurant", "Exchange"]
-                },
-                { 
-                    name: "İçərişəhər", 
-                    az: "İçərişəhər",
-                    lat: 40.4156, 
-                    lng: 49.8678, 
-                    year: 1967,
-                    line: "red",
-                    depth: "25m",
-                    features: ["WiFi", "Museum", "Tour Info"]
-                },
-                { 
-                    name: "28 May", 
-                    az: "28 May",
-                    lat: 40.4223, 
-                    lng: 49.8723, 
-                    year: 1970,
-                    line: "green",
-                    depth: "20m",
-                    features: ["WiFi", "Transfer", "Shop"]
-                },
-                { 
-                    name: "Gəncə Qapısı", 
-                    az: "Gəncə Qapısı",
-                    lat: 40.4289, 
-                    lng: 49.8767, 
-                    year: 1970,
-                    line: "green",
-                    depth: "16m",
-                    features: ["WiFi", "Market"]
-                },
-                { 
-                    name: "Əhmədli", 
-                    az: "Əhmədli",
-                    lat: 40.4356, 
-                    lng: 49.8812, 
-                    year: 1985,
-                    line: "green",
-                    depth: "14m",
-                    features: ["WiFi", "Parking"]
-                },
-                { 
-                    name: "Hətai", 
-                    az: "Hətai",
-                    lat: 40.4423, 
-                    lng: 49.8856, 
-                    year: 1985,
-                    line: "green",
-                    depth: "12m",
-                    features: ["WiFi", "Hospital Nearby"]
-                },
-                { 
-                    name: "Koroğlu", 
-                    az: "Koroğlu",
-                    lat: 40.4489, 
-                    lng: 49.8901, 
-                    year: 1989,
-                    line: "green",
-                    depth: "10m",
-                    features: ["WiFi", "Bus Station"]
-                },
-                { 
-                    name: "Qara Qarayev", 
-                    az: "Qara Qarayev",
-                    lat: 40.4556, 
-                    lng: 49.8945, 
-                    year: 1989,
-                    line: "purple",
-                    depth: "8m",
-                    features: ["WiFi", "Shopping Mall"]
-                },
-                { 
-                    name: "Nərimanov", 
-                    az: "Nərimanov",
-                    lat: 40.4623, 
-                    lng: 49.8989, 
-                    year: 1993,
-                    line: "purple",
-                    depth: "6m",
-                    features: ["WiFi", "University", "Library"]
-                },
-                { 
-                    name: "Bakıxanov", 
-                    az: "Bakıxanov",
-                    lat: 40.4689, 
-                    lng: 49.9034, 
-                    year: 1993,
-                    line: "purple",
-                    depth: "5m",
-                    features: ["WiFi", "Residential Area"]
-                },
-                { 
-                    name: "Xalqlar Dostluğu", 
-                    az: "Xalqlar Dostluğu",
-                    lat: 40.4756, 
-                    lng: 49.9078, 
-                    year: 1993,
-                    line: "purple",
-                    depth: "7m",
-                    features: ["WiFi", "Cultural Center"]
-                },
-                { 
-                    name: "Üzeyir Hacıbəyov", 
-                    az: "Üzeyir Hacıbəyov",
-                    lat: 40.4823, 
-                    lng: 49.9123, 
-                    year: 1993,
-                    line: "purple",
-                    depth: "9m",
-                    features: ["WiFi", "Opera House"]
-                },
-                { 
-                    name: "8 km", 
-                    az: "8 km",
-                    lat: 40.4889, 
-                    lng: 49.9167, 
-                    year: 1993,
-                    line: "purple",
-                    depth: "4m",
-                    features: ["WiFi", "Industrial Area"]
-                },
-                { 
-                    name: "Ulduz", 
-                    az: "Ulduz",
-                    lat: 40.4956, 
-                    lng: 49.9212, 
-                    year: 1993,
-                    line: "purple",
-                    depth: "3m",
-                    features: ["WiFi", "Sports Complex"]
-                },
-                { 
-                    name: "Memar Əcəmi", 
-                    az: "Memar Əcəmi",
-                    lat: 40.5023, 
-                    lng: 49.9256, 
-                    year: 2008,
-                    line: "blue",
-                    depth: "6m",
-                    features: ["WiFi", "Art Gallery", "Elevator"]
-                },
-                { 
-                    name: "Avtovağzal", 
-                    az: "Avtovağzal",
-                    lat: 40.5089, 
-                    lng: 49.9301, 
-                    year: 2008,
-                    line: "blue",
-                    depth: "8m",
-                    features: ["WiFi", "Bus Terminal", "Taxi"]
-                },
-                { 
-                    name: "Azadlıq Prospekti", 
-                    az: "Azadlıq Prospekti",
-                    lat: 40.5156, 
-                    lng: 49.9345, 
-                    year: 2008,
-                    line: "blue",
-                    depth: "10m",
-                    features: ["WiFi", "Shopping", "Restaurant"]
-                },
-                { 
-                    name: "Dərnəgül", 
-                    az: "Dərnəgül",
-                    lat: 40.5223, 
-                    lng: 49.9389, 
-                    year: 2016,
-                    line: "blue",
-                    depth: "5m",
-                    features: ["WiFi", "Park", "Elevator", "Modern Design"]
-                }
-            ];
+    <section id="home" class="hero">
+        <div class="hero-content container">
+            <h1>Scent of Elegance</h1>
+            <p>Discover our exclusive collection of artisanal fragrances.<br>Designed for the bold, the elegant, and the unique.</p>
+            <div>
+                <button class="btn" onclick="scrollToShop()">Shop Now</button>
+                <button class="btn btn-outline">Explore Notes</button>
+            </div>
+        </div>
+    </section>
 
-            const [userLocation, setUserLocation] = useState(null);
-            const [currentStation, setCurrentStation] = useState(null);
-            const [nearbyStations, setNearbyStations] = useState([]);
-            const [gpsAccuracy, setGpsAccuracy] = useState(null);
-            const [speed, setSpeed] = useState(0);
-            const [heading, setHeading] = useState(0);
-            const [isMoving, setIsMoving] = useState(false);
-            const [gpsStatus, setGpsStatus] = useState('offline');
-            const [lastUpdate, setLastUpdate] = useState(null);
-            const [notification, setNotification] = useState('');
-            const [showNotification, setShowNotification] = useState(false);
-            const [travelHistory, setTravelHistory] = useState([]);
-            const [estimatedArrival, setEstimatedArrival] = useState(null);
-            const [nextStation, setNextStation] = useState(null);
-            const [batteryOptimized, setBatteryOptimized] = useState(false);
+    <section id="shop" class="shop-section container">
+        <div class="text-center">
+            <h2>The Collection</h2>
+            <div class="filters">
+                <button class="filter-btn active" onclick="filterProducts('all')">All</button>
+                <button class="filter-btn" onclick="filterProducts('female')">For Her</button>
+                <button class="filter-btn" onclick="filterProducts('male')">For Him</button>
+                <button class="filter-btn" onclick="filterProducts('unisex')">Unisex</button>
+            </div>
+        </div>
 
-            const mapRef = useRef(null);
-            const mapInstanceRef = useRef(null);
-            const watchIdRef = useRef(null);
-            const userMarkerRef = useRef(null);
-            const stationMarkersRef = useRef([]);
-            const geofenceTimeoutRef = useRef(null);
+        <div class="product-grid" id="product-grid">
+            </div>
+    </section>
 
-            // Calculate distance between two coordinates using Haversine formula
-            const calculateDistance = useCallback((lat1, lng1, lat2, lng2) => {
-                const R = 6371e3; // Earth's radius in meters
-                const φ1 = lat1 * Math.PI / 180;
-                const φ2 = lat2 * Math.PI / 180;
-                const Δφ = (lat2 - lat1) * Math.PI / 180;
-                const Δλ = (lng2 - lng1) * Math.PI / 180;
+    <section class="features">
+        <div class="container features-grid">
+            <div class="feature-item">
+                <i class="fas fa-shipping-fast"></i>
+                <h4>Free Global Shipping</h4>
+                <p>On all orders over $150</p>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-award"></i>
+                <h4>Authentic Guarantee</h4>
+                <p>100% Original Niche Brands</p>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-undo"></i>
+                <h4>Easy Returns</h4>
+                <p>30 Day money back guarantee</p>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-headset"></i>
+                <h4>Expert Support</h4>
+                <p>24/7 Perfume Consultation</p>
+            </div>
+        </div>
+    </section>
 
-                const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-                        Math.cos(φ1) * Math.cos(φ2) *
-                        Math.sin(Δλ/2) * Math.sin(Δλ/2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    <footer>
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <div class="logo" style="color:white; margin-bottom: 15px;">AURA.</div>
+                <p style="opacity: 0.7; font-size: 0.9rem;">Redefining luxury through the art of perfumery. Crafted with passion, delivered with elegance.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Shop</h4>
+                <ul>
+                    <li>Best Sellers</li>
+                    <li>New Arrivals</li>
+                    <li>Gift Sets</li>
+                    <li>Samples</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <ul>
+                    <li>Contact Us</li>
+                    <li>Shipping Policy</li>
+                    <li>Returns</li>
+                    <li>FAQ</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Newsletter</h4>
+                <p style="opacity: 0.7; font-size: 0.9rem; margin-bottom: 10px;">Subscribe to receive updates on new arrivals and special offers.</p>
+                <form class="newsletter">
+                    <input type="email" placeholder="Your Email Address">
+                    <button class="btn" style="width: 100%; border:1px solid var(--secondary);">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <div class="copyright container">
+            &copy; 2026 AURA Perfumes. All Rights Reserved.
+        </div>
+    </footer>
 
-                return R * c; // Distance in meters
-            }, []);
+    <div class="floating-contact">
+        <a href="#" class="contact-btn whatsapp" title="Chat on WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a href="#" class="contact-btn telegram" title="Chat on Telegram"><i class="fab fa-telegram-plane"></i></a>
+    </div>
 
-            // Calculate bearing between two points
-            const calculateBearing = useCallback((lat1, lng1, lat2, lng2) => {
-                const φ1 = lat1 * Math.PI / 180;
-                const φ2 = lat2 * Math.PI / 180;
-                const Δλ = (lng2 - lng1) * Math.PI / 180;
+    <div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h3>Your Bag</h3>
+            <i class="fas fa-times" style="cursor:pointer;" onclick="toggleCart()"></i>
+        </div>
+        <div class="cart-items" id="cart-items-container">
+            <p style="text-align:center; color: #999; margin-top: 50px;">Your cart is empty.</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total</span>
+                <span id="cart-total">$0.00</span>
+            </div>
+            <button class="btn btn-block" onclick="openCheckout()">Proceed to Checkout</button>
+        </div>
+    </div>
 
-                const y = Math.sin(Δλ) * Math.cos(φ2);
-                const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
-
-                const bearing = Math.atan2(y, x) * 180 / Math.PI;
-                return (bearing + 360) % 360;
-            }, []);
-
-            // Show notification
-            const showNotificationMessage = useCallback((message, type = 'info') => {
-                setNotification({ message, type });
-                setShowNotification(true);
-                setTimeout(() => setShowNotification(false), 5000);
-            }, []);
-
-            // Find current station based on GPS location
-            const findCurrentStation = useCallback((lat, lng) => {
-                const STATION_RADIUS = 100; // 100 meters threshold
-                let closestStation = null;
-                let minDistance = Infinity;
-
-                metroStations.forEach((station, index) => {
-                    const distance = calculateDistance(lat, lng, station.lat, station.lng);
-                    if (distance < STATION_RADIUS && distance < minDistance) {
-                        minDistance = distance;
-                        closestStation = { ...station, index, distance };
-                    }
-                });
-
-                return closestStation;
-            }, [calculateDistance]);
-
-            // Find nearby stations
-            const findNearbyStations = useCallback((lat, lng) => {
-                const NEARBY_RADIUS = 500; // 500 meters
-                return metroStations.map((station, index) => {
-                    const distance = calculateDistance(lat, lng, station.lat, station.lng);
-                    return { ...station, index, distance };
-                }).filter(station => station.distance <= NEARBY_RADIUS)
-                  .sort((a, b) => a.distance - b.distance)
-                  .slice(0, 5);
-            }, [calculateDistance]);
-
-            // Predict next station based on movement
-            const predictNextStation = useCallback((currentLat, currentLng, heading, speed) => {
-                if (speed < 0.5) return null; // Not moving enough to predict
-
-                let bestMatch = null;
-                let bestScore = 0;
-
-                metroStations.forEach((station, index) => {
-                    const bearing = calculateBearing(currentLat, currentLng, station.lat, station.lng);
-                    const distance = calculateDistance(currentLat, currentLng, station.lat, station.lng);
-                    
-                    // Calculate bearing difference (smaller is better)
-                    let bearingDiff = Math.abs(heading - bearing);
-                    if (bearingDiff > 180) bearingDiff = 360 - bearingDiff;
-                    
-                    // Score based on bearing alignment and reasonable distance
-                    const score = distance < 2000 ? (90 - bearingDiff) / (distance / 100) : 0;
-                    
-                    if (score > bestScore) {
-                        bestScore = score;
-                        bestMatch = { ...station, index, distance, eta: distance / (speed * 1000 / 3600) };
-                    }
-                });
-
-                return bestMatch;
-            }, [calculateBearing, calculateDistance]);
-
-            // Initialize GPS tracking
-            const initializeGPS = useCallback(() => {
-                if (!navigator.geolocation) {
-                    showNotificationMessage('GPS bu cihazda dəstəklənmir!', 'error');
-                    return;
-                }
-
-                const options = {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 1000
-                };
-
-                const onSuccess = (position) => {
-                    const { latitude, longitude, accuracy, speed: gpsSpeed, heading: gpsHeading } = position.coords;
-                    
-                    setUserLocation({ lat: latitude, lng: longitude });
-                    setGpsAccuracy(accuracy);
-                    setSpeed(gpsSpeed || 0);
-                    setHeading(gpsHeading || 0);
-                    setGpsStatus('online');
-                    setLastUpdate(new Date());
-                    setIsMoving((gpsSpeed || 0) > 0.5);
-
-                    // Find current and nearby stations
-                    const current = findCurrentStation(latitude, longitude);
-                    const nearby = findNearbyStations(latitude, longitude);
-                    
-                    // Station change detection
-                    if (current && (!currentStation || current.index !== currentStation.index)) {
-                        setCurrentStation(current);
-                        showNotificationMessage(`${current.az} stansiyasına gəldiniz!`, 'success');
-                        
-                        setTravelHistory(prev => [...prev, {
-                            station: current,
-                            timestamp: new Date(),
-                            accuracy: accuracy
-                        }]);
-                    } else if (!current && currentStation) {
-                        showNotificationMessage(`${currentStation.az} stansiyasından çıxdınız`, 'info');
-                        setCurrentStation(null);
-                    }
-
-                    setNearbyStations(nearby);
-
-                    // Predict next station if moving
-                    if ((gpsSpeed || 0) > 0.5 && gpsHeading !== null) {
-                        const next = predictNextStation(latitude, longitude, gpsHeading, gpsSpeed);
-                        setNextStation(next);
-                        setEstimatedArrival(next ? Math.ceil(next.eta) : null);
-                    } else {
-                        setNextStation(null);
-                        setEstimatedArrival(null);
-                    }
-
-                    // Update map if initialized
-                    if (mapInstanceRef.current && userMarkerRef.current) {
-                        userMarkerRef.current.setLatLng([latitude, longitude]);
-                        mapInstanceRef.current.setView([latitude, longitude], 16);
-                    }
-                };
-
-                const onError = (error) => {
-                    setGpsStatus('error');
-                    let errorMessage = 'GPS xətası baş verdi';
-                    
-                    switch(error.code) {
-                        case error.PERMISSION_DENIED:
-                            errorMessage = 'GPS icazəsi verilmədi';
-                            break;
-                        case error.POSITION_UNAVAILABLE:
-                            errorMessage = 'GPS mövqeyi əlçatan deyil';
-                            break;
-                        case error.TIMEOUT:
-                            errorMessage = 'GPS sorğusu vaxtı keçdi';
-                            break;
-                    }
-                    
-                    showNotificationMessage(errorMessage, 'error');
-                };
-
-                watchIdRef.current = navigator.geolocation.watchPosition(onSuccess, onError, options);
-            }, [findCurrentStation, findNearbyStations, predictNextStation, currentStation, showNotificationMessage]);
-
-            // Initialize map
-            const initializeMap = useCallback(() => {
-                if (!mapRef.current || mapInstanceRef.current) return;
-
-                mapInstanceRef.current = L.map(mapRef.current).setView([40.4093, 49.8671], 12);
-                
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap contributors'
-                }).addTo(mapInstanceRef.current);
-
-                // Add station markers
-                stationMarkersRef.current = metroStations.map((station, index) => {
-                    const lineColors = {
-                        red: '#ef4444',
-                        green: '#10b981',
-                        purple: '#8b5cf6',
-                        blue: '#3b82f6'
-                    };
-
-                    const marker = L.circleMarker([station.lat, station.lng], {
-                        color: lineColors[station.line],
-                        fillColor: lineColors[station.line],
-                        fillOpacity: 0.8,
-                        radius: 8,
-                        weight: 2
-                    }).addTo(mapInstanceRef.current);
-
-                    marker.bindPopup(`
-                        <div style="text-align: center;">
-                            <strong>${station.az}</strong><br>
-                            <small>Açılış: ${station.year}</small><br>
-                            <small>Dərinlik: ${station.depth}</small><br>
-                            <small>Xətt: ${station.line}</small>
-                        </div>
-                    `);
-
-                    return marker;
-                });
-
-                // Add user location marker
-                if (userLocation) {
-                    userMarkerRef.current = L.marker([userLocation.lat, userLocation.lng], {
-                        icon: L.divIcon({
-                            html: '<div class="location-dot"></div>',
-                            className: 'custom-div-icon',
-                            iconSize: [12, 12],
-                            iconAnchor: [6, 6]
-                        })
-                    }).addTo(mapInstanceRef.current);
-                }
-            }, [userLocation, metroStations]);
-
-            // Cleanup GPS tracking
-            const cleanupGPS = useCallback(() => {
-                if (watchIdRef.current) {
-                    navigator.geolocation.clearWatch(watchIdRef.current);
-                    watchIdRef.current = null;
-                }
-            }, []);
-
-            // Battery optimization toggle
-            const toggleBatteryOptimization = useCallback(() => {
-                setBatteryOptimized(!batteryOptimized);
-                if (!batteryOptimized) {
-                    showNotificationMessage('Batareya optimallaşdırılması aktivləşdirildi', 'info');
-                } else {
-                    showNotificationMessage('Batareya optimallaşdırılması söndürüldü', 'info');
-                }
-            }, [batteryOptimized, showNotificationMessage]);
-
-            // Initialize on mount
-            useEffect(() => {
-                initializeGPS();
-                return cleanupGPS;
-            }, [initializeGPS, cleanupGPS]);
-
-            // Initialize map when component mounts
-            useEffect(() => {
-                const timer = setTimeout(initializeMap, 100);
-                return () => clearTimeout(timer);
-            }, [initializeMap]);
-
-            // Update map when user location changes
-            useEffect(() => {
-                if (mapInstanceRef.current && userLocation) {
-                    if (userMarkerRef.current) {
-                        userMarkerRef.current.setLatLng([userLocation.lat, userLocation.lng]);
-                    } else {
-                        userMarkerRef.current = L.marker([userLocation.lat, userLocation.lng], {
-                            icon: L.divIcon({
-                                html: '<div class="location-dot"></div>',
-                                className: 'custom-div-icon',
-                                iconSize: [12, 12],
-                                iconAnchor: [6, 6]
-                            })
-                        }).addTo(mapInstanceRef.current);
-                    }
-                }
-            }, [userLocation]);
-
-            return (
-                <div className="metro-container min-h-screen p-4 text-white">
-                    {/* GPS Status */}
-                    <div className={`gps-status glass-card rounded-xl p-4 ${gpsStatus === 'online' ? 'border-green-400' : 'border-red-400'}`}>
-                        <div className="flex items-center gap-3">
-                            <div className={`w-3 h-3 rounded-full ${gpsStatus === 'online' ? 'status-online' : 'status-offline'}`}></div>
-                            <div>
-                                <div className="font-semibold">GPS Status</div>
-                                <div className="text-sm opacity-75">
-                                    {gpsStatus === 'online' ? 'Aktiv' : 'Offline'}
-                                    {gpsAccuracy && ` (±${Math.round(gpsAccuracy)}m)`}
-                                </div>
-                                {lastUpdate && (
-                                    <div className="text-xs opacity-50">
-                                        {lastUpdate.toLocaleTimeString('az-AZ')}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Notification */}
-                    <div className={`notification glass-card rounded-xl p-4 ${showNotification ? 'show' : ''}`}>
-                        <div className="flex items-center gap-2">
-                            <span className={`text-sm font-medium ${
-                                notification.type === 'success' ? 'text-green-400' :
-                                notification.type === 'error' ? 'text-red-400' : 'text-blue-400'
-                            }`}>
-                                {notification.message}
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Main Content */}
-                    <div className="max-w-7xl mx-auto mt-8">
-                        {/* Map Container */}
-                        <div className="map-container mb-6">
-                            <div ref={mapRef} className="w-full h-[400px] md:h-[500px]"></div>
-                        </div>
-
-                        {/* Metro Line Progress */}
-                        <div className="glass-card rounded-xl p-6 mb-6">
-                            <h2 className="text-xl font-bold mb-4">Metro Xətləri</h2>
-                            <div className="space-y-4">
-                                {['red', 'green', 'purple', 'blue'].map((line) => {
-                                    const lineStations = metroStations.filter(s => s.line === line);
-                                    const currentIndex = currentStation && currentStation.line === line
-                                        ? lineStations.findIndex(s => s.name === currentStation.name)
-                                        : -1;
-                                    const progress = currentIndex >= 0 
-                                        ? ((currentIndex + 1) / lineStations.length) * 100 
-                                        : 0;
-
-                                    return (
-                                        <div key={line} className="metro-line-container">
-                                            <div className="flex items-center justify-between mb-2">
-                                                <span className="font-semibold capitalize">{line} Xətt</span>
-                                                <span className="text-sm opacity-75">
-                                                    {currentIndex >= 0 ? `${currentIndex + 1}/${lineStations.length}` : 'Stansiya yoxdur'}
-                                                </span>
-                                            </div>
-                                            <div 
-                                                className={`metro-line ${currentIndex >= 0 ? 'active' : ''}`} 
-                                                style={{ '--progress': `${progress}%` }}
-                                            >
-                                                {currentIndex >= 0 && (
-                                                    <span 
-                                                        className="train-icon absolute top-1/2 left-[var(--progress)] -translate-y-1/2"
-                                                        style={{ color: line === 'red' ? '#ef4444' : line === 'green' ? '#10b981' : line === 'purple' ? '#8b5cf6' : '#3b82f6' }}
-                                                    >
-                                                        🚆
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-
-                        {/* Current Station Info */}
-                        {currentStation && (
-                            <div className="glass-card rounded-xl p-6 mb-6">
-                                <h2 className="text-xl font-bold mb-4">Cari Stansiya</h2>
-                                <div className="flex items-center gap-4">
-                                    <div className="station-dot current w-4 h-4 rounded-full"></div>
-                                    <div>
-                                        <div className="font-semibold">{currentStation.az}</div>
-                                        <div className="text-sm opacity-75">
-                                            Məsafə: {Math.round(currentStation.distance)}m
-                                        </div>
-                                        <div className="text-sm opacity-75">
-                                            Xətt: {currentStation.line} | Dərinlik: {currentStation.depth}
-                                        </div>
-                                        <div className="text-sm opacity-75">
-                                            Xüsusiyyətlər: {currentStation.features.join(', ')}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Nearby Stations */}
-                        {nearbyStations.length > 0 && (
-                            <div className="glass-card rounded-xl p-6 mb-6">
-                                <h2 className="text-xl font-bold mb-4">Yaxınlıqdakı Stansiyalar</h2>
-                                <div className="grid gap-4">
-                                    {nearbyStations.map((station) => (
-                                        <div key={station.name} className="flex items-center gap-4">
-                                            <div className="station-dot nearby w-3 h-3 rounded-full"></div>
-                                            <div>
-                                                <div className="font-medium">{station.az}</div>
-                                                <div className="text-sm opacity-75">
-                                                    Məsafə: {Math.round(station.distance)}m
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Next Station Prediction */}
-                        {nextStation && (
-                            <div className="glass-card rounded-xl p-6 mb-6">
-                                <h2 className="text-xl font-bold mb-4">Növbəti Stansiya (Proqnoz)</h2>
-                                <div className="flex items-center gap-4">
-                                    <div className="station-dot w-3 h-3 rounded-full" style={{ background: '#3b82f6' }}></div>
-                                    <div>
-                                        <div className="font-semibold">{nextStation.az}</div>
-                                        <div className="text-sm opacity-75">
-                                            Məsafə: {Math.round(nextStation.distance)}m
-                                        </div>
-                                        <div className="text-sm opacity-75">
-                                            Təxmini Çatma Vaxtı: {estimatedArrival ? `${Math.round(estimatedArrival)} saniyə` : 'Hesablanır...'}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Travel History */}
-                        {travelHistory.length > 0 && (
-                            <div className="glass-card rounded-xl p-6 mb-6">
-                                <h2 className="text-xl font-bold mb-4">Səyahət Tarixçəsi</h2>
-                                <div className="space-y-2">
-                                    {travelHistory.slice(-5).reverse().map((entry, index) => (
-                                        <div key={index} className="text-sm opacity-75">
-                                            <span>{entry.station.az}</span> -{' '}
-                                            <span>{entry.timestamp.toLocaleString('az-AZ')}</span>
-                                            <span> (±{Math.round(entry.accuracy)}m)</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Speed and Heading Info */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                            <div className="glass-card rounded-xl p-6 speed-indicator">
-                                <h3 className="font-semibold mb-2">Sürət</h3>
-                                <div className="text-2xl font-bold">
-                                    {Math.round(speed * 3.6)} km/s
-                                </div>
-                            </div>
-                            <div className="glass-card rounded-xl p-6 distance-indicator">
-                                <h3 className="font-semibold mb-2">İstiqamət</h3>
-                                <div className="text-2xl font-bold">
-                                    {Math.round(heading)}°
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Settings */}
-                        <div className="glass-card rounded-xl p-6">
-                            <h2 className="text-xl font-bold mb-4">Ayarlar</h2>
-                            <label className="flex items-center gap-2">
-                                <input
-                                    type="checkbox"
-                                    checked={batteryOptimized}
-                                    onChange={toggleBatteryOptimization}
-                                    className="w-5 h-5"
-                                />
-                                <span>Batareya Optimizasiyası</span>
-                            </label>
-                        </div>
-                    </div>
+    <div class="modal" id="checkout-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeCheckout()">&times;</span>
+            <h2 style="margin-bottom: 20px;">Secure Checkout</h2>
+            <form onsubmit="event.preventDefault(); alert('Order Placed Successfully!'); closeCheckout(); clearCart();">
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom: 5px; font-size: 0.9rem;">Full Name</label>
+                    <input type="text" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
                 </div>
-            );
-        };
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom: 5px; font-size: 0.9rem;">Email Address</label>
+                    <input type="email" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                
+                <p style="margin-top: 20px; font-weight: 600;">Payment Method</p>
+                <div class="payment-methods">
+                    <div class="pay-option selected"><i class="fab fa-cc-visa"></i> Card</div>
+                    <div class="pay-option"><i class="fab fa-apple"></i> Apple</div>
+                    <div class="pay-option"><i class="fab fa-google"></i> Google</div>
+                    <div class="pay-option"><i class="fab fa-paypal"></i> PayPal</div>
+                </div>
 
-        // Render the component
-        ReactDOM.render(<DynamicBakuMetro />, document.getElementById('root'));
+                <div class="cart-total" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
+                    <span>Total to Pay:</span>
+                    <span id="checkout-total">$0.00</span>
+                </div>
+
+                <button class="btn btn-block">Pay Now</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA ---
+        const products = [
+            {
+                id: 1,
+                name: "Noir Éclat",
+                brand: "AURA Exclusive",
+                price: 185.00,
+                category: "male",
+                image: "https://images.unsplash.com/photo-1523293188086-b46e0a867702?q=80&w=800&auto=format&fit=crop",
+                desc: "Woody, Spicy, Dark"
+            },
+            {
+                id: 2,
+                name: "Rose Gold Mist",
+                brand: "L'Artisan",
+                price: 210.00,
+                category: "female",
+                image: "https://images.unsplash.com/photo-1594035910387-fea4779426e9?q=80&w=800&auto=format&fit=crop",
+                desc: "Floral, Amber, Soft"
+            },
+            {
+                id: 3,
+                name: "Oud Royale",
+                brand: "Desert Sands",
+                price: 245.00,
+                category: "unisex",
+                image: "https://images.unsplash.com/photo-1615160655866-5e580a563a6c?q=80&w=800&auto=format&fit=crop",
+                desc: "Oud, Leather, Intense"
+            },
+            {
+                id: 4,
+                name: "Velvet Vanilla",
+                brand: "AURA Exclusive",
+                price: 160.00,
+                category: "female",
+                image: "https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=800&auto=format&fit=crop",
+                desc: "Vanilla, Musk, Sweet"
+            },
+            {
+                id: 5,
+                name: "Oceanic Drift",
+                brand: "Azure",
+                price: 175.00,
+                category: "male",
+                image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=800&auto=format&fit=crop",
+                desc: "Marine, Citrus, Fresh"
+            },
+            {
+                id: 6,
+                name: "Saffron Spice",
+                brand: "Eastern Winds",
+                price: 290.00,
+                category: "unisex",
+                image: "https://images.unsplash.com/photo-1585218356058-c30939ea2962?q=80&w=800&auto=format&fit=crop",
+                desc: "Saffron, Rose, Exotic"
+            }
+        ];
+
+        let cart = [];
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts('all');
+        });
+
+        function scrollToShop() {
+            document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- RENDER PRODUCTS ---
+        function renderProducts(category) {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = ''; // Clear existing
+
+            const filtered = category === 'all' 
+                ? products 
+                : products.filter(p => p.category === category);
+
+            filtered.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="card-img-wrapper">
+                        <img src="${product.image}" alt="${product.name}" loading="lazy">
+                        <div class="card-actions">
+                            <button class="action-btn" onclick="addToCart(${product.id})"><i class="fas fa-plus"></i></button>
+                            <button class="action-btn"><i class="fas fa-eye"></i></button>
+                            <button class="action-btn"><i class="far fa-heart"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-brand">${product.brand}</div>
+                        <h3 class="card-title">${product.name}</h3>
+                        <div class="card-brand" style="margin-bottom:10px; font-size: 0.7rem; color:#888;">${product.desc}</div>
+                        <div class="card-price">$${product.price.toFixed(2)}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            // Update active filter button
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => {
+                if(btn.textContent.toLowerCase().includes(category === 'all' ? 'all' : category)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        function filterProducts(cat) {
+            renderProducts(cat);
+        }
+
+        // --- CART LOGIC ---
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            cart.push(product);
+            updateCartUI();
+            toggleCart(); // Open cart to show user
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function clearCart() {
+            cart = [];
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const count = document.getElementById('cart-count');
+            const itemsContainer = document.getElementById('cart-items-container');
+            const totalDisplay = document.getElementById('cart-total');
+            const checkoutTotal = document.getElementById('checkout-total');
+
+            count.textContent = cart.length;
+
+            if (cart.length === 0) {
+                itemsContainer.innerHTML = '<p style="text-align:center; color: #999; margin-top: 50px;">Your cart is empty.</p>';
+                totalDisplay.textContent = '$0.00';
+                checkoutTotal.textContent = '$0.00';
+                return;
+            }
+
+            itemsContainer.innerHTML = '';
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                total += item.price;
+                const itemEl = document.createElement('div');
+                itemEl.className = 'cart-item';
+                itemEl.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}">
+                    <div class="cart-item-details">
+                        <div class="cart-item-title">${item.name}</div>
+                        <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+                    </div>
+                    <i class="fas fa-trash" style="color:#aaa; cursor:pointer;" onclick="removeFromCart(${index})"></i>
+                `;
+                itemsContainer.appendChild(itemEl);
+            });
+
+            totalDisplay.textContent = '$' + total.toFixed(2);
+            checkoutTotal.textContent = '$' + total.toFixed(2);
+        }
+
+        function toggleCart() {
+            document.getElementById('cart-sidebar').classList.toggle('open');
+            document.getElementById('cart-overlay').classList.toggle('open');
+        }
+
+        // --- CHECKOUT LOGIC ---
+        function openCheckout() {
+            if(cart.length === 0) {
+                alert("Your cart is empty!");
+                return;
+            }
+            toggleCart(); // Close sidebar
+            document.getElementById('checkout-modal').classList.add('open');
+        }
+
+        function closeCheckout() {
+            document.getElementById('checkout-modal').classList.remove('open');
+        }
+
     </script>
 </body>
 </html>
