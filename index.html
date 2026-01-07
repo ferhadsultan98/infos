@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aiprompt | High-End Multimedia AI Gallery</title>
+    <title>Aiprompt. | Professional AI Engine</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400&family=Inter:wght@300;400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -17,300 +17,318 @@
             --secondary: #ff0055;
             --text: #ffffff;
             --text-muted: #8b9bb4;
-            --glass: rgba(5, 5, 8, 0.9);
-            --font-main: 'Inter', sans-serif;
-            --font-head: 'Space Grotesk', sans-serif;
+            --glass: rgba(5, 5, 8, 0.95);
         }
 
         body.light-mode {
-            --bg: #f3f4f6;
+            --bg: #f8fafc;
             --surface: #ffffff;
-            --border: #d1d5db;
+            --border: #e2e8f0;
             --primary: #2563eb;
-            --text: #111827;
-            --text-muted: #4b5563;
-            --glass: rgba(255, 255, 255, 0.95);
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --glass: rgba(255, 255, 255, 0.98);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            background: var(--bg); color: var(--text); font-family: var(--font-main); 
-            transition: 0.3s; overflow-x: hidden; line-height: 1.6;
-        }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; transition: 0.3s; overflow-x: hidden; }
 
-        /* --- NAVBAR & MOBILE MENU --- */
+        /* --- NAVIGATION --- */
         nav {
-            position: fixed; top: 0; width: 100%; height: 75px;
-            background: var(--glass); backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--border);
+            position: fixed; top: 0; width: 100%; height: 80px;
+            background: var(--glass); border-bottom: 1px solid var(--border);
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 5%; z-index: 2000;
+            padding: 0 5%; z-index: 3000;
         }
 
-        .logo { font-family: var(--font-head); font-size: 1.6rem; font-weight: 700; cursor: pointer; }
+        .logo { font-family: 'Space Grotesk'; font-size: 1.8rem; font-weight: 700; cursor: pointer; }
         .logo span { color: var(--primary); }
 
-        .nav-links { display: flex; gap: 20px; list-style: none; align-items: center; }
-        .nav-link { color: var(--text-muted); text-decoration: none; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: 0.2s; }
+        .nav-links { display: flex; gap: 25px; list-style: none; align-items: center; }
+        .nav-link { color: var(--text-muted); text-decoration: none; cursor: pointer; font-size: 0.95rem; font-weight: 500; transition: 0.3s; }
         .nav-link:hover, .nav-link.active { color: var(--primary); }
 
-        .nav-right { display: flex; align-items: center; gap: 15px; }
+        /* HAMBURGER (Hamburger-React Style) */
+        .ham-box { width: 40px; height: 40px; display: none; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; gap: 6px; }
+        .ham-line { width: 24px; height: 2px; background: var(--text); transition: 0.4s; }
+        .ham-box.open .line1 { transform: translateY(8px) rotate(45deg); }
+        .ham-box.open .line2 { opacity: 0; }
+        .ham-box.open .line3 { transform: translateY(-8px) rotate(-45deg); }
 
-        .btn-google { 
-            background: var(--text); color: var(--bg); 
-            padding: 8px 16px; border-radius: 8px; border: none; font-weight: 600; 
-            display: flex; align-items: center; gap: 8px; cursor: pointer; 
-        }
+        .user-profile-nav { display: none; align-items: center; gap: 12px; cursor: pointer; padding: 5px 15px; border-radius: 50px; background: var(--surface); border: 1px solid var(--border); }
+        .user-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(45deg, var(--primary), var(--secondary)); }
 
-        .user-profile-ui { 
-            display: none; align-items: center; gap: 10px; cursor: pointer;
-            padding: 5px 12px; border-radius: 50px; background: var(--surface);
-        }
-        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); }
-
-        .hamburger { display: none; font-size: 1.5rem; cursor: pointer; color: var(--text); }
-
-        /* --- CONTAINER & SECTIONS --- */
-        .container { margin-top: 100px; padding: 0 5% 50px; min-height: 80vh; }
-        .section { display: none; animation: fadeIn 0.4s ease forwards; }
+        /* --- SECTIONS --- */
+        .container { margin-top: 120px; padding: 0 5% 60px; min-height: 80vh; }
+        .section { display: none; animation: slideUp 0.5s ease forwards; }
         .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- CATEGORIES --- */
-        .cat-scroll {
-            display: flex; gap: 10px; overflow-x: auto; padding-bottom: 20px;
-            scrollbar-width: none; -ms-overflow-style: none;
-        }
-        .cat-scroll::-webkit-scrollbar { display: none; }
-        .cat-tag {
-            white-space: nowrap; padding: 8px 20px; border-radius: 50px;
-            background: var(--surface); border: 1px solid var(--border);
-            color: var(--text-muted); cursor: pointer; font-size: 0.85rem;
-        }
-        .cat-tag.active { background: var(--primary); color: #000; border-color: var(--primary); }
+        /* --- RICH CONTENT COMPONENTS --- */
+        .hero-title { font-size: clamp(2.5rem, 8vw, 4.5rem); font-family: 'Space Grotesk'; text-align: center; line-height: 1.1; margin-bottom: 40px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
+        
+        .card { background: var(--surface); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; transition: 0.4s; }
+        .card:hover { transform: scale(1.02); border-color: var(--primary); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .card-media { width: 100%; aspect-ratio: 1; overflow: hidden; background: #000; }
+        .card-media img, .card-media video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- GRID & MEDIA CARDS --- */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
-        .card { 
-            background: var(--surface); border: 1px solid var(--border); border-radius: 15px; 
-            overflow: hidden; cursor: pointer; transition: 0.3s; position: relative;
-        }
-        .card:hover { transform: translateY(-5px); border-color: var(--primary); }
-        .card-media { width: 100%; aspect-ratio: 1/1; position: relative; background: #000; }
-        .card-media img, .card-media video { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .video-overlay { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; color: #fff; }
-        .card-content { padding: 15px; }
-        .card-prompt { font-family: 'Fira Code'; font-size: 0.8rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .btn-action { background: var(--text); color: var(--bg); padding: 12px 28px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+        .btn-action:hover { transform: translateY(-2px); box-shadow: 0 5px 15px var(--primary); }
 
-        /* --- DETAILS PAGE --- */
-        .back-nav { display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 30px; color: var(--primary); font-weight: 600; }
-        .details-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-        .details-visual { border-radius: 15px; overflow: hidden; border: 1px solid var(--border); background: #000; }
-        .details-visual img, .details-visual video { width: 100%; display: block; }
-        .prompt-text-area { 
-            background: var(--surface); padding: 25px; border-radius: 12px; 
-            max-height: 300px; overflow-y: auto; font-family: 'Fira Code';
-            border: 1px solid var(--border); line-height: 1.7; margin: 20px 0;
-        }
+        /* FAQ Styling */
+        .faq-item { background: var(--surface); border: 1px solid var(--border); border-radius: 15px; margin-bottom: 15px; overflow: hidden; }
+        .faq-trigger { padding: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 600; }
+        .faq-content { padding: 0 20px 20px; color: var(--text-muted); display: none; font-size: 0.95rem; }
+        .faq-item.active .faq-content { display: block; }
+        .faq-item.active i { transform: rotate(180deg); color: var(--primary); }
 
-        /* --- FORMS & PAGINATION --- */
-        .form-box { max-width: 600px; margin: 0 auto; background: var(--surface); padding: 30px; border-radius: 15px; border: 1px solid var(--border); }
-        .input-f { width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 8px; margin-bottom: 15px; outline: none; }
-        .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 50px; }
-        .page-n { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; }
-        .page-n.active { background: var(--primary); color: #000; }
+        /* Form Controls */
+        .input-group { margin-bottom: 25px; }
+        .input-group label { display: block; margin-bottom: 10px; font-weight: 600; font-size: 0.9rem; }
+        .form-input { width: 100%; padding: 15px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; color: var(--text); resize: none; font-family: inherit; transition: 0.3s; }
+        .form-input:focus { border-color: var(--primary); outline: none; }
 
-        /* --- FOOTER --- */
-        footer { padding: 60px 5%; border-top: 1px solid var(--border); text-align: center; color: var(--text-muted); }
-        .footer-nav { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
-        .footer-nav span { cursor: pointer; transition: 0.2s; }
-        .footer-nav span:hover { color: var(--primary); }
+        /* Social Icons */
+        .social-link { color: var(--text); font-size: 1.5rem; transition: 0.3s; text-decoration: none; }
+        .social-link:hover { color: var(--primary); transform: translateY(-3px); }
 
-        /* --- MOBILE RESPONSIVE --- */
-        @media (max-width: 992px) {
-            .details-wrapper { grid-template-columns: 1fr; }
+        /* --- RESPONSIVE --- */
+        @media (max-width: 1024px) {
             .nav-links { 
-                position: fixed; top: 75px; left: -100%; width: 100%; height: calc(100vh - 75px);
-                background: var(--bg); flex-direction: column; padding: 40px; transition: 0.3s;
-                align-items: flex-start;
+                position: fixed; top: 80px; left: -100%; width: 100%; height: calc(100vh - 80px);
+                background: var(--glass); backdrop-filter: blur(20px); flex-direction: column;
+                padding: 50px 0; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); border-top: 1px solid var(--border);
             }
             .nav-links.open { left: 0; }
-            .hamburger { display: block; }
-            .nav-right .btn-google { display: none; } /* Show only in menu for mobile */
-            .nav-links .btn-google { display: flex; margin-top: 20px; }
+            .ham-box { display: flex; }
+            #signInBtn { display: none; }
+            .mobile-theme-btn { margin-top: auto; padding-bottom: 40px; }
         }
     </style>
 </head>
 <body>
 
     <nav>
-        <div class="logo" onclick="app.nav('home')">Ai<span>prompt</span></div>
+        <div class="logo" onclick="app.nav('home')">Aiprompt<span>.</span></div>
         
         <ul class="nav-links" id="navLinks">
-            <li><a class="nav-link" onclick="app.nav('home')">Home</a></li>
+            <li><a class="nav-link active" onclick="app.nav('home')">Home</a></li>
             <li><a class="nav-link" onclick="app.nav('images')">Images</a></li>
             <li><a class="nav-link" onclick="app.nav('videos')">Videos</a></li>
-            <li><a class="nav-link" onclick="app.nav('bookmarks')">Bookmarks</a></li>
             <li><a class="nav-link" onclick="app.nav('about')">About</a></li>
             <li><a class="nav-link" onclick="app.nav('contact')">Contact</a></li>
-            <li class="mobile-only"><button class="btn-google" onclick="app.login()"><i class="fab fa-google"></i> Sign In</button></li>
+            <li><a class="nav-link" onclick="app.nav('faq')">FAQ</a></li>
+            <li class="mobile-only"><button class="btn-action" onclick="app.login()">Sign In</button></li>
+            <li class="mobile-theme-btn" onclick="app.toggleTheme()" style="cursor:pointer; font-size: 1.5rem;"><i class="fas fa-moon"></i></li>
         </ul>
 
-        <div class="nav-right">
-            <div onclick="app.toggleTheme()" style="cursor:pointer"><i class="fas fa-adjust"></i></div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <div id="desktopTheme" onclick="app.toggleTheme()" style="cursor:pointer; font-size: 1.2rem;" class="desktop-only"><i class="fas fa-adjust"></i></div>
             
-            <button id="signInBtn" class="btn-google" onclick="app.login()"><i class="fab fa-google"></i> Sign In</button>
+            <button id="signInBtn" class="btn-action" onclick="app.login()"><i class="fab fa-google"></i> Sign In</button>
             
-            <div id="userProfile" class="user-profile-ui" onclick="app.nav('settings')">
-                <span style="font-size: 0.85rem; font-weight: 600;">Example User</span>
+            <div id="userProfile" class="user-profile-nav" onclick="app.toggleMenu()">
+                <span>Example User</span>
                 <div class="user-avatar"></div>
             </div>
 
-            <div class="hamburger" onclick="app.toggleMenu()"><i class="fas fa-bars"></i></div>
+            <div class="ham-box" id="hamBtn" onclick="app.toggleMenu()">
+                <div class="ham-line line1"></div>
+                <div class="ham-line line2"></div>
+                <div class="ham-line line3"></div>
+            </div>
         </div>
     </nav>
 
     <div class="container">
         
         <section id="home" class="section active">
-            <div style="text-align: center; padding: 40px 0;">
-                <h1 style="font-size: clamp(2rem, 5vw, 3.5rem); font-family: var(--font-head);">The Creative <span style="color:var(--primary)">Universe</span></h1>
-                <p style="color:var(--text-muted); margin-top: 15px;">Premium AI prompts for Images and Videos.</p>
-            </div>
+            <h1 class="hero-title">Creative Fuel for <span style="color:var(--primary)">Artificial</span> Minds.</h1>
             <div class="grid" id="home-grid"></div>
         </section>
 
         <section id="images" class="section">
-            <div class="cat-scroll" id="image-cats"></div>
+            <h2 style="margin-bottom: 30px;">Image Gallery</h2>
             <div class="grid" id="image-grid"></div>
-            <div class="pagination">
-                <div class="page-n active">1</div>
-                <div class="page-n">2</div>
-            </div>
         </section>
 
         <section id="videos" class="section">
-            <div class="cat-scroll" id="video-cats"></div>
+            <h2 style="margin-bottom: 30px;">Motion Gallery</h2>
             <div class="grid" id="video-grid"></div>
-            <div class="pagination"><div class="page-n active">1</div></div>
         </section>
 
-        <section id="details" class="section">
-            <div class="back-nav" id="backBtn"><i class="fas fa-arrow-left"></i> Back to Gallery</div>
-            <div class="details-wrapper">
-                <div class="details-visual" id="det-visual"></div>
-                <div class="details-info">
-                    <h2 id="det-user">@username</h2>
-                    <div class="prompt-text-area" id="det-prompt"></div>
-                    <div style="display:flex; gap:10px;">
-                        <button class="btn-google" onclick="app.copy()"><i class="fas fa-copy"></i> Copy Prompt</button>
-                        <button class="btn-google" id="det-heart" style="background:var(--surface); color:var(--text)" onclick="app.toggleLike()">
-                            <i class="fas fa-heart"></i>
-                        </button>
+        <section id="about" class="section">
+            <div style="max-width: 800px; margin: 0 auto;">
+                <h2 style="font-size: 2.5rem; margin-bottom: 30px;">The New Era of Artistry.</h2>
+                <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-muted); margin-bottom: 20px;">
+                    Aiprompt. is not just a gallery; it is a meticulously curated sanctuary for the next generation of visual engineers. Founded in 2024 and expanding into 2025, we serve as the bridge between human imagination and machine execution.
+                </p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 40px;">
+                    <div style="background: var(--surface); padding: 30px; border-radius: 20px; border: 1px solid var(--border);">
+                        <i class="fas fa-bolt" style="color: var(--primary); font-size: 2rem; margin-bottom: 15px;"></i>
+                        <h4>High Speed Copy</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-muted);">Get professional prompts in a single click, optimized for V6 engines.</p>
+                    </div>
+                    <div style="background: var(--surface); padding: 30px; border-radius: 20px; border: 1px solid var(--border);">
+                        <i class="fas fa-shield-halved" style="color: var(--primary); font-size: 2rem; margin-bottom: 15px;"></i>
+                        <h4>Curated Quality</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-muted);">Every prompt is tested for aesthetics and technical accuracy.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="upload" class="section">
-            <div class="form-box">
-                <h2>Upload Prompt</h2>
-                <div style="margin-top:20px;">
-                    <label>Type</label>
-                    <select class="input-f" id="up-type">
-                        <option value="image">Image</option>
-                        <option value="video">Video</option>
-                    </select>
-                    <label>Category</label>
-                    <select class="input-f" id="up-cat">
-                        <option>Realistic</option><option>Abstract</option><option>Cyberpunk</option>
-                    </select>
-                    <label>Prompt</label>
-                    <textarea class="input-f" id="up-prompt" rows="5"></textarea>
-                    <button class="btn-google" style="width:100%; justify-content:center;" onclick="app.submitUpload()">Submit for Review</button>
+        <section id="contact" class="section">
+            <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 50px;">
+                <div>
+                    <h2>Let's Connect.</h2>
+                    <p style="margin: 20px 0; color: var(--text-muted);">Have questions or feedback? Reach out and we'll get back to you within 24 hours.</p>
+                    <div style="margin-top: 30px;">
+                        <p style="font-weight: 700;">Email</p>
+                        <p style="color: var(--primary);">hello@aiprompt.info</p>
+                    </div>
+                    <div style="margin-top: 30px; display: flex; gap: 20px;">
+                        <a href="https://instagram.com/ferhad.sultann" target="_blank" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="https://linkedin.com/in/farhadsultanov" target="_blank" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div style="background: var(--surface); padding: 40px; border-radius: 25px; border: 1px solid var(--border);">
+                    <div class="input-group">
+                        <label>Full Name</label>
+                        <input type="text" class="form-input" placeholder="John Doe">
+                    </div>
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        <input type="email" class="form-input" placeholder="john@example.com">
+                    </div>
+                    <div class="input-group">
+                        <label>Message</label>
+                        <textarea class="form-input" rows="5" placeholder="How can we help?"></textarea>
+                    </div>
+                    <button class="btn-action" style="width: 100%; justify-content: center;">Send Message</button>
                 </div>
             </div>
         </section>
 
-        <section id="about" class="section">
-            <h2>About Us</h2>
-            <p style="margin-top:20px; color:var(--text-muted);">Aiprompt is the world's leading community-driven AI prompt library...</p>
-        </section>
-
-        <section id="contact" class="section">
-            <div class="form-box">
-                <h2>Contact</h2>
-                <input type="text" class="input-f" placeholder="Name">
-                <input type="email" class="input-f" placeholder="Email">
-                <textarea class="input-f" placeholder="Message" rows="4"></textarea>
-                <button class="btn-google" style="width:100%; justify-content:center;">Send</button>
-            </div>
-        </section>
-
         <section id="faq" class="section">
-            <h2>FAQ</h2>
-            <div style="margin-top:20px;">
-                <details style="background:var(--surface); padding:15px; border-radius:10px; margin-bottom:10px;">
-                    <summary style="cursor:pointer; font-weight:600;">How to copy a prompt?</summary>
-                    <p style="padding-top:10px; color:var(--text-muted);">Click on any card and use the copy button in detail view.</p>
-                </details>
+            <h2 style="text-align: center; margin-bottom: 50px;">Common Questions</h2>
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div class="faq-item">
+                    <div class="faq-trigger"><span><i class="fas fa-question-circle" style="margin-right:10px"></i> How do I use these prompts?</span><i class="fas fa-chevron-down"></i></div>
+                    <div class="faq-content">Simply copy the prompt by clicking the 'Copy' button on any item. Paste it into Midjourney, DALL-E, or Stable Diffusion for similar high-quality results.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-trigger"><span><i class="fas fa-video" style="margin-right:10px"></i> Are the videos also generated by AI?</span><i class="fas fa-chevron-down"></i></div>
+                    <div class="faq-content">Yes! All motion content in the Video section is generated using Sora, Runway Gen-2, or Luma Dream Machine.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-trigger"><span><i class="fas fa-copyright" style="margin-right:10px"></i> Can I use these for commercial projects?</span><i class="fas fa-chevron-down"></i></div>
+                    <div class="faq-content">The prompts themselves are free to use. However, always check the specific AI tool's license for the resulting images.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-trigger"><span><i class="fas fa-user-plus" style="margin-right:10px"></i> How can I become a contributor?</span><i class="fas fa-chevron-down"></i></div>
+                    <div class="faq-content">Sign in with your Google account and head over to the Upload section. Our moderators will review and publish your best work.</div>
+                </div>
             </div>
         </section>
 
-        <section id="bookmarks" class="section"><h2>Bookmarks</h2><div class="grid" id="bookmark-grid"></div></section>
-        <section id="settings" class="section"><h2>Settings</h2><p>Account preferences and security.</p></section>
-        <section id="terms" class="section"><h2>Terms & Privacy</h2><p>Legal documentation and privacy policy.</p></section>
+        <section id="upload" class="section">
+            <div style="max-width: 700px; margin: 0 auto; background: var(--surface); padding: 50px; border-radius: 30px; border: 1px solid var(--border);">
+                <h2 style="margin-bottom: 20px; text-align: center;">Share Your Magic</h2>
+                <div style="border: 2px dashed var(--border); padding: 40px; border-radius: 20px; text-align: center; margin-bottom: 30px;">
+                    <i class="fas fa-cloud-arrow-up" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
+                    <p>Drag & Drop your AI output here</p>
+                    <input type="file" style="display: none;">
+                </div>
+                <div class="input-group">
+                    <label>Category</label>
+                    <select class="form-input">
+                        <option>Realistic</option><option>Abstract</option><option>Cyberpunk</option><option>Architecture</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>The Master Prompt</label>
+                    <textarea class="form-input" rows="4" placeholder="Paste your recipe here..."></textarea>
+                </div>
+                <button class="btn-action" style="width: 100%; justify-content: center;">Submit Artwork</button>
+            </div>
+        </section>
+
+        <section id="details" class="section">
+            <button onclick="app.nav('images')" style="background: none; border: none; color: var(--primary); cursor: pointer; margin-bottom: 20px; font-weight: 700;">
+                <i class="fas fa-arrow-left"></i> RETURN TO GALLERY
+            </button>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                <div id="det-visual" style="border-radius: 25px; overflow: hidden; border: 1px solid var(--border);"></div>
+                <div>
+                    <h2 id="det-user">@username</h2>
+                    <div style="background: var(--surface); padding: 25px; border-radius: 15px; margin: 25px 0; font-family: 'Fira Code'; font-size: 0.9rem; line-height: 1.6;" id="det-prompt"></div>
+                    <button class="btn-action" onclick="app.copy()"><i class="fas fa-copy"></i> Copy Prompt</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="terms" class="section">
+            <h2 style="margin-bottom: 30px;">Terms & Privacy</h2>
+            <div style="color: var(--text-muted); line-height: 2;">
+                <p><strong>1. Usage:</strong> By using Aiprompt., you agree to use our prompts responsibly. Direct scraping is prohibited.</p>
+                <p><strong>2. Privacy:</strong> We only store your name and email when you sign in via Google to manage your uploads.</p>
+                <p><strong>3. Content:</strong> Any content deemed offensive or harmful will be removed immediately without prior notice.</p>
+            </div>
+        </section>
 
     </div>
 
     <footer>
-        <div class="footer-nav">
-            <span onclick="app.nav('about')">About</span>
-            <span onclick="app.nav('faq')">FAQ</span>
-            <span onclick="app.nav('contact')">Contact</span>
-            <span onclick="app.nav('terms')">Privacy</span>
-            <span onclick="app.nav('upload')">Upload</span>
+        <div style="margin-bottom: 30px;">
+            <div class="logo">Aiprompt<span>.</span></div>
+            <p style="margin-top: 10px; font-size: 0.9rem; color: var(--text-muted);">Curated Excellence in Generative AI</p>
         </div>
-        <div>Designed by <a href="https://farhadsultanov.info" target="_blank" style="color:var(--primary); text-decoration:none;">Farhad Sultanov</a></div>
+        <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 30px;">
+            <a href="https://instagram.com/ferhad.sultann" target="_blank" class="social-link"><i class="fab fa-instagram"></i></a>
+            <a href="https://linkedin.com/in/farhadsultanov" target="_blank" class="social-link"><i class="fab fa-linkedin"></i></a>
+        </div>
+        <div style="display: flex; justify-content: center; gap: 25px; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; flex-wrap: wrap;">
+            <span onclick="app.nav('terms')" style="cursor:pointer">Terms</span>
+            <span onclick="app.nav('about')" style="cursor:pointer">Privacy</span>
+            <span onclick="app.nav('faq')" style="cursor:pointer">Cookies</span>
+        </div>
+        <p style="font-size: 0.8rem;">© 2025 - 2026 Developed by <a href="https://farhadsultanov.info" target="_blank" style="color:var(--primary); text-decoration: none;">Farhad Sultanov</a></p>
     </footer>
 
     <script>
-        const categories = ["All", "Realistic", "Abstract", "Cyberpunk", "Anime", "3D Render", "Photography"];
-        
         const db = [
-            { id: 1, type: 'image', cat: 'Cyberpunk', user: '@morpheus', url: 'https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&w=600', prompt: 'Neon city streets at night, heavy rain, blade runner aesthetic, 8k.' },
-            { id: 2, type: 'video', cat: 'Abstract', user: '@flux_art', url: 'https://assets.mixkit.co/videos/preview/mixkit-liquid-bubbles-and-smoke-underwater-431-large.mp4', prompt: 'Liquid ink mixing in water, slow motion, hyper detailed colors.' },
-            { id: 3, type: 'image', cat: 'Realistic', user: '@pixel_pro', url: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?auto=format&fit=crop&w=600', prompt: 'Stunning portrait of an old traveler, deep wrinkles, cinematic lighting.' },
-            { id: 4, type: 'video', cat: 'Realistic', user: '@cinema_ai', url: 'https://assets.mixkit.co/videos/preview/mixkit-clouds-and-stars-at-night-2442-large.mp4', prompt: 'Time-lapse of the Milky Way over mountains, hyper realistic sky.' }
+            { id: 1, type: 'image', user: '@morpheus', url: 'https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&w=600', prompt: 'Breathtaking Cyberpunk Tokyo, 8k cinematic shot, rainy nights, neon signage reflection on puddles, hyper-realistic, intricate textures --v 6.0' },
+            { id: 2, type: 'video', user: '@motion_x', url: 'https://assets.mixkit.co/videos/preview/mixkit-liquid-bubbles-and-smoke-underwater-431-large.mp4', prompt: 'Ethereal liquid flowing in zero gravity, iridicent colors, slow motion, macro simulation, deep blue background.' },
+            { id: 3, type: 'image', user: '@art_bot', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600', prompt: 'Abstract fluid sculpture, iridescent chrome, 3D render, octane render, museum lighting.' }
         ];
 
         const app = {
-            isLoggedIn: false,
-            prevSection: 'home',
+            isLogged: false,
 
             init() {
                 this.renderGrid('home-grid', db);
                 this.renderGrid('image-grid', db.filter(x => x.type === 'image'));
                 this.renderGrid('video-grid', db.filter(x => x.type === 'video'));
-                this.renderCats();
-                
-                // Back Button Listener
-                document.getElementById('backBtn').onclick = () => this.nav(this.prevSection);
+                this.setupFaq();
             },
 
             nav(id) {
-                const current = document.querySelector('.section.active');
-                if(current) this.prevSection = current.id;
-
                 document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
                 document.getElementById(id).classList.add('active');
-                
                 document.getElementById('navLinks').classList.remove('open');
-                window.scrollTo(0,0);
+                document.getElementById('hamBtn').classList.remove('open');
+                window.scrollTo(0, 0);
             },
 
             toggleMenu() {
-                document.getElementById('navLinks').classList.toggle('open');
+                const nav = document.getElementById('navLinks');
+                const ham = document.getElementById('hamBtn');
+                
+                // If logged in, the menu logic changes or follows the avatar
+                nav.classList.toggle('open');
+                ham.classList.toggle('open');
             },
 
             toggleTheme() {
@@ -318,31 +336,31 @@
             },
 
             login() {
-                this.isLoggedIn = true;
+                this.isLogged = true;
                 document.getElementById('signInBtn').style.display = 'none';
+                document.getElementById('hamBtn').style.display = 'none'; // Hamburger disappears as per request
                 document.getElementById('userProfile').style.display = 'flex';
-                alert("Signed in with Google!");
+                alert("Welcome back, Farhad!");
             },
 
-            renderCats() {
-                const html = categories.map(c => `<div class="cat-tag ${c==='All'?'active':''}" onclick="app.filterCat('${c}')">${c}</div>`).join('');
-                document.getElementById('image-cats').innerHTML = html;
-                document.getElementById('video-cats').innerHTML = html;
+            setupFaq() {
+                document.querySelectorAll('.faq-trigger').forEach(trigger => {
+                    trigger.onclick = () => {
+                        trigger.parentElement.classList.toggle('active');
+                    }
+                });
             },
 
-            renderGrid(containerId, data) {
-                const cont = document.getElementById(containerId);
+            renderGrid(contId, data) {
+                const cont = document.getElementById(contId);
                 cont.innerHTML = data.map(item => `
                     <div class="card" onclick="app.openDetail(${item.id})">
                         <div class="card-media">
-                            ${item.type === 'video' ? `<span class="video-overlay"><i class="fas fa-play"></i></span><video src="${item.url}" muted onmouseover="this.play()" onmouseout="this.pause()"></video>` : `<img src="${item.url}">`}
+                            ${item.type === 'video' ? `<video src="${item.url}" muted onmouseover="this.play()" onmouseout="this.pause()"></video>` : `<img src="${item.url}">`}
                         </div>
-                        <div class="card-content">
-                            <div class="card-prompt">${item.prompt}</div>
-                            <div style="margin-top:10px; font-weight:600; font-size:0.8rem; display:flex; justify-content:space-between;">
-                                <span>${item.user}</span>
-                                <span style="color:var(--primary)">${item.cat}</span>
-                            </div>
+                        <div style="padding: 20px;">
+                            <p style="font-size: 0.8rem; color: var(--text-muted); font-family: 'Fira Code'; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.prompt}</p>
+                            <div style="margin-top: 15px; font-weight: 700; font-size: 0.85rem;">${item.user}</div>
                         </div>
                     </div>
                 `).join('');
@@ -350,31 +368,16 @@
 
             openDetail(id) {
                 const item = db.find(x => x.id === id);
-                const visual = document.getElementById('det-visual');
-                visual.innerHTML = item.type === 'video' ? `<video src="${item.url}" controls autoplay loop></video>` : `<img src="${item.url}">`;
-                
+                document.getElementById('det-visual').innerHTML = item.type === 'video' ? `<video src="${item.url}" controls autoplay loop></video>` : `<img src="${item.url}">`;
                 document.getElementById('det-user').innerText = item.user;
                 document.getElementById('det-prompt').innerText = item.prompt;
                 this.nav('details');
             },
 
-            toggleLike() {
-                if(!this.isLoggedIn) return alert("Please sign in to bookmark!");
-                const heart = document.querySelector('#det-heart i');
-                heart.classList.toggle('fas');
-                heart.classList.toggle('far');
-                heart.style.color = heart.classList.contains('fas') ? 'var(--secondary)' : '';
-            },
-
             copy() {
                 const text = document.getElementById('det-prompt').innerText;
                 navigator.clipboard.writeText(text);
-                alert("Copied to clipboard!");
-            },
-
-            submitUpload() {
-                if(!this.isLoggedIn) return alert("Please sign in to upload!");
-                alert("Prompt submitted for review!");
+                alert("Prompt copied to clipboard!");
             }
         };
 
