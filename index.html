@@ -11,94 +11,133 @@
     <style>
         :root {
             --bg: #050508;
-            --surface: rgba(255, 255, 255, 0.04);
+            --surface: rgba(255, 255, 255, 0.05);
             --border: rgba(255, 255, 255, 0.1);
             --primary: #00f2ea;
             --secondary: #ff0055;
             --text: #ffffff;
             --text-muted: #8b9bb4;
-            --glass: rgba(10, 10, 15, 0.85);
+            --glass: rgba(5, 5, 8, 0.9);
+            --font-main: 'Inter', sans-serif;
+            --font-head: 'Space Grotesk', sans-serif;
         }
 
         body.light-mode {
-            --bg: #f0f2f5;
+            --bg: #f3f4f6;
             --surface: #ffffff;
             --border: #d1d5db;
             --primary: #2563eb;
             --text: #111827;
-            --text-muted: #6b7280;
-            --glass: rgba(255, 255, 255, 0.9);
+            --text-muted: #4b5563;
+            --glass: rgba(255, 255, 255, 0.95);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; transition: 0.3s; overflow-x: hidden; }
+        body { 
+            background: var(--bg); color: var(--text); font-family: var(--font-main); 
+            transition: 0.3s; overflow-x: hidden; line-height: 1.6;
+        }
 
-        /* --- NAVIGATION --- */
+        /* --- NAVBAR & MOBILE MENU --- */
         nav {
             position: fixed; top: 0; width: 100%; height: 75px;
             background: var(--glass); backdrop-filter: blur(15px);
             border-bottom: 1px solid var(--border);
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 5%; z-index: 1000;
+            padding: 0 5%; z-index: 2000;
         }
-        .logo { font-family: 'Space Grotesk'; font-size: 1.6rem; font-weight: 700; cursor: pointer; }
+
+        .logo { font-family: var(--font-head); font-size: 1.6rem; font-weight: 700; cursor: pointer; }
         .logo span { color: var(--primary); }
 
-        .nav-links { display: flex; gap: 20px; list-style: none; }
-        .nav-link { color: var(--text-muted); text-decoration: none; cursor: pointer; font-size: 0.9rem; font-weight: 500; }
-        .nav-link.active { color: var(--primary); }
+        .nav-links { display: flex; gap: 20px; list-style: none; align-items: center; }
+        .nav-link { color: var(--text-muted); text-decoration: none; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: 0.2s; }
+        .nav-link:hover, .nav-link.active { color: var(--primary); }
 
-        .user-profile { display: none; align-items: center; gap: 12px; }
-        .avatar { width: 35px; height: 35px; border-radius: 50%; background: var(--primary); border: 2px solid var(--border); }
+        .nav-right { display: flex; align-items: center; gap: 15px; }
 
-        /* --- CATEGORY SCROLL --- */
-        .category-wrapper {
-            display: flex; gap: 12px; overflow-x: auto; padding: 10px 0;
-            scrollbar-width: none; -ms-overflow-style: none;
-            margin-bottom: 20px;
+        .btn-google { 
+            background: var(--text); color: var(--bg); 
+            padding: 8px 16px; border-radius: 8px; border: none; font-weight: 600; 
+            display: flex; align-items: center; gap: 8px; cursor: pointer; 
         }
-        .category-wrapper::-webkit-scrollbar { display: none; }
-        .cat-btn {
-            white-space: nowrap; padding: 8px 18px; border-radius: 50px;
-            background: var(--surface); border: 1px solid var(--border);
-            color: var(--text-muted); cursor: pointer; font-size: 0.85rem; transition: 0.3s;
-        }
-        .cat-btn.active { background: var(--primary); color: #000; border-color: var(--primary); }
 
-        /* --- GRID & PAGINATION --- */
-        .container { margin-top: 100px; padding: 0 5% 50px; }
-        .section { display: none; animation: fadeIn 0.4s ease; }
+        .user-profile-ui { 
+            display: none; align-items: center; gap: 10px; cursor: pointer;
+            padding: 5px 12px; border-radius: 50px; background: var(--surface);
+        }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); }
+
+        .hamburger { display: none; font-size: 1.5rem; cursor: pointer; color: var(--text); }
+
+        /* --- CONTAINER & SECTIONS --- */
+        .container { margin-top: 100px; padding: 0 5% 50px; min-height: 80vh; }
+        .section { display: none; animation: fadeIn 0.4s ease forwards; }
         .section.active { display: block; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* --- CATEGORIES --- */
+        .cat-scroll {
+            display: flex; gap: 10px; overflow-x: auto; padding-bottom: 20px;
+            scrollbar-width: none; -ms-overflow-style: none;
+        }
+        .cat-scroll::-webkit-scrollbar { display: none; }
+        .cat-tag {
+            white-space: nowrap; padding: 8px 20px; border-radius: 50px;
+            background: var(--surface); border: 1px solid var(--border);
+            color: var(--text-muted); cursor: pointer; font-size: 0.85rem;
+        }
+        .cat-tag.active { background: var(--primary); color: #000; border-color: var(--primary); }
+
+        /* --- GRID & MEDIA CARDS --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
         .card { 
             background: var(--surface); border: 1px solid var(--border); border-radius: 15px; 
             overflow: hidden; cursor: pointer; transition: 0.3s; position: relative;
         }
         .card:hover { transform: translateY(-5px); border-color: var(--primary); }
-        .media-box { width: 100%; aspect-ratio: 16/10; position: relative; background: #000; }
-        .media-box img, .media-box video { width: 100%; height: 100%; object-fit: cover; }
-        .video-badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; }
-        
-        .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 40px; }
-        .page-btn { padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; }
+        .card-media { width: 100%; aspect-ratio: 1/1; position: relative; background: #000; }
+        .card-media img, .card-media video { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .video-overlay { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; color: #fff; }
+        .card-content { padding: 15px; }
+        .card-prompt { font-family: 'Fira Code'; font-size: 0.8rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        /* --- UI ELEMENTS --- */
-        .btn-google { background: var(--text); color: var(--bg); padding: 10px 20px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-        .input-group { margin-bottom: 20px; }
-        .input-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); }
-        .select, .input, .textarea { width: 100%; padding: 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 8px; outline: none; }
-        
-        /* --- DETAILS --- */
-        .details-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; margin-top: 20px; }
-        .details-media { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
-        .prompt-box { background: var(--surface); padding: 20px; border-radius: 10px; font-family: 'Fira Code'; margin-top: 20px; max-height: 250px; overflow-y: auto; }
+        /* --- DETAILS PAGE --- */
+        .back-nav { display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 30px; color: var(--primary); font-weight: 600; }
+        .details-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .details-visual { border-radius: 15px; overflow: hidden; border: 1px solid var(--border); background: #000; }
+        .details-visual img, .details-visual video { width: 100%; display: block; }
+        .prompt-text-area { 
+            background: var(--surface); padding: 25px; border-radius: 12px; 
+            max-height: 300px; overflow-y: auto; font-family: 'Fira Code';
+            border: 1px solid var(--border); line-height: 1.7; margin: 20px 0;
+        }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* --- FORMS & PAGINATION --- */
+        .form-box { max-width: 600px; margin: 0 auto; background: var(--surface); padding: 30px; border-radius: 15px; border: 1px solid var(--border); }
+        .input-f { width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 8px; margin-bottom: 15px; outline: none; }
+        .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 50px; }
+        .page-n { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; }
+        .page-n.active { background: var(--primary); color: #000; }
 
-        @media (max-width: 900px) {
-            .details-grid { grid-template-columns: 1fr; }
-            .nav-links { display: none; }
+        /* --- FOOTER --- */
+        footer { padding: 60px 5%; border-top: 1px solid var(--border); text-align: center; color: var(--text-muted); }
+        .footer-nav { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .footer-nav span { cursor: pointer; transition: 0.2s; }
+        .footer-nav span:hover { color: var(--primary); }
+
+        /* --- MOBILE RESPONSIVE --- */
+        @media (max-width: 992px) {
+            .details-wrapper { grid-template-columns: 1fr; }
+            .nav-links { 
+                position: fixed; top: 75px; left: -100%; width: 100%; height: calc(100vh - 75px);
+                background: var(--bg); flex-direction: column; padding: 40px; transition: 0.3s;
+                align-items: flex-start;
+            }
+            .nav-links.open { left: 0; }
+            .hamburger { display: block; }
+            .nav-right .btn-google { display: none; } /* Show only in menu for mobile */
+            .nav-links .btn-google { display: flex; margin-top: 20px; }
         }
     </style>
 </head>
@@ -106,74 +145,66 @@
 
     <nav>
         <div class="logo" onclick="app.nav('home')">Ai<span>prompt</span></div>
-        <ul class="nav-links">
-            <li onclick="app.nav('home')" class="nav-link active">Home</li>
-            <li onclick="app.nav('images')" class="nav-link">Images</li>
-            <li onclick="app.nav('videos')" class="nav-link">Videos</li>
-            <li onclick="app.nav('bookmarks')" class="nav-link">Bookmarks</li>
+        
+        <ul class="nav-links" id="navLinks">
+            <li><a class="nav-link" onclick="app.nav('home')">Home</a></li>
+            <li><a class="nav-link" onclick="app.nav('images')">Images</a></li>
+            <li><a class="nav-link" onclick="app.nav('videos')">Videos</a></li>
+            <li><a class="nav-link" onclick="app.nav('bookmarks')">Bookmarks</a></li>
+            <li><a class="nav-link" onclick="app.nav('about')">About</a></li>
+            <li><a class="nav-link" onclick="app.nav('contact')">Contact</a></li>
+            <li class="mobile-only"><button class="btn-google" onclick="app.login()"><i class="fab fa-google"></i> Sign In</button></li>
         </ul>
-        <div style="display: flex; align-items: center; gap: 20px;">
+
+        <div class="nav-right">
             <div onclick="app.toggleTheme()" style="cursor:pointer"><i class="fas fa-adjust"></i></div>
-            <button id="signInBtn" class="btn-google" onclick="app.login()">Sign In</button>
-            <div id="userProfile" class="user-profile" onclick="app.nav('settings')">
-                <span style="font-size: 0.8rem; font-weight: 600;">Example User</span>
-                <div class="avatar"></div>
+            
+            <button id="signInBtn" class="btn-google" onclick="app.login()"><i class="fab fa-google"></i> Sign In</button>
+            
+            <div id="userProfile" class="user-profile-ui" onclick="app.nav('settings')">
+                <span style="font-size: 0.85rem; font-weight: 600;">Example User</span>
+                <div class="user-avatar"></div>
             </div>
+
+            <div class="hamburger" onclick="app.toggleMenu()"><i class="fas fa-bars"></i></div>
         </div>
     </nav>
 
     <div class="container">
         
         <section id="home" class="section active">
-            <h1 style="text-align:center; font-family:'Space Grotesk'; font-size:3rem;">Infinite <span style="color:var(--primary)">Possibilities</span></h1>
-            <div class="grid" id="home-grid" style="margin-top:50px;"></div>
+            <div style="text-align: center; padding: 40px 0;">
+                <h1 style="font-size: clamp(2rem, 5vw, 3.5rem); font-family: var(--font-head);">The Creative <span style="color:var(--primary)">Universe</span></h1>
+                <p style="color:var(--text-muted); margin-top: 15px;">Premium AI prompts for Images and Videos.</p>
+            </div>
+            <div class="grid" id="home-grid"></div>
         </section>
 
         <section id="images" class="section">
-            <div class="category-wrapper" id="image-cats"></div>
+            <div class="cat-scroll" id="image-cats"></div>
             <div class="grid" id="image-grid"></div>
-            <div class="pagination"><button class="page-btn">1</button><button class="page-btn">2</button></div>
-        </section>
-
-        <section id="videos" class="section">
-            <div class="category-wrapper" id="video-cats"></div>
-            <div class="grid" id="video-grid"></div>
-            <div class="pagination"><button class="page-btn">1</button></div>
-        </section>
-
-        <section id="upload" class="section">
-            <h2>Submit Content</h2>
-            <div style="max-width: 600px; margin: 30px auto; background: var(--surface); padding: 30px; border-radius: 15px;">
-                <div class="input-group">
-                    <label>Content Type</label>
-                    <select class="select" id="up-type">
-                        <option value="image">Image</option>
-                        <option value="video">Video</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>Category</label>
-                    <select class="select" id="up-cat">
-                        <option>Realistic</option><option>Abstract</option><option>Cyberpunk</option><option>Fantasy</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>Prompt</label>
-                    <textarea class="textarea" id="up-prompt" rows="5"></textarea>
-                </div>
-                <button class="btn-google" style="width:100%; justify-content:center" onclick="app.submitUpload()">Upload Now</button>
+            <div class="pagination">
+                <div class="page-n active">1</div>
+                <div class="page-n">2</div>
             </div>
         </section>
 
+        <section id="videos" class="section">
+            <div class="cat-scroll" id="video-cats"></div>
+            <div class="grid" id="video-grid"></div>
+            <div class="pagination"><div class="page-n active">1</div></div>
+        </section>
+
         <section id="details" class="section">
-            <div class="details-grid">
-                <div class="details-media" id="det-media-box"></div>
-                <div>
+            <div class="back-nav" id="backBtn"><i class="fas fa-arrow-left"></i> Back to Gallery</div>
+            <div class="details-wrapper">
+                <div class="details-visual" id="det-visual"></div>
+                <div class="details-info">
                     <h2 id="det-user">@username</h2>
-                    <div class="prompt-box" id="det-prompt"></div>
-                    <div style="display:flex; gap:10px; margin-top:20px;">
-                        <button class="btn-google" onclick="app.copyPrompt()"><i class="fas fa-copy"></i> Copy</button>
-                        <button class="btn-google" id="heartBtn" style="background:var(--surface); color:var(--text)" onclick="app.toggleLike()">
+                    <div class="prompt-text-area" id="det-prompt"></div>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-google" onclick="app.copy()"><i class="fas fa-copy"></i> Copy Prompt</button>
+                        <button class="btn-google" id="det-heart" style="background:var(--surface); color:var(--text)" onclick="app.toggleLike()">
                             <i class="fas fa-heart"></i>
                         </button>
                     </div>
@@ -181,68 +212,134 @@
             </div>
         </section>
 
-        <section id="settings" class="section"><h2>User Settings</h2><p>Manage your profile and API keys.</p></section>
+        <section id="upload" class="section">
+            <div class="form-box">
+                <h2>Upload Prompt</h2>
+                <div style="margin-top:20px;">
+                    <label>Type</label>
+                    <select class="input-f" id="up-type">
+                        <option value="image">Image</option>
+                        <option value="video">Video</option>
+                    </select>
+                    <label>Category</label>
+                    <select class="input-f" id="up-cat">
+                        <option>Realistic</option><option>Abstract</option><option>Cyberpunk</option>
+                    </select>
+                    <label>Prompt</label>
+                    <textarea class="input-f" id="up-prompt" rows="5"></textarea>
+                    <button class="btn-google" style="width:100%; justify-content:center;" onclick="app.submitUpload()">Submit for Review</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="section">
+            <h2>About Us</h2>
+            <p style="margin-top:20px; color:var(--text-muted);">Aiprompt is the world's leading community-driven AI prompt library...</p>
+        </section>
+
+        <section id="contact" class="section">
+            <div class="form-box">
+                <h2>Contact</h2>
+                <input type="text" class="input-f" placeholder="Name">
+                <input type="email" class="input-f" placeholder="Email">
+                <textarea class="input-f" placeholder="Message" rows="4"></textarea>
+                <button class="btn-google" style="width:100%; justify-content:center;">Send</button>
+            </div>
+        </section>
+
+        <section id="faq" class="section">
+            <h2>FAQ</h2>
+            <div style="margin-top:20px;">
+                <details style="background:var(--surface); padding:15px; border-radius:10px; margin-bottom:10px;">
+                    <summary style="cursor:pointer; font-weight:600;">How to copy a prompt?</summary>
+                    <p style="padding-top:10px; color:var(--text-muted);">Click on any card and use the copy button in detail view.</p>
+                </details>
+            </div>
+        </section>
+
         <section id="bookmarks" class="section"><h2>Bookmarks</h2><div class="grid" id="bookmark-grid"></div></section>
+        <section id="settings" class="section"><h2>Settings</h2><p>Account preferences and security.</p></section>
+        <section id="terms" class="section"><h2>Terms & Privacy</h2><p>Legal documentation and privacy policy.</p></section>
+
     </div>
 
-    <footer style="margin-top:100px; padding:50px 5%; border-top:1px solid var(--border); text-align:center; color:var(--text-muted)">
-        <div style="display:flex; justify-content:center; gap:30px; margin-bottom:20px;">
-            <a onclick="app.nav('about')" style="cursor:pointer">About</a>
-            <a onclick="app.nav('upload')" style="cursor:pointer">Upload</a>
-            <a onclick="app.nav('contact')" style="cursor:pointer">Contact</a>
+    <footer>
+        <div class="footer-nav">
+            <span onclick="app.nav('about')">About</span>
+            <span onclick="app.nav('faq')">FAQ</span>
+            <span onclick="app.nav('contact')">Contact</span>
+            <span onclick="app.nav('terms')">Privacy</span>
+            <span onclick="app.nav('upload')">Upload</span>
         </div>
-        <p>© 2026 Designed by <a href="https://farhadsultanov.info" target="_blank" style="color:var(--primary); text-decoration:none">Farhad Sultanov</a></p>
+        <div>Designed by <a href="https://farhadsultanov.info" target="_blank" style="color:var(--primary); text-decoration:none;">Farhad Sultanov</a></div>
     </footer>
 
     <script>
-        const categories = ["All", "Realistic", "Abstract", "Cyberpunk", "Fantasy", "Architecture", "Character", "Anime"];
+        const categories = ["All", "Realistic", "Abstract", "Cyberpunk", "Anime", "3D Render", "Photography"];
         
-        const db = {
-            images: [
-                { id: 1, type: 'image', cat: 'Cyberpunk', user: '@axl_rose', url: 'https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&w=600', prompt: 'Cyberpunk rainy street, neon lights, 8k render.' },
-                { id: 2, type: 'image', cat: 'Realistic', user: '@nature_pro', url: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?auto=format&fit=crop&w=600', prompt: 'Portrait of a lion, golden hour lighting, hyper realistic.' },
-            ],
-            videos: [
-                { id: 101, type: 'video', cat: 'Abstract', user: '@motion_art', url: 'https://assets.mixkit.co/videos/preview/mixkit-liquid-bubbles-and-smoke-underwater-431-large.mp4', prompt: 'Abstract liquid bubbles underwater, slow motion.' },
-                { id: 102, type: 'video', cat: 'Fantasy', user: '@dragon_lord', url: 'https://assets.mixkit.co/videos/preview/mixkit-clouds-and-stars-at-night-2442-large.mp4', prompt: 'Starry night sky with fast moving clouds, fantasy style.' }
-            ]
-        };
+        const db = [
+            { id: 1, type: 'image', cat: 'Cyberpunk', user: '@morpheus', url: 'https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&w=600', prompt: 'Neon city streets at night, heavy rain, blade runner aesthetic, 8k.' },
+            { id: 2, type: 'video', cat: 'Abstract', user: '@flux_art', url: 'https://assets.mixkit.co/videos/preview/mixkit-liquid-bubbles-and-smoke-underwater-431-large.mp4', prompt: 'Liquid ink mixing in water, slow motion, hyper detailed colors.' },
+            { id: 3, type: 'image', cat: 'Realistic', user: '@pixel_pro', url: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?auto=format&fit=crop&w=600', prompt: 'Stunning portrait of an old traveler, deep wrinkles, cinematic lighting.' },
+            { id: 4, type: 'video', cat: 'Realistic', user: '@cinema_ai', url: 'https://assets.mixkit.co/videos/preview/mixkit-clouds-and-stars-at-night-2442-large.mp4', prompt: 'Time-lapse of the Milky Way over mountains, hyper realistic sky.' }
+        ];
 
         const app = {
             isLoggedIn: false,
-            currentView: 'home',
-            activeItem: null,
+            prevSection: 'home',
 
             init() {
-                this.renderCategories('image-cats');
-                this.renderCategories('video-cats');
-                this.renderGrid('home-grid', [...db.images, ...db.videos]);
-                this.renderGrid('image-grid', db.images);
-                this.renderGrid('video-grid', db.videos);
+                this.renderGrid('home-grid', db);
+                this.renderGrid('image-grid', db.filter(x => x.type === 'image'));
+                this.renderGrid('video-grid', db.filter(x => x.type === 'video'));
+                this.renderCats();
+                
+                // Back Button Listener
+                document.getElementById('backBtn').onclick = () => this.nav(this.prevSection);
             },
 
             nav(id) {
+                const current = document.querySelector('.section.active');
+                if(current) this.prevSection = current.id;
+
                 document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
                 document.getElementById(id).classList.add('active');
-                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                
+                document.getElementById('navLinks').classList.remove('open');
                 window.scrollTo(0,0);
             },
 
-            renderCategories(id) {
-                const cont = document.getElementById(id);
-                cont.innerHTML = categories.map(c => `<button class="cat-btn ${c==='All'?'active':''}" onclick="app.filterCat('${c}')">${c}</button>`).join('');
+            toggleMenu() {
+                document.getElementById('navLinks').classList.toggle('open');
             },
 
-            renderGrid(id, data) {
-                const cont = document.getElementById(id);
+            toggleTheme() {
+                document.body.classList.toggle('light-mode');
+            },
+
+            login() {
+                this.isLoggedIn = true;
+                document.getElementById('signInBtn').style.display = 'none';
+                document.getElementById('userProfile').style.display = 'flex';
+                alert("Signed in with Google!");
+            },
+
+            renderCats() {
+                const html = categories.map(c => `<div class="cat-tag ${c==='All'?'active':''}" onclick="app.filterCat('${c}')">${c}</div>`).join('');
+                document.getElementById('image-cats').innerHTML = html;
+                document.getElementById('video-cats').innerHTML = html;
+            },
+
+            renderGrid(containerId, data) {
+                const cont = document.getElementById(containerId);
                 cont.innerHTML = data.map(item => `
-                    <div class="card" onclick="app.openDetail(${item.id}, '${item.type}')">
-                        <div class="media-box">
-                            ${item.type === 'video' ? `<span class="video-badge"><i class="fas fa-play"></i> Video</span><video src="${item.url}" muted onmouseover="this.play()" onmouseout="this.pause()"></video>` : `<img src="${item.url}">`}
+                    <div class="card" onclick="app.openDetail(${item.id})">
+                        <div class="card-media">
+                            ${item.type === 'video' ? `<span class="video-overlay"><i class="fas fa-play"></i></span><video src="${item.url}" muted onmouseover="this.play()" onmouseout="this.pause()"></video>` : `<img src="${item.url}">`}
                         </div>
-                        <div style="padding:15px;">
-                            <div style="font-size:0.8rem; color:var(--text-muted); font-family:'Fira Code'; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.prompt}</div>
-                            <div style="margin-top:10px; font-weight:600; font-size:0.85rem; display:flex; justify-content:space-between;">
+                        <div class="card-content">
+                            <div class="card-prompt">${item.prompt}</div>
+                            <div style="margin-top:10px; font-weight:600; font-size:0.8rem; display:flex; justify-content:space-between;">
                                 <span>${item.user}</span>
                                 <span style="color:var(--primary)">${item.cat}</span>
                             </div>
@@ -251,50 +348,33 @@
                 `).join('');
             },
 
-            openDetail(id, type) {
-                const source = type === 'image' ? db.images : db.videos;
-                const item = source.find(x => x.id === id);
-                this.activeItem = item;
-
-                const mediaCont = document.getElementById('det-media-box');
-                mediaCont.innerHTML = item.type === 'video' ? `<video src="${item.url}" controls autoplay loop></video>` : `<img src="${item.url}">`;
+            openDetail(id) {
+                const item = db.find(x => x.id === id);
+                const visual = document.getElementById('det-visual');
+                visual.innerHTML = item.type === 'video' ? `<video src="${item.url}" controls autoplay loop></video>` : `<img src="${item.url}">`;
                 
                 document.getElementById('det-user').innerText = item.user;
                 document.getElementById('det-prompt').innerText = item.prompt;
-                
                 this.nav('details');
             },
 
-            login() {
-                this.isLoggedIn = true;
-                document.getElementById('signInBtn').style.display = 'none';
-                document.getElementById('userProfile').style.display = 'flex';
-                alert("Welcome, Example User!");
+            toggleLike() {
+                if(!this.isLoggedIn) return alert("Please sign in to bookmark!");
+                const heart = document.querySelector('#det-heart i');
+                heart.classList.toggle('fas');
+                heart.classList.toggle('far');
+                heart.style.color = heart.classList.contains('fas') ? 'var(--secondary)' : '';
+            },
+
+            copy() {
+                const text = document.getElementById('det-prompt').innerText;
+                navigator.clipboard.writeText(text);
+                alert("Copied to clipboard!");
             },
 
             submitUpload() {
                 if(!this.isLoggedIn) return alert("Please sign in to upload!");
-                alert("Upload submitted! Our team will review your prompt.");
-            },
-
-            toggleLike() {
-                if(!this.isLoggedIn) return alert("Sign in to save prompts to bookmarks!");
-                const btn = document.getElementById('heartBtn');
-                btn.style.color = btn.style.color === 'var(--secondary)' ? 'var(--text)' : 'var(--secondary)';
-            },
-
-            copyPrompt() {
-                const text = document.getElementById('det-prompt').innerText;
-                navigator.clipboard.writeText(text);
-                alert("Prompt copied to clipboard!");
-            },
-
-            toggleTheme() {
-                document.body.classList.toggle('light-mode');
-            },
-
-            toggleMenu() {
-                // Mobile menu logic
+                alert("Prompt submitted for review!");
             }
         };
 
