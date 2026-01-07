@@ -1,608 +1,303 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aiprompt | Ultimate AI Gallery</title>
+    <title>Aiprompt | High-End Prompt Engine</title>
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400&family=Inter:wght@300;400;600&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400&family=Inter:wght@300;400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* =========================================
-           1. CSS VARIABLES
-           ========================================= */
         :root {
-            --bg-body: #050507;
-            --bg-gradient: radial-gradient(circle at 50% 0%, #1a1a2e 0%, #050507 80%);
+            --bg: #0a0a0f;
             --surface: rgba(255, 255, 255, 0.05);
-            --surface-hover: rgba(255, 255, 255, 0.1);
-            --border: rgba(255, 255, 255, 0.15);
-            --glass: rgba(5, 5, 7, 0.85); /* Darker glass for better visibility */
-            
+            --border: rgba(255, 255, 255, 0.1);
             --primary: #00f2ea;
-            --primary-glow: rgba(0, 242, 234, 0.4);
             --secondary: #ff0055;
-            
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            
-            --font-heading: 'Space Grotesk', sans-serif;
-            --font-body: 'Inter', sans-serif;
-            --font-mono: 'Fira Code', monospace;
-            
-            --navbar-height: 70px;
-            --transition: all 0.3s ease;
+            --text: #ffffff;
+            --text-muted: #8b9bb4;
+            --glass: rgba(10, 10, 15, 0.8);
+            --font-main: 'Inter', sans-serif;
+            --font-head: 'Space Grotesk', sans-serif;
         }
 
-        /* Light Mode */
         body.light-mode {
-            --bg-body: #eef2f6;
-            --bg-gradient: radial-gradient(circle at 50% 0%, #ffffff 0%, #dde1e7 80%);
+            --bg: #f8f9fa;
             --surface: #ffffff;
-            --surface-hover: #f8f9fa;
-            --border: #ccc;
-            --glass: rgba(255, 255, 255, 0.95);
-            --primary: #2563eb;
-            --text-main: #111827;
-            --text-muted: #4b5563;
+            --border: #e0e0e0;
+            --primary: #0066ff;
+            --text: #1a1a1a;
+            --text-muted: #666;
+            --glass: rgba(255, 255, 255, 0.9);
         }
 
-        /* Reset */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body {
-            background-color: var(--bg-body);
-            background-image: var(--bg-gradient);
-            background-attachment: fixed;
-            color: var(--text-main);
-            font-family: var(--font-body);
-            line-height: 1.6;
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            font-family: var(--font-main); 
+            transition: background 0.3s;
             overflow-x: hidden;
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-body); }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
-
-        /* =========================================
-           2. NAVBAR (FIXED TOP)
-           ========================================= */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: var(--navbar-height);
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+        /* --- NAVBAR --- */
+        nav {
+            position: fixed; top: 0; width: 100%; height: 70px;
+            background: var(--glass); backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border);
-            z-index: 9999; /* En üstte olduğundan emin olalım */
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 5%;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 5%; z-index: 1000;
         }
 
-        .logo {
-            font-family: var(--font-heading);
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-main);
-            text-decoration: none;
-            letter-spacing: -0.5px;
-        }
+        .logo { font-family: var(--font-head); font-size: 1.5rem; font-weight: 700; cursor: pointer; }
         .logo span { color: var(--primary); }
 
-        .nav-links {
-            display: flex;
-            gap: 25px;
-            list-style: none;
-        }
-
-        .nav-link {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.95rem;
-            transition: var(--transition);
-            cursor: pointer;
-        }
+        .nav-links { display: flex; gap: 20px; list-style: none; }
+        .nav-link { color: var(--text-muted); text-decoration: none; cursor: pointer; font-size: 0.9rem; transition: 0.2s; }
         .nav-link:hover, .nav-link.active { color: var(--primary); }
 
-        .nav-controls {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .nav-actions { display: flex; align-items: center; gap: 15px; }
+        .btn-google { 
+            background: var(--text); color: var(--bg); 
+            padding: 8px 16px; border-radius: 6px; font-weight: 600; 
+            display: flex; align-items: center; gap: 8px; cursor: pointer; border: none;
         }
 
-        /* Theme Toggle */
-        .theme-btn {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .theme-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .theme-toggle { cursor: pointer; font-size: 1.2rem; }
 
-        /* Hamburger */
-        .hamburger {
-            display: none;
-            font-size: 1.5rem;
-            color: var(--text-main);
-            cursor: pointer;
-        }
+        .hamburger { display: none; font-size: 1.5rem; cursor: pointer; }
 
-        /* =========================================
-           3. MAIN LAYOUT
-           ========================================= */
-        .container {
-            margin-top: var(--navbar-height);
-            padding: 40px 5%;
-            min-height: 100vh;
-        }
-
-        .section {
-            display: none; /* JS ile açılıp kapanacak */
-            animation: fadeIn 0.5s ease forwards;
-        }
+        /* --- SECTIONS --- */
+        .container { margin-top: 100px; padding: 0 5% 50px; min-height: 80vh; }
+        .section { display: none; animation: fadeIn 0.4s ease forwards; }
         .section.active { display: block; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- GRID & CARDS --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; margin-top: 30px; }
+        .card { 
+            background: var(--surface); border: 1px solid var(--border); border-radius: 12px; 
+            overflow: hidden; transition: 0.3s; cursor: pointer; position: relative;
+        }
+        .card:hover { border-color: var(--primary); transform: translateY(-5px); }
+        .card img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+        .card-info { padding: 15px; }
+        .card-prompt { font-family: 'Fira Code'; font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* --- DETAILS PAGE --- */
+        .details-container { display: flex; gap: 40px; margin-top: 20px; }
+        .details-img { flex: 1; border-radius: 15px; overflow: hidden; border: 1px solid var(--border); }
+        .details-img img { width: 100%; display: block; }
+        .details-content { flex: 1; }
+        .prompt-viewer { 
+            background: var(--surface); padding: 20px; border-radius: 10px; 
+            max-height: 300px; overflow-y: auto; font-family: 'Fira Code'; 
+            margin: 20px 0; border: 1px solid var(--border); line-height: 1.6;
         }
 
-        /* Grid System */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            margin-top: 30px;
-        }
-
-        /* Card Design */
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: var(--transition);
-            position: relative;
-            cursor: pointer; /* Tıklanabilir olduğu belli olsun */
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .card-img-wrap {
-            width: 100%;
-            padding-top: 100%; /* 1:1 Aspect */
-            position: relative;
-        }
-        .card-img {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover;
-        }
+        /* --- FORMS & UI --- */
+        .btn { padding: 12px 24px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; transition: 0.3s; }
+        .btn-primary { background: var(--primary); color: #000; }
+        .input { width: 100%; padding: 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 8px; margin-bottom: 15px; }
         
-        /* Heart Button on Card */
-        .card-heart {
-            position: absolute;
-            top: 10px; right: 10px;
-            z-index: 5;
-            width: 35px; height: 35px;
-            border-radius: 50%;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: #fff;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .card-heart:hover { transform: scale(1.1); }
-        .card-heart.liked { background: var(--secondary); border-color: var(--secondary); }
+        /* FAQ Accordion */
+        details { background: var(--surface); padding: 15px; border-radius: 8px; margin-bottom: 10px; cursor: pointer; }
+        summary { font-weight: 600; margin-bottom: 10px; }
 
-        .card-body {
-            padding: 15px;
-        }
-        .card-prompt {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .card-user {
-            margin-top: 10px;
-            font-size: 0.85rem;
-            color: var(--text-main);
-            font-weight: 600;
-        }
+        /* --- FOOTER --- */
+        footer { padding: 50px 5%; border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 20px; color: var(--text-muted); }
+        .footer-links { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
 
-        /* =========================================
-           4. DETAILS OVERLAY (YENİ ÖZELLİK)
-           ========================================= */
-        #details-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(10px);
-            z-index: 10000;
-            display: none; /* Default Hidden */
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        #details-overlay.open { display: flex; }
-
-        .details-modal {
-            background: var(--bg-body);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            width: 100%;
-            max-width: 1000px;
-            max-height: 90vh;
-            display: flex;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            flex-direction: row;
-        }
-
-        .details-image-col {
-            flex: 1;
-            background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .details-image-col img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            max-height: 80vh;
-        }
-
-        .details-info-col {
-            flex: 1;
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            border-left: 1px solid var(--border);
-            overflow-y: auto;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 15px; right: 15px;
-            background: rgba(0,0,0,0.5);
-            color: #fff;
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-            z-index: 10;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        .close-btn:hover { background: var(--secondary); }
-
-        /* SCROLLABLE PROMPT AREA */
-        .prompt-box {
-            background: var(--surface);
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px dashed var(--border);
-            font-family: var(--font-mono);
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin: 20px 0;
-            
-            /* SCROLL LOGIC */
-            max-height: 200px; /* Belirli yükseklik */
-            overflow-y: auto;  /* Kaydırma */
-            line-height: 1.6;
-        }
-
-        .btn-action {
-            background: var(--primary);
-            color: #000;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 6px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: var(--transition);
-            font-family: var(--font-heading);
-        }
-        .btn-action:hover { box-shadow: 0 0 15px var(--primary-glow); }
-        .btn-action.secondary { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
-        .btn-action.secondary:hover { border-color: var(--text-main); }
-
-        /* =========================================
-           5. MOBILE RESPONSIVE
-           ========================================= */
-        @media (max-width: 768px) {
-            .navbar { padding: 0 20px; }
-            .nav-links {
-                position: fixed;
-                top: var(--navbar-height);
-                left: 0;
-                width: 100%;
-                background: var(--bg-body);
-                flex-direction: column;
-                padding: 30px;
-                border-bottom: 1px solid var(--border);
-                transform: translateY(-200%); /* Gizle */
-                transition: transform 0.3s ease;
-                z-index: 9998;
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) {
+            .details-container { flex-direction: column; }
+            .nav-links { 
+                position: fixed; top: 70px; left: 0; width: 100%; background: var(--bg);
+                flex-direction: column; padding: 20px; border-bottom: 1px solid var(--border);
+                display: none;
             }
-            .nav-links.active { transform: translateY(0); }
-            
+            .nav-links.open { display: flex; }
             .hamburger { display: block; }
-            .nav-controls { display: none; } /* Mobilde basit tuttum */
-
-            /* Details Modal Stacked on Mobile */
-            .details-modal { flex-direction: column; max-height: 95vh; overflow-y: auto; }
-            .details-image-col { height: 300px; flex: none; border-bottom: 1px solid var(--border); }
-            .details-info-col { flex: none; border-left: none; }
+            .nav-actions { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <nav class="navbar">
-        <a href="#" class="logo" onclick="app.nav('home')">Aiprompt<span>.</span></a>
-        
-        <ul class="nav-links" id="menu">
-            <li><a class="nav-link active" onclick="app.nav('home')">Home</a></li>
-            <li><a class="nav-link" onclick="app.nav('explore')">Explore</a></li>
+    <nav>
+        <div class="logo" onclick="app.nav('home')">Ai<span>prompt</span></div>
+        <ul class="nav-links" id="navLinks">
+            <li><a class="nav-link" onclick="app.nav('home')">Home</a></li>
+            <li><a class="nav-link" onclick="app.nav('images')">Images</a></li>
             <li><a class="nav-link" onclick="app.nav('bookmarks')">Bookmarks</a></li>
-            <li><a class="nav-link" onclick="app.nav('upload')">Upload</a></li>
+            <li><a class="nav-link" onclick="app.nav('about')">About</a></li>
+            <li><a class="nav-link" onclick="app.nav('settings')">Settings</a></li>
         </ul>
-
-        <div class="nav-controls">
-            <button class="theme-btn" onclick="app.toggleTheme()"><i class="fas fa-adjust"></i></button>
+        <div class="nav-actions">
+            <div class="theme-toggle" onclick="app.toggleTheme()"><i class="fas fa-moon"></i></div>
+            <button class="btn-google" onclick="app.login()">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_激Logo.svg" width="18" alt=""> Sign In
+            </button>
         </div>
-
-        <div class="hamburger" onclick="app.toggleMenu()">
-            <i class="fas fa-bars"></i>
-        </div>
+        <div class="hamburger" onclick="app.toggleMenu()"><i class="fas fa-bars"></i></div>
     </nav>
 
     <div class="container">
-        
         <section id="home" class="section active">
-            <div style="text-align: center; padding: 60px 0;">
-                <h1 style="font-size: 3rem; margin-bottom: 20px;">The Next Gen <span style="color:var(--primary)">AI Prompts</span></h1>
-                <p style="color:var(--text-muted); max-width: 600px; margin: 0 auto 30px;">
-                    Discover, share, and generate. The ultimate library for Midjourney, DALL-E and Stable Diffusion.
-                </p>
-                <button class="btn-action" style="margin: 0 auto;" onclick="app.nav('explore')">Start Exploring</button>
+            <div style="text-align: center; padding: 40px 0;">
+                <h1 style="font-size: 3rem; font-family: var(--font-head);">Future of <span style="color:var(--primary)">Prompting</span></h1>
+                <p style="color:var(--text-muted); margin-top: 15px;">High-end visual library for creators.</p>
             </div>
-            <h3>Trending Now</h3>
-            <div class="grid" id="home-grid"></div>
+            <div class="grid" id="featured-grid"></div>
         </section>
 
-        <section id="explore" class="section">
-            <h2>Explore Gallery</h2>
+        <section id="images" class="section">
+            <h2>Explore Prompts</h2>
             <div class="grid" id="explore-grid"></div>
         </section>
 
+        <section id="details" class="section">
+            <button class="btn" onclick="app.nav('images')" style="margin-bottom: 20px;"><i class="fas fa-arrow-left"></i> Back</button>
+            <div class="details-container">
+                <div class="details-img"><img id="det-img" src="" alt=""></div>
+                <div class="details-content">
+                    <h2 id="det-user">@username</h2>
+                    <div class="prompt-viewer" id="det-prompt"></div>
+                    <button class="btn btn-primary" onclick="app.copy()"><i class="fas fa-copy"></i> Copy Prompt</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="section">
+            <h2>About Aiprompt</h2>
+            <p style="margin-top: 20px; color: var(--text-muted); line-height: 1.8;">
+                Aiprompt is a premium gallery dedicated to the art of AI engineering. 
+                Our platform allows users to showcase their creative workflows and explore the boundaries of generative AI.
+            </p>
+        </section>
+
+        <section id="settings" class="section">
+            <h2>Account Settings</h2>
+            <div style="max-width: 500px; margin-top: 30px;">
+                <label>Profile Name</label>
+                <input type="text" class="input" placeholder="User Name">
+                <label>Bio</label>
+                <textarea class="input" style="height: 100px;"></textarea>
+                <button class="btn btn-primary">Save Changes</button>
+            </div>
+        </section>
+
+        <section id="contact" class="section">
+            <h2>Contact Us</h2>
+            <form style="max-width: 500px; margin-top: 20px;">
+                <input type="text" class="input" placeholder="Name">
+                <input type="email" class="input" placeholder="Email">
+                <textarea class="input" style="height: 120px;" placeholder="Message"></textarea>
+                <button type="button" class="btn btn-primary">Send Message</button>
+            </form>
+        </section>
+
+        <section id="faq" class="section">
+            <h2>FAQ & Terms</h2>
+            <div style="margin-top: 30px;">
+                <details>
+                    <summary>Is it free to use?</summary>
+                    <p>Yes, Aiprompt is free for personal exploration.</p>
+                </details>
+                <details>
+                    <summary>Terms of Service</summary>
+                    <p>All prompts shared must comply with ethical AI guidelines...</p>
+                </details>
+            </div>
+        </section>
+
         <section id="bookmarks" class="section">
-            <h2>Your Bookmarks</h2>
-            <div id="bookmarks-empty" style="display:none; padding: 40px; text-align: center; color: var(--text-muted);">
-                No bookmarks yet. Go heart some prompts!
-            </div>
-            <div class="grid" id="bookmarks-grid"></div>
+            <h2>Saved Prompts</h2>
+            <div class="grid" id="bookmark-grid"></div>
         </section>
-
-        <section id="upload" class="section">
-            <h2>Upload Prompt</h2>
-            <div style="border: 2px dashed var(--border); border-radius: 12px; height: 300px; display: flex; align-items: center; justify-content: center; flex-direction: column; margin-top: 20px; background: var(--surface);">
-                <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"></i>
-                <p>Drag and drop image here</p>
-            </div>
-        </section>
-
     </div>
 
-    <footer style="text-align: center; padding: 40px; border-top: 1px solid var(--border); color: var(--text-muted);">
-        <p>&copy; 2024 Aiprompt. Designed by <a href="https://farhadsultanov.info" target="_blank" style="color:var(--primary); text-decoration: none;">Farhad Sultanov</a></p>
+    <footer>
+        <div class="footer-links">
+            <a onclick="app.nav('faq')">FAQ</a>
+            <a onclick="app.nav('faq')">Terms</a>
+            <a onclick="app.nav('contact')">Contact</a>
+            <a onclick="app.nav('about')">Privacy</a>
+        </div>
+        <div style="font-size: 0.8rem;">© 2026 Designed by <a href="https://farhadsultanov.info" target="_blank" style="color:var(--primary); text-decoration: none;">Farhad Sultanov</a></div>
     </footer>
 
-    <div id="details-overlay">
-        <div class="details-modal">
-            <button class="close-btn" onclick="app.closeDetails()"><i class="fas fa-times"></i></button>
-            
-            <div class="details-image-col">
-                <img id="detail-img" src="" alt="Prompt Result">
-            </div>
-            
-            <div class="details-info-col">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #333;"></div> <div>
-                            <div id="detail-user" style="font-weight: 700; color: var(--text-main);"></div>
-                            <div style="font-size: 0.8rem; color: var(--text-muted);">Pro Creator</div>
-                        </div>
-                    </div>
-                    <button id="detail-heart-btn" class="theme-btn"><i class="fas fa-heart"></i></button>
-                </div>
-
-                <h3 style="margin-bottom: 10px;">Prompt Details</h3>
-                
-                <div class="prompt-box" id="detail-prompt">
-                    </div>
-
-                <div style="display: flex; gap: 10px; margin-top: auto;">
-                    <button class="btn-action" onclick="app.copyPrompt()" style="flex:1;">
-                        <i class="fas fa-copy"></i> Copy Prompt
-                    </button>
-                    <button class="btn-action secondary" style="flex:1;">
-                        <i class="fas fa-download"></i> Download
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // MOCK DATABASE
-        const db = [
-            { id: 1, user: "@neo_artist", img: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&w=600&q=80", prompt: "Cyberpunk street aesthetic, neon rain, reflection, high detail, 8k render, unreal engine 5, cinematic lighting, purple and cyan color palette --v 5. This is a very long text to demonstrate the scrolling functionality inside the details panel. It needs to be long enough to overflow." },
-            { id: 2, user: "@space_walker", img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80", prompt: "Orbital view of earth, digital network lines connecting continents, futuristic ui overlay, hologram style, deep blue space background." },
-            { id: 3, user: "@dream_machine", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80", prompt: "Liquid metal abstract form, iridescent colors, chrome texture, studio lighting, macro photography, fluid simulation." },
-            { id: 4, user: "@retro_vibes", img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80", prompt: "Retro computer room 90s style, crt monitors, matrix code on screens, dark room, green glow, messy desk with cables." },
-            { id: 5, user: "@nature_ai", img: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=600&q=80", prompt: "Bioluminescent mushrooms in a dark forest, magical atmosphere, fireflies, soft bokeh, macro shot, fantasy concept art." },
-            { id: 6, user: "@arch_bot", img: "https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=600&q=80", prompt: "White futuristic building, curvy architecture, zaha hadid style, blue sky, minimalist design, clean lines, bright daylight." }
+        const mockData = [
+            { id: 1, user: "@cypher_space", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600", prompt: "Minimalist abstract 3D fluid, iridescent chrome, octane render, 8k, futuristic aesthetic --v 6.0" },
+            { id: 2, user: "@neon_ghost", img: "https://images.unsplash.com/photo-1633167606207-d840b5070fc2?auto=format&fit=crop&w=600", prompt: "Cyberpunk street photography, Tokyo rain, neon reflections, cinematic lighting, f/1.8" },
+            { id: 3, user: "@bio_arc", img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600", prompt: "Futuristic biology lab, glowing moss, glass tech, solarpunk architecture, soft sunlight" },
+            { id: 4, user: "@retro_f", img: "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?auto=format&fit=crop&w=600", prompt: "Vintage computer setup, 1980s retro tech, warm glow, vaporwave aesthetic, highly detailed" }
         ];
 
-        class App {
-            constructor() {
-                this.liked = JSON.parse(localStorage.getItem('liked')) || [];
-                this.init();
-            }
+        const app = {
+            theme: 'dark',
+            liked: [],
 
             init() {
-                this.renderGrid('home-grid', db); // Show all for demo
-                this.renderGrid('explore-grid', db);
-                this.renderBookmarks();
-                
-                // Load Theme
-                if(localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
-            }
+                this.render(mockData, 'featured-grid');
+                this.render(mockData, 'explore-grid');
+            },
 
-            // NAVIGATION
-            nav(pageId) {
-                // Update Menu UI
-                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                event.target.classList.add('active'); // Not perfect but works for simple demo
-
-                // Show Section
+            nav(id) {
                 document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                document.getElementById(pageId).classList.add('active');
-
-                // Close Mobile Menu
-                document.getElementById('menu').classList.remove('active');
-                
-                // Refresh Bookmarks if needed
-                if(pageId === 'bookmarks') this.renderBookmarks();
-
+                document.getElementById(id).classList.add('active');
+                document.getElementById('navLinks').classList.remove('open');
                 window.scrollTo(0,0);
-            }
+            },
 
-            toggleMenu() {
-                document.getElementById('menu').classList.toggle('active');
-            }
+            openDetail(id) {
+                const item = mockData.find(x => x.id === id);
+                document.getElementById('det-img').src = item.img;
+                document.getElementById('det-user').innerText = item.user;
+                document.getElementById('det-prompt').innerText = item.prompt;
+                this.nav('details');
+            },
 
-            toggleTheme() {
-                document.body.classList.toggle('light-mode');
-                localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
-            }
-
-            // GRID RENDERING
-            renderGrid(containerId, data) {
-                const container = document.getElementById(containerId);
-                container.innerHTML = data.map(item => {
-                    const isLiked = this.liked.includes(item.id);
-                    return `
-                    <div class="card" onclick="app.openDetails(${item.id})">
-                        <div class="card-img-wrap">
-                            <div class="card-heart ${isLiked ? 'liked' : ''}" onclick="event.stopPropagation(); app.toggleLike(${item.id}, this)">
-                                <i class="fas fa-heart"></i>
-                            </div>
-                            <img src="${item.img}" class="card-img" alt="AI Art">
-                        </div>
-                        <div class="card-body">
+            render(data, containerId) {
+                const cont = document.getElementById(containerId);
+                cont.innerHTML = data.map(item => `
+                    <div class="card" onclick="app.openDetail(${item.id})">
+                        <img src="${item.img}" loading="lazy">
+                        <div class="card-info">
                             <div class="card-prompt">${item.prompt}</div>
-                            <div class="card-user">${item.user}</div>
+                            <div style="font-weight:600; margin-top:8px; font-size:0.8rem;">${item.user}</div>
                         </div>
                     </div>
-                    `;
-                }).join('');
+                `).join('');
+            },
+
+            toggleTheme() {
+                this.theme = this.theme === 'dark' ? 'light' : 'dark';
+                document.body.classList.toggle('light-mode');
+                const icon = document.querySelector('.theme-toggle i');
+                icon.className = this.theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+            },
+
+            toggleMenu() {
+                document.getElementById('navLinks').classList.toggle('open');
+            },
+
+            login() {
+                alert("Redirecting to Google Authentication...");
+            },
+
+            copy() {
+                const text = document.getElementById('det-prompt').innerText;
+                navigator.clipboard.writeText(text);
+                alert("Prompt copied!");
             }
+        };
 
-            renderBookmarks() {
-                const bookmarkData = db.filter(item => this.liked.includes(item.id));
-                const container = document.getElementById('bookmarks-grid');
-                const emptyMsg = document.getElementById('bookmarks-empty');
-                
-                if(bookmarkData.length === 0) {
-                    container.innerHTML = '';
-                    emptyMsg.style.display = 'block';
-                } else {
-                    emptyMsg.style.display = 'none';
-                    this.renderGrid('bookmarks-grid', bookmarkData);
-                }
-            }
-
-            // LIKE LOGIC
-            toggleLike(id, btnElement) {
-                if(this.liked.includes(id)) {
-                    this.liked = this.liked.filter(i => i !== id);
-                    btnElement.classList.remove('liked');
-                } else {
-                    this.liked.push(id);
-                    btnElement.classList.add('liked');
-                }
-                localStorage.setItem('liked', JSON.stringify(this.liked));
-                
-                // If on bookmark page, refresh immediately
-                if(document.getElementById('bookmarks').classList.contains('active')) {
-                    this.renderBookmarks();
-                }
-            }
-
-            // DETAILS & COPY LOGIC
-            openDetails(id) {
-                const item = db.find(i => i.id === id);
-                if(!item) return;
-
-                document.getElementById('detail-img').src = item.img;
-                document.getElementById('detail-user').innerText = item.user;
-                document.getElementById('detail-prompt').innerText = item.prompt; // Text goes here
-                
-                // Show Overlay
-                document.getElementById('details-overlay').classList.add('open');
-                document.body.style.overflow = 'hidden'; // Stop background scrolling
-            }
-
-            closeDetails() {
-                document.getElementById('details-overlay').classList.remove('open');
-                document.body.style.overflow = 'auto';
-            }
-
-            copyPrompt() {
-                const text = document.getElementById('detail-prompt').innerText;
-                navigator.clipboard.writeText(text).then(() => {
-                    alert("Prompt Copied to Clipboard!");
-                });
-            }
-        }
-
-        const app = new App();
+        app.init();
     </script>
 </body>
 </html>
