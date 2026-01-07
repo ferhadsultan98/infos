@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aiprompt | High-End Multimedia AI Gallery</title>
+    <title>Aiprompt | Ultimate AI Gallery</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400&family=Inter:wght@300;400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -33,9 +33,12 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--text); font-family: var(--font-main); transition: 0.3s; overflow-x: hidden; line-height: 1.6; }
+        body { 
+            background: var(--bg); color: var(--text); font-family: var(--font-main); 
+            transition: 0.3s; overflow-x: hidden; line-height: 1.6;
+        }
 
-        /* --- NOTIFICATION SYSTEM --- */
+        /* --- NOTIFICATION SYSTEM (TOAST) --- */
         #notify-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
         .notify { 
             background: var(--glass); border: 1px solid var(--primary); backdrop-filter: blur(10px);
@@ -45,26 +48,66 @@
         }
         .notify.show { transform: translateX(0); }
 
-        /* --- NAVBAR & NAV-RIGHT --- */
-        nav { position: fixed; top: 0; width: 100%; height: 75px; background: var(--glass); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 5%; z-index: 2000; }
+        /* --- NAVBAR & NAVIGATION --- */
+        nav {
+            position: fixed; top: 0; width: 100%; height: 75px;
+            background: var(--glass); backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 5%; z-index: 2000;
+        }
+
         .logo { font-family: var(--font-head); font-size: 1.6rem; font-weight: 700; cursor: pointer; }
         .logo span { color: var(--primary); }
+
         .nav-links { display: flex; gap: 20px; list-style: none; align-items: center; }
         .nav-link { color: var(--text-muted); text-decoration: none; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: 0.2s; }
         .nav-link:hover, .nav-link.active { color: var(--primary); }
-        .nav-right { display: flex; align-items: center; gap: 15px; }
-        .btn-google { background: var(--text); color: var(--bg); padding: 8px 16px; border-radius: 8px; border: none; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer; }
-        .user-profile-ui { display: none; align-items: center; gap: 10px; cursor: pointer; padding: 5px 12px; border-radius: 50px; background: var(--surface); }
-        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(45deg, var(--primary), var(--secondary)); }
-        
-        .hamburger { display: none; width: 30px; height: 20px; position: relative; cursor: pointer; z-index: 3000; }
-        .hamburger span { display: block; position: absolute; height: 2px; width: 100%; background: var(--text); border-radius: 9px; transition: .25s; }
-        .hamburger span:nth-child(1) { top: 0; } .hamburger span:nth-child(2) { top: 10px; } .hamburger span:nth-child(3) { top: 20px; }
-        .hamburger.open span:nth-child(1) { transform: rotate(135deg); top: 10px; }
-        .hamburger.open span:nth-child(2) { opacity: 0; left: -60px; }
-        .hamburger.open span:nth-child(3) { transform: rotate(-135deg); top: 10px; }
 
-        /* --- USER PROFILE SECTION (Instagram Style) --- */
+        .nav-right { display: flex; align-items: center; gap: 15px; }
+
+        .btn-google { 
+            background: var(--text); color: var(--bg); 
+            padding: 8px 16px; border-radius: 8px; border: none; font-weight: 600; 
+            display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.3s;
+        }
+        .btn-google:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        .user-profile-ui { 
+            display: none; align-items: center; gap: 10px; cursor: pointer;
+            padding: 5px 12px; border-radius: 50px; background: var(--surface);
+            border: 1px solid var(--border);
+        }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(45deg, var(--primary), var(--secondary)); }
+
+        .hamburger { 
+            display: none; width: 30px; height: 20px; position: relative; cursor: pointer; z-index: 3000;
+        }
+        .hamburger span {
+            display: block; position: absolute; height: 2px; width: 100%; background: var(--text);
+            border-radius: 9px; transition: .25s ease-in-out;
+        }
+        .hamburger span:nth-child(1) { top: 0px; }
+        .hamburger span:nth-child(2) { top: 10px; }
+        .hamburger span:nth-child(3) { top: 20px; }
+        .hamburger.open span:nth-child(1) { top: 10px; transform: rotate(135deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; left: -60px; }
+        .hamburger.open span:nth-child(3) { top: 10px; transform: rotate(-135deg); }
+
+        /* --- CATEGORIES SCROLL --- */
+        .cat-scroll {
+            display: flex; gap: 10px; overflow-x: auto; padding-bottom: 20px;
+            scrollbar-width: none; -ms-overflow-style: none;
+        }
+        .cat-scroll::-webkit-scrollbar { display: none; }
+        .cat-tag {
+            white-space: nowrap; padding: 8px 20px; border-radius: 50px;
+            background: var(--surface); border: 1px solid var(--border);
+            color: var(--text-muted); cursor: pointer; font-size: 0.85rem; transition: 0.3s;
+        }
+        .cat-tag.active { background: var(--primary); color: #000; border-color: var(--primary); }
+
+        /* --- USER PROFILE VIEW (Instagram Style) --- */
         .profile-header { position: relative; margin-bottom: 40px; }
         .profile-cover { width: 100%; height: 200px; border-radius: 20px; background: linear-gradient(90deg, #1a1a2e, #16213e); object-fit: cover; border: 1px solid var(--border); }
         .profile-info-box { display: flex; align-items: flex-end; gap: 20px; margin-top: -60px; padding: 0 30px; }
@@ -72,37 +115,78 @@
         .profile-meta h2 { font-family: var(--font-head); font-size: 1.8rem; }
         .profile-meta p { color: var(--text-muted); font-size: 0.9rem; }
 
-        /* --- FORM & SELECT --- */
-        .input-f { width: 100%; padding: 14px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 12px; margin-bottom: 15px; outline: none; transition: 0.3s; appearance: none; }
-        .input-f:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0,242,234,0.1); }
-        select.input-f { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 15px center; background-size: 18px; }
-
-        /* --- CONTAINER & SECTIONS --- */
+        /* --- GRID & CARDS --- */
         .container { margin-top: 100px; padding: 0 5% 50px; min-height: 80vh; }
         .section { display: none; animation: fadeIn 0.4s ease forwards; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 15px; overflow: hidden; cursor: pointer; transition: 0.3s; position: relative; }
+        .card { 
+            background: var(--surface); border: 1px solid var(--border); border-radius: 15px; 
+            overflow: hidden; cursor: pointer; transition: 0.3s; position: relative;
+        }
         .card:hover { transform: translateY(-5px); border-color: var(--primary); }
         .card-media { width: 100%; aspect-ratio: 1/1; position: relative; background: #000; }
         .card-media img, .card-media video { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .video-overlay { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; color: #fff; }
+        .card-content { padding: 15px; }
+        .card-prompt { font-family: 'Fira Code'; font-size: 0.8rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        /* --- MOBILE NAV & DARK MODE BOTTOM --- */
+        /* --- DETAILS & FORMS --- */
+        .back-nav { display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 30px; color: var(--primary); font-weight: 600; }
+        .details-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .details-visual { border-radius: 15px; overflow: hidden; border: 1px solid var(--border); background: #000; }
+        .details-visual img, .details-visual video { width: 100%; display: block; }
+        .prompt-text-area { 
+            background: var(--surface); padding: 25px; border-radius: 12px; 
+            max-height: 300px; overflow-y: auto; font-family: 'Fira Code';
+            border: 1px solid var(--border); line-height: 1.7; margin: 20px 0;
+        }
+        
+        .form-box { max-width: 600px; margin: 0 auto; background: var(--surface); padding: 30px; border-radius: 15px; border: 1px solid var(--border); }
+        .input-f { width: 100%; padding: 14px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 12px; margin-bottom: 15px; outline: none; transition: 0.3s; }
+        .input-f:focus { border-color: var(--primary); }
+
+        /* --- FAQ ACCORDION --- */
+        .faq-item { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 15px; overflow: hidden; }
+        .faq-trigger { padding: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 600; }
+        .faq-content { padding: 0 20px 20px; color: var(--text-muted); font-size: 0.9rem; display: none; }
+        .faq-item.active .faq-content { display: block; }
+        .faq-item.active .chevron { transform: rotate(180deg); color: var(--primary); }
+        .chevron { transition: 0.3s; }
+
+        /* --- MOBILE MENU STYLES --- */
+        .mobile-bottom-controls { display: none; margin-top: auto; width: 100%; border-top: 1px solid var(--border); padding-top: 20px; }
+        
         @media (max-width: 992px) {
-            .nav-links { position: fixed; top: 0; left: -100%; width: 80%; height: 100vh; background: var(--bg); flex-direction: column; padding: 100px 40px; transition: 0.4s; z-index: 2500; border-right: 1px solid var(--border); }
+            .details-wrapper { grid-template-columns: 1fr; }
+            .nav-links { 
+                position: fixed; top: 0; left: -100%; width: 85%; height: 100vh;
+                background: var(--bg); flex-direction: column; padding: 100px 40px; transition: 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+                align-items: flex-start; z-index: 2500; border-right: 1px solid var(--border);
+            }
             .nav-links.open { left: 0; }
             .hamburger { display: block; }
+            .nav-right .btn-google { display: none; }
             .nav-right #theme-toggle-desktop { display: none; }
-            .mobile-bottom-controls { margin-top: auto; width: 100%; border-top: 1px solid var(--border); padding-top: 20px; }
+            .nav-links .btn-google { display: flex; margin-top: 20px; width: 100%; justify-content: center; }
+            .mobile-bottom-controls { display: block; }
         }
 
+        /* --- PAGINATION --- */
+        .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 50px; }
+        .page-n { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; }
+        .page-n.active { background: var(--primary); color: #000; }
+
         /* --- FOOTER --- */
-        footer { padding: 60px 5%; border-top: 1px solid var(--border); text-align: center; color: var(--text-muted); }
-        .social-links { display: flex; justify-content: center; gap: 20px; margin: 20px 0; font-size: 1.5rem; }
+        footer { padding: 60px 5%; border-top: 1px solid var(--border); text-align: center; color: var(--text-muted); margin-top: 50px; }
+        .footer-nav { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .footer-nav span { cursor: pointer; transition: 0.2s; }
+        .footer-nav span:hover { color: var(--primary); }
+        .social-links { display: flex; justify-content: center; gap: 20px; margin-top: 15px; font-size: 1.2rem; }
         .social-links a { color: var(--text); transition: 0.3s; }
-        .social-links a:hover { color: var(--primary); transform: translateY(-3px); }
+        .social-links a:hover { color: var(--primary); }
     </style>
 </head>
 <body>
@@ -120,8 +204,12 @@
             <li><a class="nav-link" onclick="app.nav('about')">About</a></li>
             <li><a class="nav-link" onclick="app.nav('contact')">Contact</a></li>
             
+            <li class="mobile-only"><button id="mobSignBtn" class="btn-google" onclick="app.login()"><i class="fab fa-google"></i> Sign In</button></li>
+            
             <div class="mobile-bottom-controls">
-                <div onclick="app.toggleTheme()" style="cursor:pointer; margin-bottom: 20px;"><i class="fas fa-adjust"></i> Switch Theme</div>
+                <div onclick="app.toggleTheme()" style="cursor:pointer; margin-bottom: 20px; display:flex; gap:10px; align-items:center;">
+                    <i class="fas fa-adjust"></i> Switch Theme
+                </div>
                 <div class="social-links" style="justify-content: flex-start;">
                     <a href="https://instagram.com/ferhad.sultann" target="_blank"><i class="fab fa-instagram"></i></a>
                     <a href="https://linkedin.com/in/farhadsultanov" target="_blank"><i class="fab fa-linkedin"></i></a>
@@ -131,11 +219,14 @@
 
         <div class="nav-right">
             <div id="theme-toggle-desktop" onclick="app.toggleTheme()" style="cursor:pointer"><i class="fas fa-adjust"></i></div>
+            
             <button id="signInBtn" class="btn-google" onclick="app.login()"><i class="fab fa-google"></i> Sign In</button>
-            <div id="userProfile" class="user-profile-ui" onclick="app.toggleMenu()">
+            
+            <div id="userProfile" class="user-profile-ui" onclick="app.openUserPublic()">
                 <span style="font-size: 0.85rem; font-weight: 600;">Farhad S.</span>
                 <div class="user-avatar"></div>
             </div>
+
             <div class="hamburger" id="hamBtn" onclick="app.toggleMenu()">
                 <span></span><span></span><span></span>
             </div>
@@ -146,8 +237,8 @@
         
         <section id="home" class="section active">
             <div style="text-align: center; padding: 40px 0;">
-                <h1 style="font-size: clamp(2.5rem, 6vw, 4rem); font-family: var(--font-head);">The Creative <span style="color:var(--primary)">Universe</span></h1>
-                <p style="color:var(--text-muted); margin-top: 15px;">Discover the world's most powerful AI generation prompts.</p>
+                <h1 style="font-size: clamp(2rem, 5vw, 3.5rem); font-family: var(--font-head);">The Creative <span style="color:var(--primary)">Universe</span></h1>
+                <p style="color:var(--text-muted); margin-top: 15px;">Premium AI prompts for Images and Videos.</p>
             </div>
             <div class="grid" id="home-grid"></div>
         </section>
@@ -169,21 +260,25 @@
         </section>
 
         <section id="images" class="section">
+            <div class="cat-scroll" id="image-cats"></div>
             <div class="grid" id="image-grid"></div>
+            <div class="pagination"><div class="page-n active">1</div><div class="page-n">2</div></div>
         </section>
 
         <section id="videos" class="section">
+            <div class="cat-scroll" id="video-cats"></div>
             <div class="grid" id="video-grid"></div>
+            <div class="pagination"><div class="page-n active">1</div></div>
         </section>
 
         <section id="details" class="section">
-            <div class="back-nav" onclick="app.nav(app.prevSection)"><i class="fas fa-arrow-left"></i> Back</div>
+            <div class="back-nav" id="backBtn" onclick="app.nav(app.prevSection)"><i class="fas fa-arrow-left"></i> Back</div>
             <div class="details-wrapper">
                 <div class="details-visual" id="det-visual"></div>
                 <div class="details-info">
-                    <h2 id="det-user" onclick="app.openUserPublic()" style="cursor:pointer; color: var(--primary);">@username</h2>
-                    <div class="prompt-text-area" id="det-prompt" style="background: var(--surface); padding: 20px; border-radius: 12px; font-family: 'Fira Code';"></div>
-                    <div style="display:flex; gap:10px; margin-top: 20px;">
+                    <h2 id="det-user" onclick="app.openUserPublic()" style="cursor:pointer; color: var(--primary); transition:0.3s;">@username</h2>
+                    <div class="prompt-text-area" id="det-prompt"></div>
+                    <div style="display:flex; gap:10px;">
                         <button class="btn-google" onclick="app.copy()"><i class="fas fa-copy"></i> Copy Prompt</button>
                         <button class="btn-google" id="det-heart" style="background:var(--surface); color:var(--text)" onclick="app.toggleLike()">
                             <i class="fas fa-heart"></i>
@@ -195,36 +290,99 @@
 
         <section id="upload" class="section">
             <div class="form-box">
-                <h2>Create New Art</h2>
-                <div style="margin-top:25px;">
-                    <label>Select Media Type</label>
+                <h2>Upload Prompt</h2>
+                <div style="margin-top:20px;">
+                    <label>Media File</label>
+                    <div style="border: 2px dashed var(--border); padding: 30px; text-align:center; border-radius:12px; margin-bottom:15px; cursor:pointer;" onclick="app.notify('Info', 'File selector would open here.')">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--primary)"></i>
+                        <p style="font-size: 0.8rem; margin-top:10px">Drag & Drop or Click to Select</p>
+                    </div>
+                    <label>Type</label>
                     <select class="input-f" id="up-type">
-                        <option value="image">Still Image</option>
-                        <option value="video">Motion Video</option>
+                        <option value="image">Image</option>
+                        <option value="video">Video</option>
                     </select>
                     <label>Category</label>
-                    <select class="input-f">
-                        <option>Cyberpunk</option><option>Realistic</option><option>Abstract</option>
+                    <select class="input-f" id="up-cat">
+                        <option>Realistic</option><option>Abstract</option><option>Cyberpunk</option><option>Fantasy</option>
                     </select>
-                    <label>The Prompt</label>
-                    <textarea class="input-f" rows="6" style="resize: none;" placeholder="Describe your masterpiece..."></textarea>
-                    <button class="btn-google" style="width:100%; justify-content:center; padding: 15px;" onclick="app.notify('Success', 'Prompt submitted for review!')">Publish Art</button>
+                    <label>Prompt</label>
+                    <textarea class="input-f" id="up-prompt" rows="5" style="resize: none;" placeholder="Describe your masterpiece..."></textarea>
+                    <button class="btn-google" style="width:100%; justify-content:center;" onclick="app.submitUpload()">Submit for Review</button>
                 </div>
             </div>
         </section>
 
-        <section id="about" class="section"><h2>About</h2><p>Our platform empowers creators...</p></section>
-        <section id="contact" class="section">
-             <div class="form-box">
-                <h2>Contact Us</h2>
-                <input type="text" class="input-f" placeholder="Name">
-                <textarea class="input-f" rows="5" style="resize: none;" placeholder="Message"></textarea>
-                <button class="btn-google" style="width:100%; justify-content:center;">Send</button>
+        <section id="about" class="section">
+            <div style="max-width: 800px; margin: 0 auto;">
+                <h2 style="font-size: 2.5rem; color: var(--primary);">Artistry in the Age of AI.</h2>
+                <p style="margin-top:20px; font-size: 1.1rem; line-height: 1.8;">
+                    Aiprompt is a high-end curated gallery designed for prompt engineers and digital creators. Our mission is to provide a bridge between human creativity and artificial intelligence. We believe that a prompt is more than just text—it is a recipe for a new reality.
+                </p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 40px;">
+                    <div style="background: var(--surface); padding: 25px; border-radius: 15px;">
+                        <i class="fas fa-bolt" style="color: var(--primary); font-size: 1.5rem;"></i>
+                        <h4 style="margin: 10px 0;">Ultra Performance</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-muted);">Optimized for Midjourney V6, Sora, and Stable Diffusion workflows.</p>
+                    </div>
+                    <div style="background: var(--surface); padding: 25px; border-radius: 15px;">
+                        <i class="fas fa-layer-group" style="color: var(--primary); font-size: 1.5rem;"></i>
+                        <h4 style="margin: 10px 0;">Curated Selection</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-muted);">Every piece is reviewed for quality and technical execution.</p>
+                    </div>
+                </div>
             </div>
         </section>
-        <section id="faq" class="section"><h2>FAQ</h2><p>Common questions and answers.</p></section>
+
+        <section id="contact" class="section">
+            <div class="form-box">
+                <h2>Get in Touch</h2>
+                <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">Reach out for collaborations or support.</p>
+                <input type="text" class="input-f" placeholder="Full Name">
+                <input type="email" class="input-f" placeholder="Email Address">
+                <textarea class="input-f" placeholder="How can we help you?" rows="6" style="resize: none;"></textarea>
+                <button class="btn-google" style="width:100%; justify-content:center;" onclick="app.notify('Sent', 'Message sent successfully!')">Send Message</button>
+            </div>
+        </section>
+
+        <section id="faq" class="section">
+            <h2 style="text-align: center; margin-bottom: 40px;">Frequently Asked Questions</h2>
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div class="faq-item">
+                    <div class="faq-trigger">
+                        <span><i class="fas fa-question-circle" style="margin-right:10px"></i> Is it free to use?</span>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </div>
+                    <div class="faq-content">Yes! Aiprompt is a community-driven project. You can explore and copy prompts for free.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-trigger">
+                        <span><i class="fas fa-copyright" style="margin-right:10px"></i> Can I use prompts commercially?</span>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </div>
+                    <div class="faq-content">The prompts themselves are open-source. However, the commercial rights of the generated images depend on the AI platform's terms.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-trigger">
+                        <span><i class="fas fa-user-plus" style="margin-right:10px"></i> How do I become a contributor?</span>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </div>
+                    <div class="faq-content">Once you sign in via Google, you can use the 'Upload' feature to submit your own masterpieces.</div>
+                </div>
+            </div>
+        </section>
+
         <section id="bookmarks" class="section"><h2>Bookmarks</h2><div class="grid" id="bookmark-grid"></div></section>
-        <section id="terms" class="section"><h2>Terms</h2><p>Legal information 2025-2026.</p></section>
+        
+        <section id="terms" class="section">
+            <h2 style="margin-bottom: 25px;">Terms & Privacy Policy</h2>
+            <div style="color: var(--text-muted); line-height: 2;">
+                <p><strong>1. Data Collection:</strong> We only store your Google ID and email for authentication purposes.</p>
+                <p><strong>2. User Conduct:</strong> Prohibited to upload offensive, illegal, or harmful AI-generated content.</p>
+                <p><strong>3. Liability:</strong> Aiprompt is not responsible for the misuse of prompts or generated outputs.</p>
+                <p><strong>4. Updates:</strong> These terms are effective as of 2025 and may be updated in 2026.</p>
+            </div>
+        </section>
 
     </div>
 
@@ -234,19 +392,25 @@
             <span onclick="app.nav('faq')">FAQ</span>
             <span onclick="app.nav('contact')">Contact</span>
             <span onclick="app.nav('terms')">Privacy</span>
+            <span onclick="app.nav('upload')">Upload</span>
         </div>
         <div class="social-links">
             <a href="https://instagram.com/ferhad.sultann" target="_blank"><i class="fab fa-instagram"></i></a>
             <a href="https://linkedin.com/in/farhadsultanov" target="_blank"><i class="fab fa-linkedin"></i></a>
         </div>
-        <div>© 2025 - 2026 | Designed by <a href="#" style="color:var(--primary); text-decoration:none;">Farhad Sultanov</a></div>
+        <div style="margin-top: 20px; font-size: 0.8rem;">© 2025 - 2026 | Designed by <a href="https://farhadsultanov.info" target="_blank" style="color:var(--primary); text-decoration:none;">Farhad Sultanov</a></div>
     </footer>
 
     <script>
+        const categories = ["All", "Realistic", "Abstract", "Cyberpunk", "Anime", "3D Render", "Photography"];
+        
+        // Combined Database
         const db = [
-            { id: 1, type: 'image', user: '@morpheus', url: 'https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&w=600', prompt: 'Breathtaking cyberpunk city, neon reflections, 8k.' },
-            { id: 2, type: 'video', user: '@flux_art', url: 'https://assets.mixkit.co/videos/preview/mixkit-liquid-bubbles-and-smoke-underwater-431-large.mp4', prompt: 'Abstract liquid ink smoke, 4k motion.' },
-            { id: 3, type: 'image', user: '@farhad.sultann', url: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?auto=format&fit=crop&w=600', prompt: 'Detailed portrait of a wise man, lighting.' }
+            { id: 1, type: 'image', cat: 'Cyberpunk', user: '@morpheus', url: 'https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&w=600', prompt: 'Neon city streets at night, heavy rain, blade runner aesthetic, 8k.' },
+            { id: 2, type: 'video', cat: 'Abstract', user: '@flux_art', url: 'https://assets.mixkit.co/videos/preview/mixkit-liquid-bubbles-and-smoke-underwater-431-large.mp4', prompt: 'Liquid ink mixing in water, slow motion, hyper detailed colors.' },
+            { id: 3, type: 'image', cat: 'Realistic', user: '@pixel_pro', url: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?auto=format&fit=crop&w=600', prompt: 'Stunning portrait of an old traveler, deep wrinkles, cinematic lighting.' },
+            { id: 4, type: 'video', cat: 'Realistic', user: '@cinema_ai', url: 'https://assets.mixkit.co/videos/preview/mixkit-clouds-and-stars-at-night-2442-large.mp4', prompt: 'Time-lapse of the Milky Way over mountains, hyper realistic sky.' },
+            { id: 5, type: 'image', cat: 'Realistic', user: '@farhad.sultann', url: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?auto=format&fit=crop&w=600', prompt: 'Detailed portrait of a wise man, lighting.' }
         ];
 
         const app = {
@@ -257,8 +421,11 @@
                 this.renderGrid('home-grid', db);
                 this.renderGrid('image-grid', db.filter(x => x.type === 'image'));
                 this.renderGrid('video-grid', db.filter(x => x.type === 'video'));
+                this.renderCats();
+                this.setupFaq();
             },
 
+            // Toast Notification System
             notify(title, msg) {
                 const container = document.getElementById('notify-container');
                 const div = document.createElement('div');
@@ -274,17 +441,23 @@
 
             nav(id) {
                 const current = document.querySelector('.section.active');
-                if(current && current.id !== 'details') this.prevSection = current.id;
+                if(current && current.id !== 'details' && current.id !== 'user-view') {
+                    this.prevSection = current.id;
+                }
                 document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
                 document.getElementById(id).classList.add('active');
+                
+                // Close Mobile Menu
                 document.getElementById('navLinks').classList.remove('open');
                 document.getElementById('hamBtn').classList.remove('open');
                 window.scrollTo(0,0);
             },
 
             toggleMenu() {
+                // Determine logic based on screen size and login state
                 if(this.isLoggedIn && window.innerWidth > 992) {
-                    this.nav('upload'); // Quick action for profile click
+                     // If desktop and logged in, clicking avatar might just open profile or nothing
+                     // In this UI, avatar opens profile via onclick attribute directly
                 } else {
                     document.getElementById('navLinks').classList.toggle('open');
                     document.getElementById('hamBtn').classList.toggle('open');
@@ -298,22 +471,62 @@
 
             login() {
                 this.isLoggedIn = true;
+                // Update UI elements
                 document.getElementById('signInBtn').style.display = 'none';
+                document.getElementById('mobSignBtn').parentElement.style.display = 'none';
                 document.getElementById('userProfile').style.display = 'flex';
-                document.getElementById('hamBtn').style.display = 'none';
+                
+                // Hamburger remains visible on mobile to access menu
+                if(window.innerWidth > 992) {
+                    document.getElementById('hamBtn').style.display = 'none';
+                }
+                
                 this.notify('Welcome', 'Logged in as Farhad Sultanov');
+                this.renderCats(); // Re-render to refresh state if needed
+            },
+
+            setupFaq() {
+                document.querySelectorAll('.faq-trigger').forEach(trigger => {
+                    trigger.onclick = () => {
+                        trigger.parentElement.classList.toggle('active');
+                    };
+                });
+            },
+
+            renderCats() {
+                // Only render cats if containers exist
+                const imgCats = document.getElementById('image-cats');
+                if(!imgCats) return;
+                
+                const html = categories.map(c => `<div class="cat-tag ${c==='All'?'active':''}" onclick="app.filterCat(this, '${c}')">${c}</div>`).join('');
+                document.getElementById('image-cats').innerHTML = html;
+                document.getElementById('video-cats').innerHTML = html;
+            },
+
+            filterCat(el, cat) {
+                // Visual update
+                el.parentElement.querySelectorAll('.cat-tag').forEach(t => t.classList.remove('active'));
+                el.classList.add('active');
+                
+                // Logic (Simulated filtering)
+                // In a real app, this would filter the grid below.
+                this.notify('Filter', `Showing ${cat} results.`);
             },
 
             renderGrid(containerId, data) {
                 const cont = document.getElementById(containerId);
+                if(!cont) return;
                 cont.innerHTML = data.map(item => `
                     <div class="card" onclick="app.openDetail(${item.id})">
                         <div class="card-media">
-                            ${item.type === 'video' ? `<video src="${item.url}" muted onmouseover="this.play()" onmouseout="this.pause()"></video>` : `<img src="${item.url}">`}
+                            ${item.type === 'video' ? `<span class="video-overlay"><i class="fas fa-play"></i></span><video src="${item.url}" muted onmouseover="this.play()" onmouseout="this.pause()"></video>` : `<img src="${item.url}">`}
                         </div>
-                        <div style="padding: 15px;">
-                            <div style="font-size: 0.8rem; color: var(--text-muted); text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">${item.prompt}</div>
-                            <div style="margin-top: 10px; font-weight: 600; font-size: 0.85rem; color: var(--primary)">${item.user}</div>
+                        <div class="card-content">
+                            <div class="card-prompt">${item.prompt}</div>
+                            <div style="margin-top:10px; font-weight:600; font-size:0.8rem; display:flex; justify-content:space-between;">
+                                <span>${item.user}</span>
+                                <span style="color:var(--primary)">${item.cat || 'Art'}</span>
+                            </div>
                         </div>
                     </div>
                 `).join('');
@@ -323,17 +536,38 @@
                 const item = db.find(x => x.id === id);
                 const visual = document.getElementById('det-visual');
                 visual.innerHTML = item.type === 'video' ? `<video src="${item.url}" controls autoplay loop></video>` : `<img src="${item.url}">`;
+                
                 document.getElementById('det-user').innerText = item.user;
                 document.getElementById('det-prompt').innerText = item.prompt;
                 this.nav('details');
             },
 
             openUserPublic() {
-                const username = document.getElementById('det-user').innerText;
+                let username = document.getElementById('det-user').innerText;
+                // Default if coming from nav
+                if(!username || username.includes('@username')) username = "@farhad.sultann";
+                
                 document.getElementById('view-username').innerText = username;
-                document.getElementById('view-name').innerText = username.replace('@', '');
-                this.renderGrid('user-art-grid', db.filter(x => x.user === username));
+                document.getElementById('view-name').innerText = username.replace('@', '').replace('.', ' ').toUpperCase();
+                
+                // Filter DB for this user
+                const userArt = db.filter(x => x.user === username);
+                this.renderGrid('user-art-grid', userArt.length ? userArt : db.slice(0,3)); // Fallback data
+                
                 this.nav('user-view');
+            },
+
+            toggleLike() {
+                if(!this.isLoggedIn) return this.notify('Error', 'Please login to bookmark!');
+                
+                const heart = document.querySelector('#det-heart i');
+                heart.classList.toggle('fas');
+                heart.classList.toggle('far');
+                heart.style.color = heart.classList.contains('fas') ? 'var(--secondary)' : '';
+                
+                if(heart.classList.contains('fas')) {
+                    this.notify('Saved', 'Added to your bookmarks.');
+                }
             },
 
             copy() {
@@ -342,9 +576,9 @@
                 this.notify('Copied', 'Prompt saved to clipboard!');
             },
 
-            toggleLike() {
-                if(!this.isLoggedIn) return this.notify('Error', 'Please login first.');
-                this.notify('Saved', 'Added to your bookmarks.');
+            submitUpload() {
+                if(!this.isLoggedIn) return this.notify('Error', 'Please sign in to upload!');
+                this.notify('Success', 'Prompt submitted for review!');
             }
         };
 
