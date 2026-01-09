@@ -1,1498 +1,2265 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aiprompt | Ultimate AI Gallery</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aiprompt | Ultimate AI Gallery</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400&family=Inter:wght@300;400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400&family=Inter:wght@300;400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
 
-    <style>
-        :root {
-            --bg: #050508;
-            --surface: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
-            --primary: #00f2ea;
-            --secondary: #ff0055;
-            --text: #ffffff;
-            --text-muted: #8b9bb4;
-            --glass: rgba(5, 5, 8, 0.9);
-            --font-main: 'Inter', sans-serif;
-            --font-head: 'Space Grotesk', sans-serif;
-        }
+  <style>
+    :root {
+      --bg: #050508;
+      --surface: rgba(255, 255, 255, 0.05);
+      --border: rgba(255, 255, 255, 0.1);
+      --primary: #00f2ea;
+      --secondary: #ff0055;
+      --text: #ffffff;
+      --text-muted: #8b9bb4;
+      --glass: rgba(5, 5, 8, 0.9);
+      --font-main: 'Inter', sans-serif;
+      --font-head: 'Space Grotesk', sans-serif;
 
-        body.light-mode {
-            --bg: #f3f4f6;
-            --surface: #ffffff;
-            --border: #d1d5db;
-            --primary: #2563eb;
-            --text: #111827;
-            --text-muted: #4b5563;
-            --glass: rgba(255, 255, 255, 0.95);
-        }
+      --shadow: 0 20px 70px rgba(0,0,0,0.45);
+      --radius-xl: 20px;
+      --radius-lg: 14px;
+      --radius-md: 12px;
+    }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            background: var(--bg); 
-            color: var(--text); 
-            font-family: var(--font-main); 
-            transition: 0.3s; 
-            overflow-x: hidden; 
-            line-height: 1.6;
-        }
+    body.light-mode {
+      --bg: #f3f4f6;
+      --surface: #ffffff;
+      --border: #d1d5db;
+      --primary: #2563eb;
+      --text: #111827;
+      --text-muted: #4b5563;
+      --glass: rgba(255, 255, 255, 0.95);
+      --shadow: 0 20px 70px rgba(0,0,0,0.10);
+    }
 
-        nav {
-            position: fixed; 
-            top: 0; 
-            width: 100%; 
-            height: 75px;
-            background: var(--glass); 
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--border);
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between;
-            padding: 0 5%; 
-            z-index: 2000;
-        }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-main);
+      transition: 0.3s;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
 
-        .logo { 
-            font-family: var(--font-head); 
-            font-size: 1.6rem; 
-            font-weight: 700; 
-            cursor: pointer; 
-        }
-        .logo span { color: var(--primary); }
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 75px;
+      background: var(--glass);
+      backdrop-filter: blur(15px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5%;
+      z-index: 2000;
+    }
 
-        .nav-links { 
-            display: flex; 
-            gap: 20px; 
-            list-style: none; 
-            align-items: center; 
-        }
-        .nav-link { 
-            color: var(--text-muted); 
-            text-decoration: none; 
-            cursor: pointer; 
-            font-size: 0.9rem; 
-            font-weight: 500; 
-            transition: 0.2s; 
-        }
-        .nav-link:hover, 
-        .nav-link.active { 
-            color: var(--primary); 
-        }
+    .logo {
+      font-family: var(--font-head);
+      font-size: 1.6rem;
+      font-weight: 700;
+      cursor: pointer;
+      user-select: none;
+    }
+    .logo span { color: var(--primary); }
 
-        .nav-right { 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; 
-        }
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      align-items: center;
+    }
 
-        .btn-google { 
-            background: var(--text); 
-            color: var(--bg); 
-            padding: 8px 16px; 
-            border-radius: 8px; 
-            border: none; 
-            font-weight: 600; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            cursor: pointer; 
-            transition: 0.3s;
-        }
-        .btn-google:hover { 
-            opacity: 0.9; 
-            transform: translateY(-2px); 
-        }
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: 0.2s;
+      padding: 8px 10px;
+      border-radius: 10px;
+    }
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--primary);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.03);
+    }
 
-        .user-profile-ui { 
-            display: none; 
-            align-items: center; 
-            gap: 10px; 
-            cursor: pointer;
-            padding: 5px 12px; 
-            border-radius: 50px; 
-            background: var(--surface);
-            border: 1px solid var(--border);
-        }
-        .user-avatar { 
-            width: 32px; 
-            height: 32px; 
-            border-radius: 50%; 
-            object-fit: cover; 
-        }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-        .hamburger { 
-            display: none; 
-            width: 30px; 
-            height: 20px; 
-            position: relative; 
-            cursor: pointer; 
-            z-index: 3000;
-        }
-        .hamburger span {
-            display: block; 
-            position: absolute; 
-            height: 2px; 
-            width: 100%; 
-            background: var(--text);
-            border-radius: 9px; 
-            transition: .25s ease-in-out;
-        }
-        .hamburger span:nth-child(1) { top: 0px; }
-        .hamburger span:nth-child(2) { top: 10px; }
-        .hamburger span:nth-child(3) { top: 20px; }
-        .hamburger.open span:nth-child(1) { top: 10px; transform: rotate(135deg); }
-        .hamburger.open span:nth-child(2) { opacity: 0; left: -60px; }
-        .hamburger.open span:nth-child(3) { top: 10px; transform: rotate(-135deg); }
+    .btn-google {
+      background: var(--text);
+      color: var(--bg);
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn-google:hover { opacity: 0.9; transform: translateY(-2px); }
 
-        .cat-scroll {
-            display: flex; 
-            gap: 10px; 
-            overflow-x: auto; 
-            padding-bottom: 20px; 
-            margin-bottom: 30px;
-            scrollbar-width: none; 
-            -ms-overflow-style: none;
-        }
-        .cat-scroll::-webkit-scrollbar { display: none; }
-        .cat-tag {
-            white-space: nowrap; 
-            padding: 8px 20px; 
-            border-radius: 50px;
-            background: var(--surface); 
-            border: 1px solid var(--border);
-            color: var(--text-muted); 
-            cursor: pointer; 
-            font-size: 0.85rem; 
-            transition: 0.3s;
-        }
-        .cat-tag.active { 
-            background: var(--primary); 
-            color: #000; 
-            border-color: var(--primary); 
-        }
+    /* User dropdown */
+    .user-menu {
+      position: relative;
+      display: none;
+      align-items: center;
+    }
 
-        .profile-header { 
-            position: relative; 
-            margin-bottom: 40px; 
-        }
-        .profile-cover { 
-            width: 100%; 
-            height: 200px; 
-            border-radius: 20px; 
-            background: linear-gradient(90deg, #1a1a2e, #16213e); 
-            object-fit: cover; 
-            border: 1px solid var(--border); 
-        }
-        .profile-info-box { 
-            display: flex; 
-            align-items: flex-end; 
-            gap: 20px; 
-            margin-top: -60px; 
-            padding: 0 30px; 
-            position: relative; 
-        }
-        .profile-pfp { 
-            width: 120px; 
-            height: 120px; 
-            border-radius: 50%; 
-            border: 5px solid var(--bg); 
-            background: var(--surface); 
-            object-fit: cover; 
-        }
-        .profile-meta h2 { 
-            font-family: var(--font-head); 
-            font-size: 1.8rem; 
-        }
-        .profile-meta p { 
-            color: var(--text-muted); 
-            font-size: 0.9rem; 
-        }
-        .edit-profile-btn {
-            position: absolute; 
-            top: 10px; 
-            right: 30px;
-            padding: 8px 16px; 
-            background: var(--surface); 
-            border: 1px solid var(--border);
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-size: 0.85rem; 
-            transition: 0.3s;
-        }
-        .edit-profile-btn:hover { 
-            border-color: var(--primary); 
-            color: var(--primary); 
-        }
+    .user-profile-ui {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      transition: 0.25s;
+    }
+    .user-profile-ui:hover {
+      border-color: rgba(0,242,234,0.35);
+      transform: translateY(-1px);
+    }
 
-        .container { 
-            margin-top: 100px; 
-            padding: 0 5% 50px; 
-            min-height: 80vh; 
-        }
-        .section { 
-            display: none; 
-            animation: fadeIn 0.4s ease forwards; 
-        }
-        .section.active { display: block; }
-        @keyframes fadeIn { 
-            from { opacity: 0; transform: translateY(10px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,0.10);
+    }
 
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-            gap: 25px; 
-        }
-        .card { 
-            background: var(--surface); 
-            border: 1px solid var(--border); 
-            border-radius: 15px; 
-            overflow: hidden; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            position: relative;
-        }
-        .card:hover { 
-            transform: translateY(-5px); 
-            border-color: var(--primary); 
-        }
-        .card-media { 
-            width: 100%; 
-            aspect-ratio: 1/1; 
-            position: relative; 
-            background: #000; 
-        }
-        .card-media img, 
-        .card-media video { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            display: block; 
-        }
-        .video-overlay { 
-            position: absolute; 
-            top: 10px; 
-            right: 10px; 
-            background: rgba(0,0,0,0.6); 
-            padding: 4px 8px; 
-            border-radius: 4px; 
-            font-size: 0.7rem; 
-            color: #fff; 
-        }
-        .card-content { padding: 15px; }
-        .card-prompt { 
-            font-family: 'Fira Code'; 
-            font-size: 0.8rem; 
-            color: var(--text-muted); 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-            white-space: nowrap; 
-        }
-        .card-stats { 
-            display: flex; 
-            gap: 15px; 
-            margin-top: 10px; 
-            font-size: 0.8rem; 
-            color: var(--text-muted); 
-        }
-        .card-stats span { 
-            display: flex; 
-            align-items: center; 
-            gap: 5px; 
-        }
+    .user-dropdown {
+      position: absolute;
+      top: 56px;
+      right: 0;
+      min-width: 240px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: none;
+      z-index: 2400;
+    }
+    .user-dropdown.active { display: block; }
 
-        .back-nav { 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            cursor: pointer; 
-            margin-bottom: 30px; 
-            color: var(--primary); 
-            font-weight: 600; 
-        }
-        .details-wrapper { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 40px; 
-        }
-        .details-visual { 
-            border-radius: 15px; 
-            overflow: hidden; 
-            border: 1px solid var(--border); 
-            background: #000; 
-            position: sticky; 
-            top: 100px; 
-        }
-        .details-visual img, 
-        .details-visual video { 
-            width: 100%; 
-            display: block; 
-        }
-        .prompt-text-area { 
-            background: var(--surface); 
-            padding: 25px; 
-            border-radius: 12px; 
-            max-height: 300px; 
-            overflow-y: auto; 
-            font-family: 'Fira Code';
-            border: 1px solid var(--border); 
-            line-height: 1.7; 
-            margin: 20px 0;
-        }
+    .dd-head {
+      padding: 14px 14px 12px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(0,242,234,0.06), transparent);
+    }
+    .dd-title {
+      font-weight: 800;
+      font-size: 0.95rem;
+      font-family: var(--font-head);
+      margin-bottom: 4px;
+    }
+    .dd-sub {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
-        .related-prompts { 
-            margin-top: 50px; 
-            padding-top: 30px; 
-            border-top: 1px solid var(--border); 
-        }
-        .related-prompts h3 { margin-bottom: 20px; }
-        .slide-container { 
-            display: flex; 
-            gap: 15px; 
-            overflow-x: auto; 
-            padding-bottom: 15px; 
-            scrollbar-width: thin; 
-        }
-        .slide-card { 
-            min-width: 200px; 
-            background: var(--surface); 
-            border: 1px solid var(--border); 
-            border-radius: 12px; 
-            overflow: hidden; 
-            cursor: pointer; 
-            transition: 0.3s; 
-        }
-        .slide-card:hover { 
-            border-color: var(--primary); 
-            transform: scale(1.05); 
-        }
-        .slide-card img { 
-            width: 100%; 
-            aspect-ratio: 1/1; 
-            object-fit: cover; 
-        }
-        .slide-card-info { 
-            padding: 10px; 
-            font-size: 0.75rem; 
-        }
+    .dd-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      cursor: pointer;
+      color: var(--text);
+      transition: 0.2s;
+      font-size: 0.92rem;
+      border-top: 1px solid rgba(255,255,255,0.03);
+    }
+    .dd-item:hover { background: rgba(255,255,255,0.05); }
+    .dd-item i { width: 18px; color: var(--text-muted); }
+    .dd-item.danger i, .dd-item.danger { color: #ff6b8a; }
+    .dd-item.danger:hover { background: rgba(255,0,85,0.10); }
 
-        .form-box { 
-            max-width: 600px; 
-            margin: 0 auto; 
-            background: var(--surface); 
-            padding: 30px; 
-            border-radius: 15px; 
-            border: 1px solid var(--border); 
-        }
-        .input-f { 
-            width: 100%; 
-            padding: 14px; 
-            background: var(--bg); 
-            border: 1px solid var(--border); 
-            color: var(--text); 
-            border-radius: 12px; 
-            margin-bottom: 15px; 
-            outline: none; 
-            transition: 0.3s; 
-            font-family: var(--font-main); 
-        }
-        .input-f:focus { border-color: var(--primary); }
+    /* Hamburger (upgraded) */
+    .hamburger {
+      display: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      position: relative;
+      cursor: pointer;
+      z-index: 3000;
+      transition: 0.25s;
+    }
+    .hamburger:hover { transform: translateY(-1px); border-color: rgba(0,242,234,0.35); }
+    .hamburger span {
+      display: block;
+      position: absolute;
+      height: 2px;
+      width: 20px;
+      left: 11px;
+      background: var(--text);
+      border-radius: 9px;
+      transition: .25s ease-in-out;
+      opacity: 0.95;
+    }
+    .hamburger span:nth-child(1) { top: 14px; }
+    .hamburger span:nth-child(2) { top: 21px; width: 16px; left: 15px; }
+    .hamburger span:nth-child(3) { top: 28px; }
 
-        .upload-zone { 
-            border: 2px dashed var(--border); 
-            padding: 40px; 
-            text-align: center; 
-            border-radius: 12px; 
-            margin-bottom: 15px; 
-            cursor: pointer; 
-            transition: 0.3s;
-            position: relative; 
-            overflow: hidden;
-        }
-        .upload-zone:hover { border-color: var(--primary); }
-        .upload-zone.has-file { 
-            border-color: var(--primary); 
-            background: var(--surface); 
-        }
-        .preview-image { 
-            max-width: 100%; 
-            max-height: 300px; 
-            border-radius: 8px; 
-            margin-top: 15px; 
-        }
+    .hamburger.open span:nth-child(1) { top: 21px; transform: rotate(135deg); width: 22px; left: 11px; }
+    .hamburger.open span:nth-child(2) { opacity: 0; left: -60px; }
+    .hamburger.open span:nth-child(3) { top: 21px; transform: rotate(-135deg); width: 22px; left: 11px; }
 
-        .modal { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0,0,0,0.8); 
-            z-index: 3000; 
-            backdrop-filter: blur(5px); 
-        }
-        .modal.active { 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            animation: fadeIn 0.3s; 
-        }
-        .modal-content { 
-            background: var(--bg); 
-            border: 1px solid var(--border); 
-            border-radius: 20px; 
-            padding: 40px; 
-            max-width: 500px; 
-            width: 90%; 
-            position: relative; 
-        }
-        .modal-close { 
-            position: absolute; 
-            top: 15px; 
-            right: 15px; 
-            cursor: pointer; 
-            font-size: 1.5rem; 
-            color: var(--text-muted); 
-        }
-        .modal-close:hover { color: var(--primary); }
+    /* Drawer overlay */
+    .drawer-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(2px);
+      z-index: 2300;
+    }
+    .drawer-overlay.active { display: block; }
 
-        .loading { 
-            display: none; 
-            position: fixed; 
-            top: 50%; 
-            left: 50%; 
-            transform: translate(-50%, -50%); 
-            z-index: 4000; 
-        }
-        .loading.active { display: block; }
-        .spinner { 
-            border: 4px solid var(--surface); 
-            border-top: 4px solid var(--primary); 
-            border-radius: 50%; 
-            width: 50px; 
-            height: 50px; 
-            animation: spin 1s linear infinite; 
-        }
-        @keyframes spin { 
-            0% { transform: rotate(0deg); } 
-            100% { transform: rotate(360deg); } 
-        }
+    /* Categories */
+    .cat-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .cat-scroll::-webkit-scrollbar { display: none; }
+    .cat-tag {
+      white-space: nowrap;
+      padding: 8px 20px;
+      border-radius: 999px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: 0.3s;
+    }
+    .cat-tag.active {
+      background: var(--primary);
+      color: #000;
+      border-color: var(--primary);
+    }
 
-        .empty-state { 
-            text-align: center; 
-            padding: 60px 20px; 
-            color: var(--text-muted); 
-        }
-        .empty-state i { 
-            font-size: 4rem; 
-            margin-bottom: 20px; 
-            opacity: 0.5; 
-        }
+    /* Layout */
+    .container {
+      margin-top: 100px;
+      padding: 0 5% 50px;
+      min-height: 80vh;
+    }
 
-        .mobile-bottom-controls { 
-            display: none; 
-            margin-top: auto; 
-            width: 100%; 
-            border-top: 1px solid var(--border); 
-            padding-top: 20px; 
-        }
+    .section {
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+    .section.active { display: block; }
 
-        @media (max-width: 992px) {
-            .details-wrapper { grid-template-columns: 1fr; }
-            .details-visual { position: relative; top: 0; }
-            .nav-links { 
-                position: fixed; 
-                top: 0; 
-                left: -100%; 
-                width: 85%; 
-                height: 100vh;
-                background: var(--bg); 
-                flex-direction: column; 
-                padding: 100px 40px; 
-                transition: 0.4s cubic-bezier(0.77, 0, 0.175, 1);
-                align-items: flex-start; 
-                z-index: 2500; 
-                border-right: 1px solid var(--border);
-            }
-            .nav-links.open { left: 0; }
-            .hamburger { display: block; }
-            .nav-right .btn-google { display: none; }
-            .nav-right #theme-toggle-desktop { display: none; }
-            .mobile-bottom-controls { display: block; }
-        }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        footer { 
-            padding: 60px 5%; 
-            border-top: 1px solid var(--border); 
-            text-align: center; 
-            color: var(--text-muted); 
-            margin-top: 50px; 
-        }
-        .footer-nav { 
-            display: flex; 
-            justify-content: center; 
-            gap: 20px; 
-            margin-bottom: 20px; 
-            flex-wrap: wrap; 
-        }
-        .footer-nav span { 
-            cursor: pointer; 
-            transition: 0.2s; 
-        }
-        .footer-nav span:hover { color: var(--primary); }
-        .social-links { 
-            display: flex; 
-            justify-content: center; 
-            gap: 20px; 
-            margin-top: 15px; 
-            font-size: 1.2rem; 
-        }
-        .social-links a { 
-            color: var(--text); 
-            transition: 0.3s; 
-        }
-        .social-links a:hover { color: var(--primary); }
-    </style>
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: 0.3s;
+      position: relative;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: var(--primary);
+    }
+    .card-media {
+      width: 100%;
+      aspect-ratio: 1/1;
+      position: relative;
+      background: #000;
+    }
+    .card-media img,
+    .card-media video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .video-overlay {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.6);
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      color: #fff;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .card-content { padding: 15px; }
+    .card-prompt {
+      font-family: 'Fira Code';
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .card-stats {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .card-stats span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Details */
+    .back-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      margin-bottom: 30px;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .details-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+    .details-visual {
+      border-radius: 15px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #000;
+      position: sticky;
+      top: 100px;
+    }
+    .details-visual img,
+    .details-visual video {
+      width: 100%;
+      display: block;
+    }
+
+    .prompt-text-area {
+      background: var(--surface);
+      padding: 25px;
+      border-radius: 12px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: 'Fira Code';
+      border: 1px solid var(--border);
+      line-height: 1.7;
+      margin: 20px 0;
+    }
+
+    /* Related slider (smooth, scroll-snap + arrows) */
+    .related-prompts {
+      margin-top: 50px;
+      padding-top: 30px;
+      border-top: 1px solid var(--border);
+    }
+
+    .slider-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .slider-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .slider-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .slider-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(0,242,234,0.35);
+    }
+
+    .slide-container {
+      display: flex;
+      gap: 15px;
+      overflow-x: auto;
+      padding: 8px 2px 18px;
+      scrollbar-width: thin;
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    .slide-container::-webkit-scrollbar { height: 8px; }
+    .slide-container::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.12);
+      border-radius: 10px;
+    }
+
+    .slide-card {
+      min-width: 220px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: 0.25s;
+      scroll-snap-align: start;
+    }
+    .slide-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-3px);
+    }
+    .slide-card img, .slide-card video {
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      display: block;
+      background: #000;
+    }
+    .slide-card-info {
+      padding: 12px;
+      font-size: 0.8rem;
+      display: grid;
+      gap: 6px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      width: fit-content;
+    }
+
+    /* Forms + pages */
+    .form-box {
+      max-width: 760px;
+      margin: 0 auto;
+      background: var(--surface);
+      padding: 30px;
+      border-radius: 15px;
+      border: 1px solid var(--border);
+    }
+
+    .input-f {
+      width: 100%;
+      padding: 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 12px;
+      margin-bottom: 15px;
+      outline: none;
+      transition: 0.3s;
+      font-family: var(--font-main);
+    }
+    .input-f:focus { border-color: var(--primary); }
+
+    .upload-zone {
+      border: 2px dashed var(--border);
+      padding: 40px;
+      text-align: center;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .upload-zone:hover { border-color: var(--primary); }
+    .upload-zone.has-file {
+      border-color: var(--primary);
+      background: var(--surface);
+    }
+    .preview-image {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 8px;
+      margin-top: 15px;
+    }
+
+    .page-hero {
+      background: linear-gradient(180deg, rgba(0,242,234,0.08), transparent);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 26px;
+      margin-bottom: 18px;
+    }
+    .page-hero h2 {
+      font-family: var(--font-head);
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+    }
+    .page-hero p { color: var(--text-muted); }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .mini-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .action-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .action-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .action-item:hover { border-color: rgba(0,242,234,0.35); transform: translateY(-1px); }
+    .action-item .left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .action-item .left i { color: var(--text-muted); width: 18px; }
+
+    .badge-soon {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,0,85,0.25);
+      background: rgba(255,0,85,0.10);
+      color: #ff9ab3;
+      font-weight: 800;
+      font-size: 0.85rem;
+      width: fit-content;
+      margin-top: 12px;
+    }
+
+    /* Profile public view */
+    .profile-header { position: relative; margin-bottom: 40px; }
+    .profile-cover {
+      width: 100%;
+      height: 200px;
+      border-radius: 20px;
+      background: linear-gradient(90deg, #1a1a2e, #16213e);
+      object-fit: cover;
+      border: 1px solid var(--border);
+    }
+    .profile-info-box {
+      display: flex;
+      align-items: flex-end;
+      gap: 20px;
+      margin-top: -60px;
+      padding: 0 30px;
+      position: relative;
+    }
+    .profile-pfp {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 5px solid var(--bg);
+      background: var(--surface);
+      object-fit: cover;
+    }
+    .profile-meta h2 { font-family: var(--font-head); font-size: 1.8rem; }
+    .profile-meta p { color: var(--text-muted); font-size: 0.9rem; }
+    .edit-profile-btn {
+      position: absolute;
+      top: 10px;
+      right: 30px;
+      padding: 8px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: 0.3s;
+    }
+    .edit-profile-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 3000;
+      backdrop-filter: blur(5px);
+    }
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s;
+    }
+    .modal-content {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 520px;
+      width: 92%;
+      position: relative;
+      box-shadow: var(--shadow);
+    }
+    .modal-close {
+      position: absolute;
+      top: 15px; right: 15px;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: var(--text-muted);
+    }
+    .modal-close:hover { color: var(--primary); }
+
+    /* Loading */
+    .loading {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 4000;
+    }
+    .loading.active { display: block; }
+    .spinner {
+      border: 4px solid var(--surface);
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
+    /* Bottom nav (mobile) */
+    .bottom-nav {
+      display: none;
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 74px;
+      padding: 10px 12px;
+      background: var(--glass);
+      backdrop-filter: blur(18px);
+      border-top: 1px solid var(--border);
+      z-index: 2100;
+    }
+    .bottom-nav-inner {
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      align-items: center;
+    }
+
+    .bn-item {
+      height: 54px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.04);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      user-select: none;
+    }
+    .bn-item i { font-size: 1.1rem; }
+    .bn-item:hover { transform: translateY(-1px); border-color: rgba(0,242,234,0.30); color: var(--text); }
+
+    .bn-item.primary {
+      background: linear-gradient(135deg, rgba(0,242,234,0.18), rgba(255,0,85,0.10));
+      border-color: rgba(0,242,234,0.30);
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    /* Mobile drawer controls inside drawer */
+    .mobile-bottom-controls {
+      display: none;
+      margin-top: auto;
+      width: 100%;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+    }
+
+    /* Footer */
+    footer {
+      padding: 60px 5%;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--text-muted);
+      margin-top: 50px;
+    }
+    .footer-nav {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .footer-nav span {
+      cursor: pointer;
+      transition: 0.2s;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+    }
+    .footer-nav span:hover { color: var(--primary); border-color: rgba(0,242,234,0.25); }
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 15px;
+      font-size: 1.2rem;
+    }
+    .social-links a { color: var(--text); transition: 0.3s; }
+    .social-links a:hover { color: var(--primary); }
+
+    @media (max-width: 992px) {
+      .details-wrapper { grid-template-columns: 1fr; }
+      .details-visual { position: relative; top: 0; }
+
+      .nav-links {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 86%;
+        max-width: 420px;
+        height: 100vh;
+        background: var(--bg);
+        flex-direction: column;
+        padding: 95px 28px 28px;
+        transition: 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+        align-items: flex-start;
+        z-index: 2500;
+        border-right: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        gap: 8px;
+      }
+      .nav-links.open { left: 0; }
+
+      .nav-link {
+        width: 100%;
+        padding: 12px 12px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.03);
+      }
+
+      .hamburger { display: block; }
+      .nav-right #theme-toggle-desktop { display: none; }
+
+      /* Sign-in button stays in navbar (per request), but looks better */
+      .nav-right .btn-google { display: flex; }
+
+      .mobile-bottom-controls { display: block; }
+      .bottom-nav { display: block; }
+      .container { padding-bottom: 110px; } /* space for bottom nav */
+      .two-col { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
+
 <body>
+  <!-- Drawer overlay -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="app.closeMenu()"></div>
 
-    <div class="loading" id="loading">
-        <div class="spinner"></div>
+  <div class="loading" id="loading"><div class="spinner"></div></div>
+
+  <!-- Edit Profile modal (kept; no delete) -->
+  <div class="modal" id="editProfileModal">
+    <div class="modal-content">
+      <i class="fas fa-times modal-close" onclick="app.closeModal('editProfileModal')"></i>
+      <h2 style="margin-bottom: 20px;">Edit Profile</h2>
+
+      <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Display Name</label>
+      <input type="text" class="input-f" id="editDisplayName" placeholder="Enter your display name">
+
+      <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Profile Picture</label>
+      <button class="btn-google" style="width: 100%; justify-content: center; margin-bottom: 15px;" onclick="app.uploadProfileImage()">
+        <i class="fas fa-image"></i> Change Profile Picture
+      </button>
+
+      <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Cover Photo</label>
+      <button class="btn-google" style="width: 100%; justify-content: center; margin-bottom: 20px;" onclick="app.uploadCoverImage()">
+        <i class="fas fa-image"></i> Change Cover Photo
+      </button>
+
+      <button class="btn-google" style="width: 100%; justify-content: center; background: var(--primary); color: #000;" onclick="app.saveProfileFromModal()">
+        <i class="fas fa-save"></i> Save Changes
+      </button>
+    </div>
+  </div>
+
+  <nav>
+    <div class="logo" onclick="app.nav('home')">Ai<span>prompt.</span></div>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a class="nav-link" onclick="app.nav('home')">Home</a></li>
+      <li><a class="nav-link" onclick="app.nav('images')">Images</a></li>
+      <li><a class="nav-link" onclick="app.nav('videos')">Videos</a></li>
+
+      <!-- Login sonrası görünəcək -->
+      <li><a class="nav-link" id="bookmarksNavLink" style="display:none;" onclick="app.nav('bookmarks')">Bookmarks</a></li>
+      <li><a class="nav-link" id="uploadNavLink" style="display:none;" onclick="app.nav('upload')">Upload</a></li>
+      <li><a class="nav-link" id="aiGenerateNavLink" style="display:none;" onclick="app.nav('ai-generate')">AI Generate</a></li>
+
+      <!-- Public pages -->
+      <li><a class="nav-link" onclick="app.nav('about')">About</a></li>
+      <li><a class="nav-link" onclick="app.nav('contact')">Contact</a></li>
+      <li><a class="nav-link" onclick="app.nav('faq')">FAQ</a></li>
+      <li><a class="nav-link" onclick="app.nav('privacy')">Privacy</a></li>
+      <li><a class="nav-link" onclick="app.nav('terms')">Terms</a></li>
+
+      <div class="mobile-bottom-controls">
+        <div onclick="app.toggleTheme()" style="cursor:pointer; margin-bottom: 16px; display:flex; gap:10px; align-items:center;">
+          <i class="fas fa-adjust"></i> Switch Theme
+        </div>
+        <button style="background: var(--secondary); margin-top: 8px; color: #fff; width: 100%; justify-content:center;" class="btn-google" id="signOutMobile" onclick="app.signOut()">
+          <i class="fas fa-sign-out-alt"></i> Sign Out
+        </button>
+      </div>
+    </ul>
+
+    <div class="nav-right">
+      <div id="theme-toggle-desktop" onclick="app.toggleTheme()" style="cursor:pointer; width:44px; height:44px; display:flex; align-items:center; justify-content:center; border-radius:14px; background:var(--surface); border:1px solid var(--border);">
+        <i class="fas fa-adjust"></i>
+      </div>
+
+      <!-- Sign In navbar içində -->
+      <button id="signInBtn" class="btn-google" onclick="app.signIn()"><i class="fab fa-google"></i> Sign In</button>
+
+      <!-- User dropdown (desktop) -->
+      <div class="user-menu" id="userMenu">
+        <div id="userProfile" class="user-profile-ui" onclick="app.toggleUserDropdown(event)">
+          <span id="userDisplayName" style="font-size: 0.85rem; font-weight: 800;"></span>
+          <img src="" class="user-avatar" id="userAvatar" alt="User">
+        </div>
+
+        <div class="user-dropdown" id="userDropdown">
+          <div class="dd-head">
+            <div class="dd-title" id="ddName">Account</div>
+            <div class="dd-sub" id="ddEmail">—</div>
+          </div>
+
+          <div class="dd-item" onclick="app.nav('my-profile')"><i class="fa-regular fa-user"></i> My Profile</div>
+          <div class="dd-item" onclick="app.nav('settings')"><i class="fa-solid fa-gear"></i> Settings</div>
+          <div class="dd-item" id="ddBookmarks" onclick="app.nav('bookmarks')"><i class="fa-regular fa-bookmark"></i> Bookmarks</div>
+          <div class="dd-item" id="ddUpload" onclick="app.nav('upload')"><i class="fa-solid fa-upload"></i> Upload</div>
+          <div class="dd-item danger" onclick="app.signOut()"><i class="fa-solid fa-right-from-bracket"></i> Logout</div>
+        </div>
+      </div>
+
+      <div class="hamburger" id="hamBtn" onclick="app.toggleMenu()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Bottom nav (mobile) -->
+  <div class="bottom-nav" id="bottomNav">
+    <div class="bottom-nav-inner">
+      <div class="bn-item" onclick="app.nav('images')"><i class="fa-regular fa-image"></i><div>Images</div></div>
+      <div class="bn-item" onclick="app.nav('videos')"><i class="fa-solid fa-video"></i><div>Videos</div></div>
+
+      <!-- login sonrası görünəcək -->
+      <div class="bn-item primary" id="bnAiGenerate" style="display:none;" onclick="app.nav('ai-generate')">
+        <i class="fa-solid fa-wand-magic-sparkles"></i><div>AI</div>
+      </div>
+
+      <div class="bn-item" id="bnUpload" style="display:none;" onclick="app.nav('upload')"><i class="fa-solid fa-cloud-arrow-up"></i><div>Upload</div></div>
+      <div class="bn-item" id="bnProfile" style="display:none;" onclick="app.nav('profile-menu')"><i class="fa-regular fa-circle-user"></i><div>Profile</div></div>
+
+      <!-- logged out state: keep 5 columns clean by showing SignIn shortcut -->
+      <div class="bn-item" id="bnSignIn" style="display:flex;" onclick="app.signIn()"><i class="fa-brands fa-google"></i><div>Sign in</div></div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <section id="home" class="section active">
+      <div style="text-align: center; padding: 40px 0;">
+        <h1 style="font-size: clamp(2rem, 5vw, 3.5rem); font-family: var(--font-head);">
+          The Creative <span style="color:var(--primary)">Universe</span>
+        </h1>
+        <p style="color:var(--text-muted); margin-top: 15px;">Premium AI prompts for Images and Videos.</p>
+      </div>
+      <div class="cat-scroll" id="home-cats"></div>
+      <div class="grid" id="home-grid"></div>
+    </section>
+
+    <!-- PROFILE MENU (mobile page) -->
+    <section id="profile-menu" class="section">
+      <div class="page-hero">
+        <h2>Profile</h2>
+        <p>Account quick actions.</p>
+      </div>
+      <div class="form-box">
+        <div class="action-list">
+          <div class="action-item" onclick="app.nav('my-profile')">
+            <div class="left"><i class="fa-regular fa-user"></i><div><div style="font-weight:800">My Profile</div><div style="color:var(--text-muted); font-size:0.85rem">Dashboard & shortcuts</div></div></div>
+            <i class="fa-solid fa-chevron-right" style="color:var(--text-muted)"></i>
+          </div>
+          <div class="action-item" onclick="app.nav('settings')">
+            <div class="left"><i class="fa-solid fa-gear"></i><div><div style="font-weight:800">Settings</div><div style="color:var(--text-muted); font-size:0.85rem">Name, photo, cover</div></div></div>
+            <i class="fa-solid fa-chevron-right" style="color:var(--text-muted)"></i>
+          </div>
+          <div class="action-item" onclick="app.nav('bookmarks')">
+            <div class="left"><i class="fa-regular fa-bookmark"></i><div><div style="font-weight:800">Bookmarks</div><div style="color:var(--text-muted); font-size:0.85rem">Saved prompts</div></div></div>
+            <i class="fa-solid fa-chevron-right" style="color:var(--text-muted)"></i>
+          </div>
+          <div class="action-item" onclick="app.signOut()">
+            <div class="left"><i class="fa-solid fa-right-from-bracket"></i><div><div style="font-weight:800">Logout</div><div style="color:var(--text-muted); font-size:0.85rem">Sign out securely</div></div></div>
+            <i class="fa-solid fa-chevron-right" style="color:var(--text-muted)"></i>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MY PROFILE (separate from public user-view) -->
+    <section id="my-profile" class="section">
+      <div class="page-hero">
+        <h2>My Profile</h2>
+        <p>Your account dashboard (public profile is a separate view).</p>
+      </div>
+
+      <div class="two-col">
+        <div class="mini-card">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <img id="myAvatar" src="https://i.pravatar.cc/150?u=default" style="width:64px; height:64px; border-radius:18px; object-fit:cover; border:1px solid var(--border);" alt="avatar">
+            <div>
+              <div id="myName" style="font-family:var(--font-head); font-weight:900; font-size:1.1rem;">—</div>
+              <div id="myEmail" style="color:var(--text-muted); font-size:0.9rem;">—</div>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+            <button class="btn-google" style="background:var(--primary); color:#000;" onclick="app.openMyPublicProfile()">
+              <i class="fa-regular fa-id-card"></i> View public profile
+            </button>
+            <button class="btn-google" style="background:var(--surface); color:var(--text); border:1px solid var(--border);" onclick="app.nav('settings')">
+              <i class="fa-solid fa-gear"></i> Settings
+            </button>
+          </div>
+        </div>
+
+        <div class="mini-card">
+          <div style="font-family:var(--font-head); font-weight:900; font-size:1.05rem; margin-bottom:10px;">Quick actions</div>
+          <div class="action-list">
+            <div class="action-item" onclick="app.nav('upload')">
+              <div class="left"><i class="fa-solid fa-upload"></i><div><div style="font-weight:800">Upload</div><div style="color:var(--text-muted); font-size:0.85rem">Share your prompt</div></div></div>
+              <i class="fa-solid fa-chevron-right" style="color:var(--text-muted)"></i>
+            </div>
+            <div class="action-item" onclick="app.nav('bookmarks')">
+              <div class="left"><i class="fa-regular fa-bookmark"></i><div><div style="font-weight:800">Bookmarks</div><div style="color:var(--text-muted); font-size:0.85rem">Your saved items</div></div></div>
+              <i class="fa-solid fa-chevron-right" style="color:var(--text-muted)"></i>
+            </div>
+            <div class="action-item" onclick="app.nav('ai-generate')">
+              <div class="left"><i class="fa-solid fa-wand-magic-sparkles"></i><div><div style="font-weight:800">AI Generate</div><div style="color:var(--text-muted); font-size:0.85rem">Coming soon</div></div></div>
+              <i class="fa-solid fa-chevron-right" style="color:var(--text-muted)"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="settings" class="section">
+      <div class="page-hero">
+        <h2>Settings</h2>
+        <p>Update your display name, profile picture and cover photo.</p>
+      </div>
+
+      <div class="form-box">
+        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Display Name</label>
+        <input type="text" class="input-f" id="settingsDisplayName" placeholder="Enter your display name">
+
+        <div class="two-col" style="margin-top:10px;">
+          <button class="btn-google" style="width:100%; justify-content:center; background:var(--surface); color:var(--text); border:1px solid var(--border);" onclick="app.uploadProfileImage()">
+            <i class="fas fa-image"></i> Change profile picture
+          </button>
+          <button class="btn-google" style="width:100%; justify-content:center; background:var(--surface); color:var(--text); border:1px solid var(--border);" onclick="app.uploadCoverImage()">
+            <i class="fas fa-image"></i> Change cover photo
+          </button>
+        </div>
+
+        <button class="btn-google" style="width:100%; justify-content:center; background:var(--primary); color:#000; margin-top:12px;" onclick="app.saveSettings()">
+          <i class="fas fa-save"></i> Save settings
+        </button>
+
+        <button class="btn-google" style="width:100%; justify-content:center; background:var(--secondary); color:#fff; margin-top:10px;" onclick="app.signOut()">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </section>
+
+    <!-- PUBLIC USER VIEW (kept) -->
+    <section id="user-view" class="section">
+      <div class="profile-header">
+        <img src="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&w=1200" class="profile-cover" id="viewCoverImage">
+        <button class="edit-profile-btn" id="editProfileBtn" style="display: none;" onclick="app.openEditProfile()">
+          <i class="fas fa-edit"></i> Edit Profile
+        </button>
+        <div class="profile-info-box">
+          <img src="https://i.pravatar.cc/150?u=default" class="profile-pfp" id="viewProfileImage">
+          <div class="profile-meta">
+            <h2 id="view-name">User Name</h2>
+            <p id="view-email" style="color: var(--text-muted); font-size: 0.85rem;"></p>
+            <p style="margin-top: 5px;"><i class="far fa-calendar-alt"></i> <span id="view-joined">Joined Recently</span></p>
+          </div>
+        </div>
+      </div>
+      <h3 style="margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+        Artworks (<span id="artworkCount">0</span>)
+      </h3>
+      <div class="grid" id="user-art-grid"></div>
+    </section>
+
+    <section id="images" class="section">
+      <h2 style="margin-bottom: 20px;">Image Prompts</h2>
+      <div class="cat-scroll" id="image-cats"></div>
+      <div class="grid" id="image-grid"></div>
+    </section>
+
+    <section id="videos" class="section">
+      <h2 style="margin-bottom: 20px;">Video Prompts</h2>
+      <div class="cat-scroll" id="video-cats"></div>
+      <div class="grid" id="video-grid"></div>
+    </section>
+
+    <section id="details" class="section">
+      <div class="back-nav" onclick="app.goBack()"><i class="fas fa-arrow-left"></i> Back</div>
+      <div class="details-wrapper">
+        <div class="details-visual" id="det-visual"></div>
+
+        <div class="details-info">
+          <h2 id="det-user" style="cursor:pointer; color: var(--primary); transition:0.3s; display: flex; align-items: center; gap: 10px;">
+            <img src="" id="det-user-avatar" style="width: 40px; height: 40px; border-radius: 50%; display: none;">
+            <span></span>
+          </h2>
+
+          <div style="display: flex; gap: 20px; margin: 15px 0; font-size: 0.9rem; color: var(--text-muted);">
+            <span><i class="fas fa-heart"></i> <span id="det-likes">0</span> likes</span>
+            <span><i class="fas fa-copy"></i> <span id="det-copies">0</span> copies</span>
+          </div>
+
+          <div style="margin: 15px 0;">
+            <span style="background: var(--surface); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem;" id="det-category"></span>
+          </div>
+
+          <div class="prompt-text-area" id="det-prompt"></div>
+
+          <div style="display:flex; gap:10px; flex-wrap: wrap;">
+            <button class="btn-google" onclick="app.copyPrompt()"><i class="fas fa-copy"></i> Copy Prompt</button>
+            <button class="btn-google" id="det-heart" style="background:var(--surface); color:var(--text); border: 1px solid var(--border);" onclick="app.toggleBookmark()">
+              <i class="far fa-bookmark"></i> Bookmark
+            </button>
+          </div>
+
+          <div class="related-prompts">
+            <div class="slider-head">
+              <h3 style="display:flex; align-items:center; gap:10px;">
+                <i class="fas fa-fire" style="color: var(--secondary);"></i> Most Copied Prompts
+              </h3>
+              <div class="slider-actions">
+                <button class="slider-btn" onclick="app.scrollRelated(-1)" aria-label="Scroll left"><i class="fa-solid fa-chevron-left"></i></button>
+                <button class="slider-btn" onclick="app.scrollRelated(1)" aria-label="Scroll right"><i class="fa-solid fa-chevron-right"></i></button>
+              </div>
+            </div>
+            <div class="slide-container" id="relatedSlider"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="upload" class="section">
+      <div class="form-box">
+        <h2>Upload Prompt</h2>
+        <p style="color: var(--text-muted); margin: 10px 0 20px; font-size: 0.9rem;">Share your AI-generated masterpiece with the community</p>
+
+        <div style="margin-top:20px;">
+          <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Media File</label>
+          <div class="upload-zone" id="uploadZone" onclick="app.openCloudinaryWidget()">
+            <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--primary)"></i>
+            <p style="font-size: 0.9rem; margin-top:10px; font-weight: 800;">Click to Upload Image or Video</p>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 5px;">Supports: JPG, PNG, GIF, MP4, MOV</p>
+            <img id="uploadPreview" class="preview-image" style="display: none;">
+          </div>
+
+          <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Type</label>
+          <select class="input-f" id="up-type">
+            <option value="image">Image</option>
+            <option value="video">Video</option>
+          </select>
+
+          <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Category</label>
+          <select class="input-f" id="up-cat">
+            <option>Realistic</option>
+            <option>Abstract</option>
+            <option>Cyberpunk</option>
+            <option>Anime</option>
+            <option>3D Render</option>
+            <option>Photography</option>
+            <option>Fantasy</option>
+          </select>
+
+          <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Prompt</label>
+          <textarea class="input-f" id="up-prompt" rows="6" style="resize: vertical;" placeholder="Describe your masterpiece and the prompt used..."></textarea>
+
+          <button class="btn-google" style="width:100%; justify-content:center; background:var(--primary); color:#000;" onclick="app.submitUpload()">
+            <i class="fas fa-upload"></i> Publish Prompt
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="bookmarks" class="section">
+      <h2 style="margin-bottom: 25px;">My Bookmarks</h2>
+      <div class="grid" id="bookmark-grid"></div>
+    </section>
+
+    <!-- AI Generate (Coming Soon) -->
+    <section id="ai-generate" class="section">
+      <div class="page-hero">
+        <h2>AI Generate</h2>
+        <p>Next-gen generation experience for prompts & assets.</p>
+        <div class="badge-soon"><i class="fa-solid fa-bolt"></i> Coming Soon</div>
+      </div>
+
+      <div class="two-col">
+        <div class="mini-card">
+          <div style="font-family:var(--font-head); font-weight:900; font-size:1.05rem; margin-bottom:8px;">What’s coming</div>
+          <ul style="color:var(--text-muted); padding-left:18px; display:grid; gap:6px;">
+            <li>Prompt builder with smart suggestions.</li>
+            <li>Style presets for images & videos.</li>
+            <li>Save + export prompt packs.</li>
+          </ul>
+        </div>
+        <div class="mini-card">
+          <div style="font-family:var(--font-head); font-weight:900; font-size:1.05rem; margin-bottom:8px;">Early access</div>
+          <p style="color:var(--text-muted); font-size:0.95rem;">
+            This section is intentionally locked to logged-in users only.
+          </p>
+          <button class="btn-google" style="margin-top:12px; background:var(--surface); color:var(--text); border:1px solid var(--border);" onclick="app.nav('contact')">
+            <i class="fa-regular fa-paper-plane"></i> Contact for updates
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="section">
+      <div class="page-hero">
+        <h2>About</h2>
+        <p>Aiprompt is a premium gallery for curated AI prompts (image & video) shared by the community.</p>
+      </div>
+      <div class="two-col">
+        <div class="mini-card">
+          <div style="font-family:var(--font-head); font-weight:900; font-size:1.05rem; margin-bottom:8px;">Mission</div>
+          <p style="color:var(--text-muted);">Make prompt discovery fast, clean and inspiring—without sacrificing design quality.</p>
+        </div>
+        <div class="mini-card">
+          <div style="font-family:var(--font-head); font-weight:900; font-size:1.05rem; margin-bottom:8px;">How it works</div>
+          <p style="color:var(--text-muted);">Browse, open details, copy prompts, and bookmark your favorites. Upload your own work after login.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="section">
+      <div class="page-hero">
+        <h2>Contact</h2>
+        <p>For partnerships, feedback, and feature requests.</p>
+      </div>
+      <div class="form-box">
+        <div class="two-col">
+          <div>
+            <div style="color:var(--text-muted); font-size:0.85rem; margin-bottom:6px;">Email</div>
+            <div style="font-weight:800;">support@aiprompt.app</div>
+          </div>
+          <div>
+            <div style="color:var(--text-muted); font-size:0.85rem; margin-bottom:6px;">Social</div>
+            <div style="font-weight:800;">Instagram / LinkedIn</div>
+          </div>
+        </div>
+        <div style="margin-top:14px; color:var(--text-muted); font-size:0.95rem;">
+          Tip: Send screenshots + device width to report UI issues faster.
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section">
+      <div class="page-hero">
+        <h2>FAQ</h2>
+        <p>Quick answers.</p>
+      </div>
+      <div class="form-box">
+        <div class="mini-card" style="margin-bottom:12px;">
+          <div style="font-weight:900; margin-bottom:6px;">Why do I need to login?</div>
+          <div style="color:var(--text-muted);">Bookmarks, upload and AI Generate are account-based features.</div>
+        </div>
+        <div class="mini-card" style="margin-bottom:12px;">
+          <div style="font-weight:900; margin-bottom:6px;">Can I upload videos?</div>
+          <div style="color:var(--text-muted);">Yes—MP4/MOV are supported via Cloudinary upload widget.</div>
+        </div>
+        <div class="mini-card">
+          <div style="font-weight:900; margin-bottom:6px;">Why does the video stop when I navigate?</div>
+          <div style="color:var(--text-muted);">To prevent background playback and save battery/data.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Privacy -->
+    <section id="privacy" class="section">
+      <div class="page-hero">
+        <h2>Privacy Policy</h2>
+        <p>Short & clear summary for users.</p>
+      </div>
+      <div class="form-box">
+        <p style="color:var(--text-muted);">
+          Aiprompt stores authentication info (Firebase) and user-generated content (prompts, bookmarks). Media uploads are handled via Cloudinary.
+        </p>
+      </div>
+    </section>
+
+    <!-- Terms -->
+    <section id="terms" class="section">
+      <div class="page-hero">
+        <h2>Terms</h2>
+        <p>Basic rules for content and usage.</p>
+      </div>
+      <div class="form-box">
+        <p style="color:var(--text-muted);">
+          Do not upload copyrighted or illegal content. You are responsible for the prompts/media you publish.
+        </p>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <div class="footer-nav">
+      <span onclick="app.nav('home')">Home</span>
+      <span onclick="app.nav('images')">Images</span>
+      <span onclick="app.nav('videos')">Videos</span>
+
+      <span onclick="app.nav('about')">About</span>
+      <span onclick="app.nav('contact')">Contact</span>
+      <span onclick="app.nav('ai-generate')">AI Generate</span>
+      <span onclick="app.nav('privacy')">Privacy</span>
+      <span onclick="app.nav('terms')">Terms</span>
+      <span onclick="app.nav('faq')">FAQ</span>
     </div>
 
-    <div class="modal" id="editProfileModal">
-        <div class="modal-content">
-            <i class="fas fa-times modal-close" onclick="app.closeModal('editProfileModal')"></i>
-            <h2 style="margin-bottom: 20px;">Edit Profile</h2>
-            <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Display Name</label>
-            <input type="text" class="input-f" id="editDisplayName" placeholder="Enter your display name">
-
-            <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Profile Picture</label>
-            <button class="btn-google" style="width: 100%; justify-content: center; margin-bottom: 15px;" onclick="app.uploadProfileImage()">
-                <i class="fas fa-image"></i> Change Profile Picture
-            </button>
-
-            <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Cover Photo</label>
-            <button class="btn-google" style="width: 100%; justify-content: center; margin-bottom: 20px;" onclick="app.uploadCoverImage()">
-                <i class="fas fa-image"></i> Change Cover Photo
-            </button>
-
-            <button class="btn-google" style="width: 100%; justify-content: center; background: var(--primary); color: #000;" onclick="app.saveProfile()">
-                <i class="fas fa-save"></i> Save Changes
-            </button>
-        </div>
+    <div class="social-links">
+      <a href="https://instagram.com/ferhad.sultann" target="_blank" rel="noreferrer"><i class="fab fa-instagram"></i></a>
+      <a href="https://linkedin.com/in/farhadsultanov" target="_blank" rel="noreferrer"><i class="fab fa-linkedin"></i></a>
     </div>
 
-    <nav>
-        <div class="logo" onclick="app.nav('home')">Ai<span>prompt.</span></div>
-
-        <ul class="nav-links" id="navLinks">
-            <li><a class="nav-link" onclick="app.nav('home')">Home</a></li>
-            <li><a class="nav-link" onclick="app.nav('images')">Images</a></li>
-            <li><a class="nav-link" onclick="app.nav('videos')">Videos</a></li>
-            <li><a class="nav-link" onclick="app.nav('bookmarks')">Bookmarks</a></li>
-            <li><a class="nav-link" onclick="app.nav('upload')" style="display: none;" id="uploadNavLink">Upload</a></li>
-
-            <div class="mobile-bottom-controls">
-                <div onclick="app.toggleTheme()" style="cursor:pointer; margin-bottom: 20px; display:flex; gap:10px; align-items:center;">
-                    <i class="fas fa-adjust"></i> Switch Theme
-                </div>
-                <button style="background: var(--secondary); margin-top: 10px; color: #fff; width: 100%;" class="btn-google" id="signOutMobile" onclick="app.signOut()">
-                    <i class="fas fa-sign-out-alt"></i> Sign Out
-                </button>
-            </div>
-        </ul>
-
-        <div class="nav-right">
-            <div id="theme-toggle-desktop" onclick="app.toggleTheme()" style="cursor:pointer"><i class="fas fa-adjust"></i></div>
-
-            <button id="signInBtn" class="btn-google" onclick="app.signIn()"><i class="fab fa-google"></i> Sign In</button>
-
-            <div id="userProfile" class="user-profile-ui" onclick="app.openMyProfile()">
-                <span id="userDisplayName" style="font-size: 0.85rem; font-weight: 600;"></span>
-                <img src="" class="user-avatar" id="userAvatar" alt="User">
-            </div>
-
-            <div class="hamburger" id="hamBtn" onclick="app.toggleMenu()">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container">
-
-        <section id="home" class="section active">
-            <div style="text-align: center; padding: 40px 0;">
-                <h1 style="font-size: clamp(2rem, 5vw, 3.5rem); font-family: var(--font-head);">The Creative <span style="color:var(--primary)">Universe</span></h1>
-                <p style="color:var(--text-muted); margin-top: 15px;">Premium AI prompts for Images and Videos.</p>
-            </div>
-            <div class="cat-scroll" id="home-cats"></div>
-            <div class="grid" id="home-grid"></div>
-        </section>
-
-        <section id="user-view" class="section">
-            <div class="profile-header">
-                <img src="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&w=1200" class="profile-cover" id="viewCoverImage">
-                <button class="edit-profile-btn" id="editProfileBtn" style="display: none;" onclick="app.openEditProfile()">
-                    <i class="fas fa-edit"></i> Edit Profile
-                </button>
-                <div class="profile-info-box">
-                    <img src="https://i.pravatar.cc/150?u=default" class="profile-pfp" id="viewProfileImage">
-                    <div class="profile-meta">
-                        <h2 id="view-name">User Name</h2>
-                        <p id="view-email" style="color: var(--text-muted); font-size: 0.85rem;"></p>
-                        <p style="margin-top: 5px;"><i class="far fa-calendar-alt"></i> <span id="view-joined">Joined Recently</span></p>
-                    </div>
-                </div>
-            </div>
-            <h3 style="margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Artworks (<span id="artworkCount">0</span>)</h3>
-            <div class="grid" id="user-art-grid"></div>
-        </section>
-
-        <section id="images" class="section">
-            <h2 style="margin-bottom: 20px;">Image Prompts</h2>
-            <div class="cat-scroll" id="image-cats"></div>
-            <div class="grid" id="image-grid"></div>
-        </section>
-
-        <section id="videos" class="section">
-            <h2 style="margin-bottom: 20px;">Video Prompts</h2>
-            <div class="cat-scroll" id="video-cats"></div>
-            <div class="grid" id="video-grid"></div>
-        </section>
-
-        <section id="details" class="section">
-            <div class="back-nav" onclick="app.goBack()"><i class="fas fa-arrow-left"></i> Back</div>
-            <div class="details-wrapper">
-                <div class="details-visual" id="det-visual"></div>
-                <div class="details-info">
-                    <h2 id="det-user" style="cursor:pointer; color: var(--primary); transition:0.3s; display: flex; align-items: center; gap: 10px;">
-                        <img src="" id="det-user-avatar" style="width: 40px; height: 40px; border-radius: 50%; display: none;">
-                        <span></span>
-                    </h2>
-                    <div style="display: flex; gap: 20px; margin: 15px 0; font-size: 0.9rem; color: var(--text-muted);">
-                        <span><i class="fas fa-heart"></i> <span id="det-likes">0</span> likes</span>
-                        <span><i class="fas fa-copy"></i> <span id="det-copies">0</span> copies</span>
-                    </div>
-                    <div style="margin: 15px 0;">
-                        <span style="background: var(--surface); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem;" id="det-category"></span>
-                    </div>
-                    <div class="prompt-text-area" id="det-prompt"></div>
-                    <div style="display:flex; gap:10px; flex-wrap: wrap;">
-                        <button class="btn-google" onclick="app.copyPrompt()"><i class="fas fa-copy"></i> Copy Prompt</button>
-                        <button class="btn-google" id="det-heart" style="background:var(--surface); color:var(--text); border: 1px solid var(--border);" onclick="app.toggleBookmark()">
-                            <i class="far fa-bookmark"></i> Bookmark
-                        </button>
-                    </div>
-
-                    <div class="related-prompts">
-                        <h3><i class="fas fa-fire" style="color: var(--secondary);"></i> Most Copied Prompts</h3>
-                        <div class="slide-container" id="relatedSlider"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="upload" class="section">
-            <div class="form-box">
-                <h2>Upload Prompt</h2>
-                <p style="color: var(--text-muted); margin: 10px 0 20px; font-size: 0.9rem;">Share your AI-generated masterpiece with the community</p>
-                <div style="margin-top:20px;">
-                    <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Media File</label>
-                    <div class="upload-zone" id="uploadZone" onclick="app.openCloudinaryWidget()">
-                        <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--primary)"></i>
-                        <p style="font-size: 0.9rem; margin-top:10px; font-weight: 600;">Click to Upload Image or Video</p>
-                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 5px;">Supports: JPG, PNG, GIF, MP4, MOV</p>
-                        <img id="uploadPreview" class="preview-image" style="display: none;">
-                    </div>
-
-                    <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Type</label>
-                    <select class="input-f" id="up-type">
-                        <option value="image">Image</option>
-                        <option value="video">Video</option>
-                    </select>
-
-                    <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Category</label>
-                    <select class="input-f" id="up-cat">
-                        <option>Realistic</option>
-                        <option>Abstract</option>
-                        <option>Cyberpunk</option>
-                        <option>Anime</option>
-                        <option>3D Render</option>
-                        <option>Photography</option>
-                        <option>Fantasy</option>
-                    </select>
-
-                    <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Prompt</label>
-                    <textarea class="input-f" id="up-prompt" rows="6" style="resize: vertical;" placeholder="Describe your masterpiece and the prompt used..."></textarea>
-
-                    <button class="btn-google" style="width:100%; justify-content:center;" onclick="app.submitUpload()">
-                        <i class="fas fa-upload"></i> Publish Prompt
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <section id="bookmarks" class="section">
-            <h2 style="margin-bottom: 25px;">My Bookmarks</h2>
-            <div class="grid" id="bookmark-grid"></div>
-        </section>
-
+    <div style="margin-top: 20px; font-size: 0.8rem;">
+      © 2026 Aiprompt | Designed by
+      <a href="https://farhadsultanov.info" target="_blank" rel="noreferrer" style="color:var(--primary); text-decoration:none;">Farhad Sultanov</a>
     </div>
-
-    <footer>
-        <div class="footer-nav">
-            <span onclick="app.nav('home')">Home</span>
-            <span onclick="app.nav('images')">Images</span>
-            <span onclick="app.nav('videos')">Videos</span>
-        </div>
-        <div class="social-links">
-            <a href="https://instagram.com/ferhad.sultann" target="_blank"><i class="fab fa-instagram"></i></a>
-            <a href="https://linkedin.com/in/farhadsultanov" target="_blank"><i class="fab fa-linkedin"></i></a>
-        </div>
-        <div style="margin-top: 20px; font-size: 0.8rem;">© 2026 Aiprompt | Designed by <a href="https://farhadsultanov.info" target="_blank" style="color:var(--primary); text-decoration:none;">Farhad Sultanov</a></div>
-    </footer>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, set, get, push, update, increment, query, orderByChild, limitToLast, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCbEC5U7QcqhaSU-EM2S-5G4lA7o-pnFYI",
-            authDomain: "projects-34769.firebaseapp.com",
-            databaseURL: "https://projects-34769-default-rtdb.firebaseio.com",
-            projectId: "projects-34769",
-            storageBucket: "projects-34769.firebasestorage.app",
-            messagingSenderId: "740273672797",
-            appId: "1:740273672797:web:9c9df9bf330315c80533b4"
-        };
-
-        const firebaseApp = initializeApp(firebaseConfig);
-        const auth = getAuth(firebaseApp);
-        const db = getDatabase(firebaseApp);
-        const provider = new GoogleAuthProvider();
-
-        const CLOUDINARY_CLOUD_NAME = "dbiltdpxh";
-        const CLOUDINARY_UPLOAD_PRESET = "farhadsultan";
-
-        window.app = {
-            currentUser: null,
-            currentItem: null,
-            prevSection: 'home',
-            categories: ["All", "Realistic", "Abstract", "Cyberpunk", "Anime", "3D Render", "Photography", "Fantasy"],
-            uploadedFileUrl: null,
-            uploadWidget: null,
-
-            init() {
-                this.setupAuthListener();
-                this.initCloudinaryWidget();
-                this.renderCategories();
-                this.loadAllPrompts();
-            },
-
-            setupAuthListener() {
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        this.currentUser = user;
-                        await this.saveUserToDatabase(user);
-                        this.updateUIForLoggedIn(user);
-                    } else {
-                        this.currentUser = null;
-                        this.updateUIForLoggedOut();
-                    }
-                });
-            },
-
-            async saveUserToDatabase(user) {
-                const userRef = ref(db, `users/${user.uid}`);
-                const snapshot = await get(userRef);
-
-                if (!snapshot.exists()) {
-                    await set(userRef, {
-                        uid: user.uid,
-                        email: user.email,
-                        displayName: user.displayName || user.email.split('@')[0],
-                        photoURL: user.photoURL || 'https://i.pravatar.cc/150?u=' + user.uid,
-                        coverURL: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&w=1200',
-                        createdAt: new Date().toISOString(),
-                        lastLogin: new Date().toISOString()
-                    });
-                } else {
-                    await update(userRef, {
-                        lastLogin: new Date().toISOString()
-                    });
-                }
-            },
-
-            updateUIForLoggedIn(user) {
-                document.getElementById('signInBtn').style.display = 'none';
-                document.getElementById('userProfile').style.display = 'flex';
-                document.getElementById('uploadNavLink').style.display = 'block';
-                document.getElementById('signOutMobile').style.display = 'flex';
-
-                get(ref(db, `users/${user.uid}`)).then(snapshot => {
-                    if (snapshot.exists()) {
-                        const userData = snapshot.val();
-                        document.getElementById('userDisplayName').textContent = userData.displayName;
-                        document.getElementById('userAvatar').src = userData.photoURL;
-                    }
-                });
-            },
-
-            updateUIForLoggedOut() {
-                document.getElementById('signInBtn').style.display = 'flex';
-                document.getElementById('userProfile').style.display = 'none';
-                document.getElementById('uploadNavLink').style.display = 'none';
-                document.getElementById('signOutMobile').style.display = 'none';
-            },
-
-            async signIn() {
-                try {
-                    this.showLoading();
-                    const result = await signInWithPopup(auth, provider);
-                    console.log("Signed in:", result.user.email);
-                } catch (error) {
-                    console.error("Sign in error:", error);
-                    alert("Failed to sign in. Please try again.");
-                } finally {
-                    this.hideLoading();
-                }
-            },
-
-            async signOut() {
-                try {
-                    await signOut(auth);
-                    this.nav('home');
-                } catch (error) {
-                    console.error("Sign out error:", error);
-                }
-            },
-
-            initCloudinaryWidget() {
-                this.uploadWidget = cloudinary.createUploadWidget({
-                    cloudName: CLOUDINARY_CLOUD_NAME,
-                    uploadPreset: CLOUDINARY_UPLOAD_PRESET,
-                    sources: ['local', 'url', 'camera'],
-                    multiple: false,
-                    resourceType: 'auto',
-                    clientAllowedFormats: ['jpg', 'png', 'gif', 'mp4', 'mov', 'webm'],
-                    maxFileSize: 100000000,
-                    styles: {
-                        palette: {
-                            window: "#050508",
-                            windowBorder: "#00f2ea",
-                            tabIcon: "#00f2ea",
-                            menuIcons: "#ffffff",
-                            textDark: "#000000",
-                            textLight: "#ffffff",
-                            link: "#00f2ea",
-                            action: "#00f2ea",
-                            inactiveTabIcon: "#8b9bb4",
-                            error: "#ff0055",
-                            inProgress: "#00f2ea",
-                            complete: "#00f2ea",
-                            sourceBg: "#0a0a0f"
-                        }
-                    }
-                }, (error, result) => {
-                    if (!error && result && result.event === "success") {
-                        console.log("Upload success:", result.info);
-                        this.uploadedFileUrl = result.info.secure_url;
-                        this.showUploadPreview(result.info);
-                    }
-                });
-            },
-
-            openCloudinaryWidget() {
-                if (!this.currentUser) {
-                    alert("Please sign in to upload");
-                    return;
-                }
-                this.uploadWidget.open();
-            },
-
-            showUploadPreview(info) {
-                const uploadZone = document.getElementById('uploadZone');
-                const preview = document.getElementById('uploadPreview');
-
-                uploadZone.classList.add('has-file');
-                preview.src = info.secure_url;
-                preview.style.display = 'block';
-
-                const typeSelect = document.getElementById('up-type');
-                typeSelect.value = info.resource_type === 'video' ? 'video' : 'image';
-            },
-
-            async submitUpload() {
-                if (!this.currentUser) {
-                    alert("Please sign in to upload");
-                    return;
-                }
-
-                if (!this.uploadedFileUrl) {
-                    alert("Please upload a media file");
-                    return;
-                }
-
-                const prompt = document.getElementById('up-prompt').value.trim();
-                const category = document.getElementById('up-cat').value;
-                const type = document.getElementById('up-type').value;
-
-                if (!prompt) {
-                    alert("Please enter a prompt description");
-                    return;
-                }
-
-                try {
-                    this.showLoading();
-
-                    const promptRef = push(ref(db, 'prompts'));
-                    await set(promptRef, {
-                        userId: this.currentUser.uid,
-                        userEmail: this.currentUser.email,
-                        mediaUrl: this.uploadedFileUrl,
-                        prompt: prompt,
-                        category: category,
-                        type: type,
-                        likes: 0,
-                        copies: 0,
-                        createdAt: new Date().toISOString(),
-                        timestamp: Date.now()
-                    });
-
-                    alert("Prompt uploaded successfully!");
-                    this.resetUploadForm();
-                    this.nav('home');
-                    this.loadAllPrompts();
-                } catch (error) {
-                    console.error("Upload error:", error);
-                    alert("Failed to upload. Please try again.");
-                } finally {
-                    this.hideLoading();
-                }
-            },
-
-            resetUploadForm() {
-                document.getElementById('up-prompt').value = '';
-                document.getElementById('uploadPreview').style.display = 'none';
-                document.getElementById('uploadZone').classList.remove('has-file');
-                this.uploadedFileUrl = null;
-            },
-
-            async loadAllPrompts() {
-                try {
-                    this.showLoading();
-                    const promptsRef = ref(db, 'prompts');
-                    const snapshot = await get(promptsRef);
-
-                    if (snapshot.exists()) {
-                        const prompts = [];
-                        snapshot.forEach(child => {
-                            prompts.push({ id: child.key, ...child.val() });
-                        });
-
-                        prompts.sort((a, b) => b.timestamp - a.timestamp);
-
-                        this.renderGrid('home-grid', prompts);
-                        this.renderGrid('image-grid', prompts.filter(p => p.type === 'image'));
-                        this.renderGrid('video-grid', prompts.filter(p => p.type === 'video'));
-                    } else {
-                        this.showEmptyState('home-grid', 'No prompts yet');
-                    }
-                } catch (error) {
-                    console.error("Load prompts error:", error);
-                } finally {
-                    this.hideLoading();
-                }
-            },
-
-            async loadMostCopied() {
-                try {
-                    const promptsRef = query(ref(db, 'prompts'), orderByChild('copies'), limitToLast(10));
-                    const snapshot = await get(promptsRef);
-
-                    if (snapshot.exists()) {
-                        const prompts = [];
-                        snapshot.forEach(child => {
-                            prompts.push({ id: child.key, ...child.val() });
-                        });
-
-                        prompts.reverse();
-                        this.renderRelatedSlider(prompts);
-                    }
-                } catch (error) {
-                    console.error("Load most copied error:", error);
-                }
-            },
-
-            renderRelatedSlider(prompts) {
-                const container = document.getElementById('relatedSlider');
-                if (!container) return;
-
-                container.innerHTML = prompts.map(item => `
-                    <div class="slide-card" onclick="app.openDetail('${item.id}')">
-                        <img src="${item.mediaUrl}" alt="Prompt">
-                        <div class="slide-card-info">
-                            <div style="color: var(--text); font-weight: 600; margin-bottom: 5px;">${item.category}</div>
-                            <div style="color: var(--text-muted);"><i class="fas fa-copy"></i> ${item.copies || 0}</div>
-                        </div>
-                    </div>
-                `).join('');
-            },
-
-            renderGrid(containerId, data) {
-                const container = document.getElementById(containerId);
-                if (!container) return;
-
-                if (!data || data.length === 0) {
-                    this.showEmptyState(containerId, 'No prompts found');
-                    return;
-                }
-
-                container.innerHTML = data.map(item => `
-                    <div class="card" onclick="app.openDetail('${item.id}')">
-                        <div class="card-media">
-                            ${item.type === 'video' ? 
-                                `<span class="video-overlay"><i class="fas fa-play"></i></span>
-                                <video src="${item.mediaUrl}" muted loop onmouseover="this.play()" onmouseout="this.pause()"></video>` :
-                                `<img src="${item.mediaUrl}" alt="AI Prompt">`
-                            }
-                        </div>
-                        <div class="card-content">
-                            <div class="card-prompt">${item.prompt}</div>
-                            <div style="margin-top:10px; font-weight:600; font-size:0.8rem; display:flex; justify-content:space-between; align-items: center;">
-                                <span style="color: var(--text-muted); font-size: 0.75rem;">${item.userEmail?.split('@')[0] || 'Unknown'}</span>
-                                <span style="color:var(--primary); font-size: 0.75rem;">${item.category || 'Art'}</span>
-                            </div>
-                            <div class="card-stats">
-                                <span><i class="fas fa-heart"></i> ${item.likes || 0}</span>
-                                <span><i class="fas fa-copy"></i> ${item.copies || 0}</span>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            },
-
-            showEmptyState(containerId, message) {
-                const container = document.getElementById(containerId);
-                if (!container) return;
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-inbox"></i>
-                        <p>${message}</p>
-                    </div>
-                `;
-            },
-
-            async openDetail(promptId) {
-                try {
-                    this.showLoading();
-                    const promptRef = ref(db, `prompts/${promptId}`);
-                    const snapshot = await get(promptRef);
-
-                    if (snapshot.exists()) {
-                        const item = { id: promptId, ...snapshot.val() };
-                        this.currentItem = item;
-                        await this.renderDetails(item);
-                        this.loadMostCopied();
-                        this.checkBookmarkStatus(promptId);
-                        this.nav('details');
-                    }
-                } catch (error) {
-                    console.error("Open detail error:", error);
-                } finally {
-                    this.hideLoading();
-                }
-            },
-
-            async renderDetails(item) {
-                const visual = document.getElementById('det-visual');
-                visual.innerHTML = item.type === 'video' ? 
-                    `<video src="${item.mediaUrl}" controls autoplay loop></video>` : 
-                    `<img src="${item.mediaUrl}" alt="AI Prompt">`;
-
-                const userRef = ref(db, `users/${item.userId}`);
-                const userSnapshot = await get(userRef);
-                let displayName = item.userEmail?.split('@')[0] || 'Unknown';
-                let photoURL = '';
-
-                if (userSnapshot.exists()) {
-                    const userData = userSnapshot.val();
-                    displayName = userData.displayName || displayName;
-                    photoURL = userData.photoURL || '';
-                }
-
-                const userNameSpan = document.querySelector('#det-user span');
-                const userAvatar = document.getElementById('det-user-avatar');
-
-                userNameSpan.textContent = displayName;
-                if (photoURL) {
-                    userAvatar.src = photoURL;
-                    userAvatar.style.display = 'block';
-                }
-
-                document.getElementById('det-user').onclick = () => this.openUserProfile(item.userId);
-
-                document.getElementById('det-prompt').textContent = item.prompt;
-                document.getElementById('det-category').textContent = item.category;
-                document.getElementById('det-likes').textContent = item.likes || 0;
-                document.getElementById('det-copies').textContent = item.copies || 0;
-            },
-
-            async copyPrompt() {
-                const text = document.getElementById('det-prompt').textContent;
-                try {
-                    await navigator.clipboard.writeText(text);
-
-                    if (this.currentItem) {
-                        const promptRef = ref(db, `prompts/${this.currentItem.id}`);
-                        await update(promptRef, {
-                            copies: increment(1)
-                        });
-
-                        const currentCopies = parseInt(document.getElementById('det-copies').textContent);
-                        document.getElementById('det-copies').textContent = currentCopies + 1;
-                    }
-
-                    alert("Prompt copied to clipboard!");
-                } catch (error) {
-                    console.error("Copy error:", error);
-                }
-            },
-
-            async toggleBookmark() {
-                if (!this.currentUser) {
-                    alert("Please sign in to bookmark");
-                    return;
-                }
-
-                if (!this.currentItem) return;
-
-                try {
-                    const bookmarkRef = ref(db, `bookmarks/${this.currentUser.uid}/${this.currentItem.id}`);
-                    const snapshot = await get(bookmarkRef);
-
-                    const heartBtn = document.getElementById('det-heart');
-                    const heartIcon = heartBtn.querySelector('i');
-
-                    if (snapshot.exists()) {
-                        await remove(bookmarkRef);
-                        heartIcon.classList.remove('fas');
-                        heartIcon.classList.add('far');
-                        alert("Removed from bookmarks");
-                    } else {
-                        await set(bookmarkRef, {
-                            promptId: this.currentItem.id,
-                            timestamp: Date.now()
-                        });
-                        heartIcon.classList.remove('far');
-                        heartIcon.classList.add('fas');
-                        alert("Added to bookmarks");
-                    }
-                } catch (error) {
-                    console.error("Bookmark error:", error);
-                }
-            },
-
-            async checkBookmarkStatus(promptId) {
-                if (!this.currentUser) return;
-
-                const bookmarkRef = ref(db, `bookmarks/${this.currentUser.uid}/${promptId}`);
-                const snapshot = await get(bookmarkRef);
-
-                const heartBtn = document.getElementById('det-heart');
-                const heartIcon = heartBtn.querySelector('i');
-
-                if (snapshot.exists()) {
-                    heartIcon.classList.remove('far');
-                    heartIcon.classList.add('fas');
-                } else {
-                    heartIcon.classList.remove('fas');
-                    heartIcon.classList.add('far');
-                }
-            },
-
-            async loadBookmarks() {
-                if (!this.currentUser) {
-                    this.showEmptyState('bookmark-grid', 'Please sign in to see bookmarks');
-                    return;
-                }
-
-                try {
-                    this.showLoading();
-                    const bookmarksRef = ref(db, `bookmarks/${this.currentUser.uid}`);
-                    const snapshot = await get(bookmarksRef);
-
-                    if (snapshot.exists()) {
-                        const bookmarks = [];
-                        snapshot.forEach(child => {
-                            bookmarks.push(child.val());
-                        });
-
-                        const promptsPromises = bookmarks.map(async (bookmark) => {
-                            const promptRef = ref(db, `prompts/${bookmark.promptId}`);
-                            const promptSnapshot = await get(promptRef);
-                            if (promptSnapshot.exists()) {
-                                return { id: bookmark.promptId, ...promptSnapshot.val() };
-                            }
-                            return null;
-                        });
-
-                        const prompts = (await Promise.all(promptsPromises)).filter(p => p !== null);
-                        this.renderGrid('bookmark-grid', prompts);
-                    } else {
-                        this.showEmptyState('bookmark-grid', 'No bookmarks yet');
-                    }
-                } catch (error) {
-                    console.error("Load bookmarks error:", error);
-                } finally {
-                    this.hideLoading();
-                }
-            },
-
-            async openMyProfile() {
-                if (!this.currentUser) return;
-                await this.openUserProfile(this.currentUser.uid, true);
-            },
-
-            async openUserProfile(userId, isOwnProfile = false) {
-                if (!userId) return;
-
-                try {
-                    this.showLoading();
-
-                    const userRef = ref(db, `users/${userId}`);
-                    const userSnapshot = await get(userRef);
-
-                    if (userSnapshot.exists()) {
-                        const userData = userSnapshot.val();
-
-                        document.getElementById('viewProfileImage').src = userData.photoURL || 'https://i.pravatar.cc/150?u=default';
-                        document.getElementById('viewCoverImage').src = userData.coverURL || 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&w=1200';
-                        document.getElementById('view-name').textContent = userData.displayName || 'User';
-                        document.getElementById('view-email').textContent = userData.email || '';
-
-                        const joinDate = new Date(userData.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-                        document.getElementById('view-joined').textContent = `Joined ${joinDate}`;
-
-                        const editBtn = document.getElementById('editProfileBtn');
-                        editBtn.style.display = isOwnProfile ? 'block' : 'none';
-
-                        const promptsRef = ref(db, 'prompts');
-                        const promptsSnapshot = await get(promptsRef);
-                        const userPrompts = [];
-
-                        if (promptsSnapshot.exists()) {
-                            promptsSnapshot.forEach(child => {
-                                const prompt = child.val();
-                                if (prompt.userId === userId) {
-                                    userPrompts.push({ id: child.key, ...prompt });
-                                }
-                            });
-                        }
-
-                        document.getElementById('artworkCount').textContent = userPrompts.length;
-                        this.renderGrid('user-art-grid', userPrompts);
-                    }
-
-                    this.nav('user-view');
-                } catch (error) {
-                    console.error("Open profile error:", error);
-                } finally {
-                    this.hideLoading();
-                }
-            },
-
-            async openEditProfile() {
-                if (!this.currentUser) return;
-
-                const userRef = ref(db, `users/${this.currentUser.uid}`);
-                const snapshot = await get(userRef);
-
-                if (snapshot.exists()) {
-                    const userData = snapshot.val();
-                    document.getElementById('editDisplayName').value = userData.displayName || '';
-                }
-
-                this.openModal('editProfileModal');
-            },
-
-            uploadProfileImage() {
-                const widget = cloudinary.createUploadWidget({
-                    cloudName: CLOUDINARY_CLOUD_NAME,
-                    uploadPreset: CLOUDINARY_UPLOAD_PRESET,
-                    sources: ['local', 'camera'],
-                    multiple: false,
-                    resourceType: 'image',
-                    cropping: true,
-                    croppingAspectRatio: 1,
-                    croppingShowDimensions: true
-                }, async (error, result) => {
-                    if (!error && result && result.event === "success") {
-                        await update(ref(db, `users/${this.currentUser.uid}`), {
-                            photoURL: result.info.secure_url
-                        });
-                        alert("Profile picture updated!");
-                    }
-                });
-                widget.open();
-            },
-
-            uploadCoverImage() {
-                const widget = cloudinary.createUploadWidget({
-                    cloudName: CLOUDINARY_CLOUD_NAME,
-                    uploadPreset: CLOUDINARY_UPLOAD_PRESET,
-                    sources: ['local'],
-                    multiple: false,
-                    resourceType: 'image',
-                    cropping: true,
-                    croppingAspectRatio: 3
-                }, async (error, result) => {
-                    if (!error && result && result.event === "success") {
-                        await update(ref(db, `users/${this.currentUser.uid}`), {
-                            coverURL: result.info.secure_url
-                        });
-                        alert("Cover photo updated!");
-                    }
-                });
-                widget.open();
-            },
-
-            async saveProfile() {
-                if (!this.currentUser) return;
-
-                const displayName = document.getElementById('editDisplayName').value.trim();
-
-                if (!displayName) {
-                    alert("Please enter a display name");
-                    return;
-                }
-
-                try {
-                    await update(ref(db, `users/${this.currentUser.uid}`), {
-                        displayName: displayName
-                    });
-
-                    this.closeModal('editProfileModal');
-                    this.openMyProfile();
-                    alert("Profile updated successfully!");
-                } catch (error) {
-                    console.error("Save profile error:", error);
-                    alert("Failed to save profile");
-                }
-            },
-
-            renderCategories() {
-                const containers = ['home-cats', 'image-cats', 'video-cats'];
-                containers.forEach(containerId => {
-                    const container = document.getElementById(containerId);
-                    if (!container) return;
-
-                    container.innerHTML = this.categories.map((cat, idx) => 
-                        `<div class="cat-tag ${idx === 0 ? 'active' : ''}" onclick="app.filterCategory('${containerId}', '${cat}')">${cat}</div>`
-                    ).join('');
-                });
-            },
-
-            async filterCategory(containerId, category) {
-                const container = document.getElementById(containerId);
-                container.querySelectorAll('.cat-tag').forEach(tag => tag.classList.remove('active'));
-                event.target.classList.add('active');
-
-                try {
-                    this.showLoading();
-                    const promptsRef = ref(db, 'prompts');
-                    const snapshot = await get(promptsRef);
-
-                    if (snapshot.exists()) {
-                        let prompts = [];
-                        snapshot.forEach(child => {
-                            prompts.push({ id: child.key, ...child.val() });
-                        });
-
-                        if (category !== 'All') {
-                            prompts = prompts.filter(p => p.category === category);
-                        }
-
-                        if (containerId === 'image-cats') {
-                            prompts = prompts.filter(p => p.type === 'image');
-                            this.renderGrid('image-grid', prompts);
-                        } else if (containerId === 'video-cats') {
-                            prompts = prompts.filter(p => p.type === 'video');
-                            this.renderGrid('video-grid', prompts);
-                        } else {
-                            this.renderGrid('home-grid', prompts);
-                        }
-                    }
-                } catch (error) {
-                    console.error("Filter error:", error);
-                } finally {
-                    this.hideLoading();
-                }
-            },
-
-            nav(sectionId) {
-                const current = document.querySelector('.section.active');
-                if (current && current.id !== 'details' && current.id !== 'user-view') {
-                    this.prevSection = current.id;
-                }
-
-                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                document.getElementById(sectionId).classList.add('active');
-
-                if (sectionId === 'bookmarks') {
-                    this.loadBookmarks();
-                }
-
-                document.getElementById('navLinks').classList.remove('open');
-                document.getElementById('hamBtn').classList.remove('open');
-                window.scrollTo(0, 0);
-            },
-
-            goBack() {
-                this.nav(this.prevSection);
-            },
-
-            toggleMenu() {
-                document.getElementById('navLinks').classList.toggle('open');
-                document.getElementById('hamBtn').classList.toggle('open');
-            },
-
-            toggleTheme() {
-                document.body.classList.toggle('light-mode');
-            },
-
-            openModal(modalId) {
-                document.getElementById(modalId).classList.add('active');
-            },
-
-            closeModal(modalId) {
-                document.getElementById(modalId).classList.remove('active');
-            },
-
-            showLoading() {
-                document.getElementById('loading').classList.add('active');
-            },
-
-            hideLoading() {
-                document.getElementById('loading').classList.remove('active');
-            }
-        };
-
-        document.addEventListener('DOMContentLoaded', () => {
-            app.init();
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getDatabase, ref, set, get, push, update, increment, query, orderByChild, limitToLast, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbEC5U7QcqhaSU-EM2S-5G4lA7o-pnFYI",
+      authDomain: "projects-34769.firebaseapp.com",
+      databaseURL: "https://projects-34769-default-rtdb.firebaseio.com",
+      projectId: "projects-34769",
+      storageBucket: "projects-34769.firebasestorage.app",
+      messagingSenderId: "740273672797",
+      appId: "1:740273672797:web:9c9df9bf330315c80533b4"
+    };
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const auth = getAuth(firebaseApp);
+    const db = getDatabase(firebaseApp);
+    const provider = new GoogleAuthProvider();
+
+    const CLOUDINARY_CLOUD_NAME = "dbiltdpxh";
+    const CLOUDINARY_UPLOAD_PRESET = "farhadsultan";
+
+    window.app = {
+      currentUser: null,
+      currentItem: null,
+      prevSection: 'home',
+      categories: ["All", "Realistic", "Abstract", "Cyberpunk", "Anime", "3D Render", "Photography", "Fantasy"],
+      uploadedFileUrl: null,
+      uploadWidget: null,
+
+      restrictedSections: new Set(['bookmarks', 'upload', 'ai-generate', 'my-profile', 'settings', 'profile-menu']),
+
+      init() {
+        this.setupAuthListener();
+        this.initCloudinaryWidget();
+        this.renderCategories();
+        this.loadAllPrompts();
+
+        // Close dropdown on outside click
+        document.addEventListener('click', (e) => {
+          const dd = document.getElementById('userDropdown');
+          const menu = document.getElementById('userMenu');
+          if (!dd || !menu) return;
+          if (!menu.contains(e.target)) this.closeUserDropdown();
         });
 
-    </script>
+        // Escape closes menu/dropdown
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            this.closeUserDropdown();
+            this.closeMenu();
+          }
+        });
+      },
+
+      /* --- UI helpers --- */
+      stopAllVideos() {
+        // pause any playing <video> to fix background playback
+        document.querySelectorAll('video').forEach(v => {
+          try { v.pause(); } catch (_) {}
+          // optional: reset, but keep it light:
+          try { v.currentTime = 0; } catch (_) {}
+        });
+      },
+
+      setActiveNav(sectionId) {
+        document.querySelectorAll('.nav-link').forEach(a => a.classList.remove('active'));
+        // Mark active if we can find a link with onclick nav('section')
+        // (simple approach: leave it; SPA sections vary)
+      },
+
+      toggleUserDropdown(ev) {
+        if (ev) ev.stopPropagation();
+        const dd = document.getElementById('userDropdown');
+        if (!dd) return;
+        dd.classList.toggle('active');
+      },
+
+      closeUserDropdown() {
+        const dd = document.getElementById('userDropdown');
+        if (dd) dd.classList.remove('active');
+      },
+
+      toggleMenu() {
+        document.getElementById('navLinks').classList.toggle('open');
+        document.getElementById('hamBtn').classList.toggle('open');
+        document.getElementById('drawerOverlay').classList.toggle('active');
+      },
+
+      closeMenu() {
+        document.getElementById('navLinks').classList.remove('open');
+        document.getElementById('hamBtn').classList.remove('open');
+        document.getElementById('drawerOverlay').classList.remove('active');
+      },
+
+      toggleTheme() {
+        document.body.classList.toggle('light-mode');
+      },
+
+      openModal(modalId) {
+        document.getElementById(modalId).classList.add('active');
+      },
+
+      closeModal(modalId) {
+        document.getElementById(modalId).classList.remove('active');
+      },
+
+      showLoading() {
+        document.getElementById('loading').classList.add('active');
+      },
+
+      hideLoading() {
+        document.getElementById('loading').classList.remove('active');
+      },
+
+      /* --- Auth --- */
+      setupAuthListener() {
+        onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            this.currentUser = user;
+            await this.saveUserToDatabase(user);
+            await this.updateUIForLoggedIn(user);
+          } else {
+            this.currentUser = null;
+            this.updateUIForLoggedOut();
+          }
+        });
+      },
+
+      async saveUserToDatabase(user) {
+        const userRef = ref(db, `users/${user.uid}`);
+        const snapshot = await get(userRef);
+
+        if (!snapshot.exists()) {
+          await set(userRef, {
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName || user.email.split('@')[0],
+            photoURL: user.photoURL || ('https://i.pravatar.cc/150?u=' + user.uid),
+            coverURL: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&w=1200',
+            createdAt: new Date().toISOString(),
+            lastLogin: new Date().toISOString()
+          });
+        } else {
+          await update(userRef, { lastLogin: new Date().toISOString() });
+        }
+      },
+
+      async updateUIForLoggedIn(user) {
+        // Navbar
+        document.getElementById('signInBtn').style.display = 'none';
+        document.getElementById('userMenu').style.display = 'flex';
+
+        // Drawer items
+        document.getElementById('uploadNavLink').style.display = 'block';
+        document.getElementById('bookmarksNavLink').style.display = 'block';
+        document.getElementById('aiGenerateNavLink').style.display = 'block';
+        document.getElementById('signOutMobile').style.display = 'flex';
+
+        // Bottom nav items
+        document.getElementById('bnAiGenerate').style.display = 'flex';
+        document.getElementById('bnUpload').style.display = 'flex';
+        document.getElementById('bnProfile').style.display = 'flex';
+        document.getElementById('bnSignIn').style.display = 'none';
+
+        // Fill user data
+        const snap = await get(ref(db, `users/${user.uid}`));
+        if (snap.exists()) {
+          const userData = snap.val();
+          document.getElementById('userDisplayName').textContent = userData.displayName || 'User';
+          document.getElementById('userAvatar').src = userData.photoURL || '';
+
+          document.getElementById('ddName').textContent = userData.displayName || 'Account';
+          document.getElementById('ddEmail').textContent = userData.email || user.email || '';
+
+          // My profile page
+          document.getElementById('myName').textContent = userData.displayName || 'User';
+          document.getElementById('myEmail').textContent = userData.email || user.email || '';
+          document.getElementById('myAvatar').src = userData.photoURL || 'https://i.pravatar.cc/150?u=default';
+
+          // Settings form
+          document.getElementById('settingsDisplayName').value = userData.displayName || '';
+        }
+      },
+
+      updateUIForLoggedOut() {
+        // Navbar
+        document.getElementById('signInBtn').style.display = 'flex';
+        document.getElementById('userMenu').style.display = 'none';
+        this.closeUserDropdown();
+
+        // Drawer items hidden
+        document.getElementById('uploadNavLink').style.display = 'none';
+        document.getElementById('bookmarksNavLink').style.display = 'none';
+        document.getElementById('aiGenerateNavLink').style.display = 'none';
+        document.getElementById('signOutMobile').style.display = 'none';
+
+        // Bottom nav items hidden
+        document.getElementById('bnAiGenerate').style.display = 'none';
+        document.getElementById('bnUpload').style.display = 'none';
+        document.getElementById('bnProfile').style.display = 'none';
+        document.getElementById('bnSignIn').style.display = 'flex';
+
+        // If currently on restricted section, redirect to home
+        const current = document.querySelector('.section.active');
+        if (current && this.restrictedSections.has(current.id)) {
+          this.nav('home');
+        }
+      },
+
+      async signIn() {
+        try {
+          this.showLoading();
+          await signInWithPopup(auth, provider);
+        } catch (error) {
+          console.error("Sign in error:", error);
+          alert("Failed to sign in. Please try again.");
+        } finally {
+          this.hideLoading();
+        }
+      },
+
+      async signOut() {
+        try {
+          this.stopAllVideos();
+          await signOut(auth);
+          this.closeMenu();
+          this.closeUserDropdown();
+          this.nav('home');
+        } catch (error) {
+          console.error("Sign out error:", error);
+        }
+      },
+
+      /* --- Cloudinary --- */
+      initCloudinaryWidget() {
+        this.uploadWidget = cloudinary.createUploadWidget({
+          cloudName: CLOUDINARY_CLOUD_NAME,
+          uploadPreset: CLOUDINARY_UPLOAD_PRESET,
+          sources: ['local', 'url', 'camera'],
+          multiple: false,
+          resourceType: 'auto',
+          clientAllowedFormats: ['jpg', 'png', 'gif', 'mp4', 'mov', 'webm'],
+          maxFileSize: 100000000,
+          styles: {
+            palette: {
+              window: "#050508",
+              windowBorder: "#00f2ea",
+              tabIcon: "#00f2ea",
+              menuIcons: "#ffffff",
+              textDark: "#000000",
+              textLight: "#ffffff",
+              link: "#00f2ea",
+              action: "#00f2ea",
+              inactiveTabIcon: "#8b9bb4",
+              error: "#ff0055",
+              inProgress: "#00f2ea",
+              complete: "#00f2ea",
+              sourceBg: "#0a0a0f"
+            }
+          }
+        }, (error, result) => {
+          if (!error && result && result.event === "success") {
+            this.uploadedFileUrl = result.info.secure_url;
+            this.showUploadPreview(result.info);
+          }
+        });
+      },
+
+      openCloudinaryWidget() {
+        if (!this.currentUser) {
+          alert("Please sign in to upload");
+          return;
+        }
+        this.uploadWidget.open();
+      },
+
+      showUploadPreview(info) {
+        const uploadZone = document.getElementById('uploadZone');
+        const preview = document.getElementById('uploadPreview');
+
+        uploadZone.classList.add('has-file');
+        preview.src = info.secure_url;
+        preview.style.display = 'block';
+
+        const typeSelect = document.getElementById('up-type');
+        typeSelect.value = info.resource_type === 'video' ? 'video' : 'image';
+      },
+
+      /* --- Upload / Prompts --- */
+      async submitUpload() {
+        if (!this.currentUser) {
+          alert("Please sign in to upload");
+          return;
+        }
+        if (!this.uploadedFileUrl) {
+          alert("Please upload a media file");
+          return;
+        }
+
+        const prompt = document.getElementById('up-prompt').value.trim();
+        const category = document.getElementById('up-cat').value;
+        const type = document.getElementById('up-type').value;
+
+        if (!prompt) {
+          alert("Please enter a prompt description");
+          return;
+        }
+
+        try {
+          this.showLoading();
+          const promptRef = push(ref(db, 'prompts'));
+          await set(promptRef, {
+            userId: this.currentUser.uid,
+            userEmail: this.currentUser.email,
+            mediaUrl: this.uploadedFileUrl,
+            prompt,
+            category,
+            type,
+            likes: 0,
+            copies: 0,
+            createdAt: new Date().toISOString(),
+            timestamp: Date.now()
+          });
+
+          alert("Prompt uploaded successfully!");
+          this.resetUploadForm();
+          this.nav('home');
+          this.loadAllPrompts();
+        } catch (error) {
+          console.error("Upload error:", error);
+          alert("Failed to upload. Please try again.");
+        } finally {
+          this.hideLoading();
+        }
+      },
+
+      resetUploadForm() {
+        document.getElementById('up-prompt').value = '';
+        document.getElementById('uploadPreview').style.display = 'none';
+        document.getElementById('uploadZone').classList.remove('has-file');
+        this.uploadedFileUrl = null;
+      },
+
+      async loadAllPrompts() {
+        try {
+          this.showLoading();
+          const promptsRef = ref(db, 'prompts');
+          const snapshot = await get(promptsRef);
+
+          if (snapshot.exists()) {
+            const prompts = [];
+            snapshot.forEach(child => prompts.push({ id: child.key, ...child.val() }));
+            prompts.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+            this.renderGrid('home-grid', prompts);
+            this.renderGrid('image-grid', prompts.filter(p => p.type === 'image'));
+            this.renderGrid('video-grid', prompts.filter(p => p.type === 'video'));
+          } else {
+            this.showEmptyState('home-grid', 'No prompts yet');
+            this.showEmptyState('image-grid', 'No image prompts yet');
+            this.showEmptyState('video-grid', 'No video prompts yet');
+          }
+        } catch (error) {
+          console.error("Load prompts error:", error);
+        } finally {
+          this.hideLoading();
+        }
+      },
+
+      async loadMostCopied() {
+        try {
+          // Firebase query: order by copies, take last N; then we sort client-side for best UX
+          const promptsRef = query(ref(db, 'prompts'), orderByChild('copies'), limitToLast(30));
+          const snapshot = await get(promptsRef);
+
+          if (snapshot.exists()) {
+            const prompts = [];
+            snapshot.forEach(child => prompts.push({ id: child.key, ...child.val() }));
+
+            // Algorithm: exclude current item, sort by copies desc then timestamp desc
+            const filtered = prompts
+              .filter(p => !this.currentItem || p.id !== this.currentItem.id)
+              .sort((a, b) => {
+                const c = (b.copies || 0) - (a.copies || 0);
+                if (c !== 0) return c;
+                return (b.timestamp || 0) - (a.timestamp || 0);
+              })
+              .slice(0, 12);
+
+            this.renderRelatedSlider(filtered);
+          } else {
+            this.renderRelatedSlider([]);
+          }
+        } catch (error) {
+          console.error("Load most copied error:", error);
+        }
+      },
+
+      scrollRelated(dir) {
+        const el = document.getElementById('relatedSlider');
+        if (!el) return;
+        const amount = Math.round(el.clientWidth * 0.9) * dir;
+        el.scrollBy({ left: amount, behavior: 'smooth' });
+      },
+
+      renderRelatedSlider(prompts) {
+        const container = document.getElementById('relatedSlider');
+        if (!container) return;
+
+        if (!prompts || prompts.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state" style="padding:20px 0;">
+              <i class="fas fa-inbox" style="font-size:2rem;"></i>
+              <p>No related prompts yet</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = prompts.map(item => `
+          <div class="slide-card" onclick="app.openDetail('${item.id}')">
+            ${item.type === 'video'
+              ? `<video src="${item.mediaUrl}" muted preload="metadata"></video>`
+              : `<img src="${item.mediaUrl}" alt="Prompt">`
+            }
+            <div class="slide-card-info">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                <div style="color: var(--text); font-weight: 900; font-size:0.9rem;">${item.category || 'Art'}</div>
+                <span class="chip"><i class="fas fa-copy"></i> ${item.copies || 0}</span>
+              </div>
+              <div style="color: var(--text-muted); font-size:0.78rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                ${item.prompt || ''}
+              </div>
+            </div>
+          </div>
+        `).join('');
+      },
+
+      renderGrid(containerId, data) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        if (!data || data.length === 0) {
+          this.showEmptyState(containerId, 'No prompts found');
+          return;
+        }
+
+        container.innerHTML = data.map(item => `
+          <div class="card" onclick="app.openDetail('${item.id}')">
+            <div class="card-media">
+              ${item.type === 'video'
+                ? `<span class="video-overlay"><i class="fas fa-play"></i> Video</span>
+                   <video src="${item.mediaUrl}" muted loop preload="metadata"
+                     onmouseover="this.play()"
+                     onmouseout="this.pause()"></video>`
+                : `<img src="${item.mediaUrl}" alt="AI Prompt">`
+              }
+            </div>
+            <div class="card-content">
+              <div class="card-prompt">${item.prompt || ''}</div>
+              <div style="margin-top:10px; font-weight:800; font-size:0.8rem; display:flex; justify-content:space-between; align-items:center;">
+                <span style="color: var(--text-muted); font-size: 0.75rem;">${(item.userEmail && item.userEmail.split('@')[0]) || 'Unknown'}</span>
+                <span style="color:var(--primary); font-size: 0.75rem;">${item.category || 'Art'}</span>
+              </div>
+              <div class="card-stats">
+                <span><i class="fas fa-heart"></i> ${item.likes || 0}</span>
+                <span><i class="fas fa-copy"></i> ${item.copies || 0}</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      },
+
+      showEmptyState(containerId, message) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <p>${message}</p>
+          </div>
+        `;
+      },
+
+      async openDetail(promptId) {
+        try {
+          this.showLoading();
+          const promptRef = ref(db, `prompts/${promptId}`);
+          const snapshot = await get(promptRef);
+
+          if (snapshot.exists()) {
+            const item = { id: promptId, ...snapshot.val() };
+            this.currentItem = item;
+
+            await this.renderDetails(item);
+            await this.loadMostCopied();
+            await this.checkBookmarkStatus(promptId);
+
+            this.nav('details');
+          }
+        } catch (error) {
+          console.error("Open detail error:", error);
+        } finally {
+          this.hideLoading();
+        }
+      },
+
+      async renderDetails(item) {
+        const visual = document.getElementById('det-visual');
+        // IMPORTANT: ensure we don't keep old video playing
+        visual.innerHTML = "";
+
+        visual.innerHTML = item.type === 'video'
+          ? `<video id="detailVideo" src="${item.mediaUrl}" controls autoplay loop playsinline></video>`
+          : `<img src="${item.mediaUrl}" alt="AI Prompt">`;
+
+        // User info
+        const userRef = ref(db, `users/${item.userId}`);
+        const userSnapshot = await get(userRef);
+
+        let displayName = (item.userEmail && item.userEmail.split('@')[0]) || 'Unknown';
+        let photoURL = '';
+
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.val();
+          displayName = userData.displayName || displayName;
+          photoURL = userData.photoURL || '';
+        }
+
+        const userNameSpan = document.querySelector('#det-user span');
+        const userAvatar = document.getElementById('det-user-avatar');
+
+        userNameSpan.textContent = displayName;
+        if (photoURL) {
+          userAvatar.src = photoURL;
+          userAvatar.style.display = 'block';
+        } else {
+          userAvatar.style.display = 'none';
+        }
+
+        document.getElementById('det-user').onclick = () => this.openUserProfile(item.userId);
+
+        document.getElementById('det-prompt').textContent = item.prompt || '';
+        document.getElementById('det-category').textContent = item.category || '';
+        document.getElementById('det-likes').textContent = item.likes || 0;
+        document.getElementById('det-copies').textContent = item.copies || 0;
+      },
+
+      async copyPrompt() {
+        const text = document.getElementById('det-prompt').textContent;
+        try {
+          await navigator.clipboard.writeText(text);
+
+          if (this.currentItem) {
+            const promptRef = ref(db, `prompts/${this.currentItem.id}`);
+            await update(promptRef, { copies: increment(1) });
+
+            const currentCopies = parseInt(document.getElementById('det-copies').textContent || '0', 10);
+            document.getElementById('det-copies').textContent = currentCopies + 1;
+          }
+
+          alert("Prompt copied to clipboard!");
+        } catch (error) {
+          console.error("Copy error:", error);
+        }
+      },
+
+      /* --- Bookmarks --- */
+      async toggleBookmark() {
+        if (!this.currentUser) {
+          alert("Please sign in to bookmark");
+          return;
+        }
+        if (!this.currentItem) return;
+
+        try {
+          const bookmarkRef = ref(db, `bookmarks/${this.currentUser.uid}/${this.currentItem.id}`);
+          const snapshot = await get(bookmarkRef);
+
+          const heartBtn = document.getElementById('det-heart');
+          const heartIcon = heartBtn.querySelector('i');
+
+          if (snapshot.exists()) {
+            await remove(bookmarkRef);
+            heartIcon.classList.remove('fas');
+            heartIcon.classList.add('far');
+            alert("Removed from bookmarks");
+          } else {
+            await set(bookmarkRef, { promptId: this.currentItem.id, timestamp: Date.now() });
+            heartIcon.classList.remove('far');
+            heartIcon.classList.add('fas');
+            alert("Added to bookmarks");
+          }
+        } catch (error) {
+          console.error("Bookmark error:", error);
+        }
+      },
+
+      async checkBookmarkStatus(promptId) {
+        const heartBtn = document.getElementById('det-heart');
+        const heartIcon = heartBtn.querySelector('i');
+
+        if (!this.currentUser) {
+          heartIcon.classList.remove('fas');
+          heartIcon.classList.add('far');
+          return;
+        }
+
+        const bookmarkRef = ref(db, `bookmarks/${this.currentUser.uid}/${promptId}`);
+        const snapshot = await get(bookmarkRef);
+
+        if (snapshot.exists()) {
+          heartIcon.classList.remove('far');
+          heartIcon.classList.add('fas');
+        } else {
+          heartIcon.classList.remove('fas');
+          heartIcon.classList.add('far');
+        }
+      },
+
+      async loadBookmarks() {
+        if (!this.currentUser) {
+          this.showEmptyState('bookmark-grid', 'Please sign in to see bookmarks');
+          return;
+        }
+
+        try {
+          this.showLoading();
+          const bookmarksRef = ref(db, `bookmarks/${this.currentUser.uid}`);
+          const snapshot = await get(bookmarksRef);
+
+          if (snapshot.exists()) {
+            const bookmarks = [];
+            snapshot.forEach(child => bookmarks.push(child.val()));
+
+            const promptsPromises = bookmarks.map(async (bookmark) => {
+              const promptRef = ref(db, `prompts/${bookmark.promptId}`);
+              const promptSnapshot = await get(promptRef);
+              if (promptSnapshot.exists()) return { id: bookmark.promptId, ...promptSnapshot.val() };
+              return null;
+            });
+
+            const prompts = (await Promise.all(promptsPromises)).filter(p => p !== null);
+            // sort newest saved first
+            prompts.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            this.renderGrid('bookmark-grid', prompts);
+          } else {
+            this.showEmptyState('bookmark-grid', 'No bookmarks yet');
+          }
+        } catch (error) {
+          console.error("Load bookmarks error:", error);
+        } finally {
+          this.hideLoading();
+        }
+      },
+
+      /* --- Profiles --- */
+      async openMyPublicProfile() {
+        if (!this.currentUser) return;
+        await this.openUserProfile(this.currentUser.uid, true);
+      },
+
+      async openMyProfileDashboard() {
+        // kept for future if needed
+        this.nav('my-profile');
+      },
+
+      async openUserProfile(userId, isOwnProfile = false) {
+        if (!userId) return;
+
+        try {
+          this.showLoading();
+
+          const userRef = ref(db, `users/${userId}`);
+          const userSnapshot = await get(userRef);
+
+          if (userSnapshot.exists()) {
+            const userData = userSnapshot.val();
+
+            document.getElementById('viewProfileImage').src = userData.photoURL || 'https://i.pravatar.cc/150?u=default';
+            document.getElementById('viewCoverImage').src = userData.coverURL || 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&w=1200';
+            document.getElementById('view-name').textContent = userData.displayName || 'User';
+            document.getElementById('view-email').textContent = userData.email || '';
+
+            const joinDate = new Date(userData.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            document.getElementById('view-joined').textContent = `Joined ${joinDate}`;
+
+            const editBtn = document.getElementById('editProfileBtn');
+            editBtn.style.display = isOwnProfile ? 'block' : 'none';
+
+            const promptsRef = ref(db, 'prompts');
+            const promptsSnapshot = await get(promptsRef);
+            const userPrompts = [];
+
+            if (promptsSnapshot.exists()) {
+              promptsSnapshot.forEach(child => {
+                const prompt = child.val();
+                if (prompt.userId === userId) userPrompts.push({ id: child.key, ...prompt });
+              });
+            }
+
+            document.getElementById('artworkCount').textContent = userPrompts.length;
+            // sort newest first
+            userPrompts.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            this.renderGrid('user-art-grid', userPrompts);
+          }
+
+          this.nav('user-view');
+        } catch (error) {
+          console.error("Open profile error:", error);
+        } finally {
+          this.hideLoading();
+        }
+      },
+
+      async openEditProfile() {
+        if (!this.currentUser) return;
+
+        const userRef = ref(db, `users/${this.currentUser.uid}`);
+        const snapshot = await get(userRef);
+
+        if (snapshot.exists()) {
+          const userData = snapshot.val();
+          document.getElementById('editDisplayName').value = userData.displayName || '';
+        }
+
+        this.openModal('editProfileModal');
+      },
+
+      // Keep original upload actions, but used both from settings and modal
+      uploadProfileImage() {
+        if (!this.currentUser) {
+          alert("Please sign in first");
+          return;
+        }
+
+        const widget = cloudinary.createUploadWidget({
+          cloudName: CLOUDINARY_CLOUD_NAME,
+          uploadPreset: CLOUDINARY_UPLOAD_PRESET,
+          sources: ['local', 'camera'],
+          multiple: false,
+          resourceType: 'image',
+          cropping: true,
+          croppingAspectRatio: 1,
+          croppingShowDimensions: true
+        }, async (error, result) => {
+          if (!error && result && result.event === "success") {
+            await update(ref(db, `users/${this.currentUser.uid}`), { photoURL: result.info.secure_url });
+            alert("Profile picture updated!");
+            // refresh ui
+            await this.updateUIForLoggedIn(this.currentUser);
+          }
+        });
+
+        widget.open();
+      },
+
+      uploadCoverImage() {
+        if (!this.currentUser) {
+          alert("Please sign in first");
+          return;
+        }
+
+        const widget = cloudinary.createUploadWidget({
+          cloudName: CLOUDINARY_CLOUD_NAME,
+          uploadPreset: CLOUDINARY_UPLOAD_PRESET,
+          sources: ['local'],
+          multiple: false,
+          resourceType: 'image',
+          cropping: true,
+          croppingAspectRatio: 3
+        }, async (error, result) => {
+          if (!error && result && result.event === "success") {
+            await update(ref(db, `users/${this.currentUser.uid}`), { coverURL: result.info.secure_url });
+            alert("Cover photo updated!");
+          }
+        });
+
+        widget.open();
+      },
+
+      async saveProfileFromModal() {
+        if (!this.currentUser) return;
+
+        const displayName = document.getElementById('editDisplayName').value.trim();
+        if (!displayName) {
+          alert("Please enter a display name");
+          return;
+        }
+
+        try {
+          await update(ref(db, `users/${this.currentUser.uid}`), { displayName });
+          this.closeModal('editProfileModal');
+          await this.updateUIForLoggedIn(this.currentUser);
+          alert("Profile updated successfully!");
+        } catch (error) {
+          console.error("Save profile error:", error);
+          alert("Failed to save profile");
+        }
+      },
+
+      async saveSettings() {
+        if (!this.currentUser) return;
+
+        const displayName = document.getElementById('settingsDisplayName').value.trim();
+        if (!displayName) {
+          alert("Please enter a display name");
+          return;
+        }
+
+        try {
+          await update(ref(db, `users/${this.currentUser.uid}`), { displayName });
+          await this.updateUIForLoggedIn(this.currentUser);
+          alert("Settings saved!");
+        } catch (error) {
+          console.error("Save settings error:", error);
+          alert("Failed to save settings");
+        }
+      },
+
+      /* --- Categories --- */
+      renderCategories() {
+        const containers = ['home-cats', 'image-cats', 'video-cats'];
+        containers.forEach(containerId => {
+          const container = document.getElementById(containerId);
+          if (!container) return;
+
+          container.innerHTML = this.categories.map((cat, idx) =>
+            `<div class="cat-tag ${idx === 0 ? 'active' : ''}" onclick="app.filterCategory('${containerId}', '${cat}', event)">${cat}</div>`
+          ).join('');
+        });
+      },
+
+      async filterCategory(containerId, category, ev) {
+        const container = document.getElementById(containerId);
+        if (container) container.querySelectorAll('.cat-tag').forEach(tag => tag.classList.remove('active'));
+        if (ev && ev.target) ev.target.classList.add('active');
+
+        try {
+          this.showLoading();
+          const promptsRef = ref(db, 'prompts');
+          const snapshot = await get(promptsRef);
+
+          if (snapshot.exists()) {
+            let prompts = [];
+            snapshot.forEach(child => prompts.push({ id: child.key, ...child.val() }));
+
+            if (category !== 'All') prompts = prompts.filter(p => p.category === category);
+
+            if (containerId === 'image-cats') {
+              prompts = prompts.filter(p => p.type === 'image');
+              prompts.sort((a,b) => (b.timestamp||0)-(a.timestamp||0));
+              this.renderGrid('image-grid', prompts);
+            } else if (containerId === 'video-cats') {
+              prompts = prompts.filter(p => p.type === 'video');
+              prompts.sort((a,b) => (b.timestamp||0)-(a.timestamp||0));
+              this.renderGrid('video-grid', prompts);
+            } else {
+              prompts.sort((a,b) => (b.timestamp||0)-(a.timestamp||0));
+              this.renderGrid('home-grid', prompts);
+            }
+          }
+        } catch (error) {
+          console.error("Filter error:", error);
+        } finally {
+          this.hideLoading();
+        }
+      },
+
+      /* --- Navigation (with guards + video stop) --- */
+      nav(sectionId) {
+        // Stop any videos when leaving a section (fix: background playback)
+        this.stopAllVideos();
+
+        // Guard restricted sections
+        if (this.restrictedSections.has(sectionId) && !this.currentUser) {
+          alert("Please sign in first.");
+          sectionId = 'home';
+        }
+
+        const current = document.querySelector('.section.active');
+        if (current && current.id !== 'details' && current.id !== 'user-view') {
+          this.prevSection = current.id;
+        }
+
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        const next = document.getElementById(sectionId);
+        if (next) next.classList.add('active');
+
+        if (sectionId === 'bookmarks') this.loadBookmarks();
+
+        // Close mobile menu
+        this.closeMenu();
+        this.closeUserDropdown();
+
+        window.scrollTo(0, 0);
+      },
+
+      goBack() {
+        this.nav(this.prevSection);
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      app.init();
+    });
+  </script>
 </body>
 </html>
