@@ -156,7 +156,7 @@
       position: absolute;
       top: 55px;
       right: 0;
-      min-width: 220px;
+      min-width: 240px;
       background: var(--glass);
       backdrop-filter: blur(20px);
       border: 1px solid var(--border);
@@ -203,6 +203,29 @@
       height: 1px;
       background: var(--border);
       margin: 6px 0;
+    }
+    .dropdown-points {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: rgba(0, 242, 234, 0.1);
+      border: 1px solid rgba(0, 242, 234, 0.3);
+      margin-bottom: 6px;
+    }
+    .dropdown-points .left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .dropdown-points .left i {
+      color: var(--primary);
+    }
+    .dropdown-points .points-value {
+      font-weight: 900;
+      color: var(--primary);
+      font-size: 1.1rem;
     }
 
     /* Hamburger / drawer */
@@ -405,6 +428,9 @@
       color: var(--primary);
       font-weight: 700;
     }
+    .back-nav:hover {
+      opacity: 0.8;
+    }
 
     .details-wrapper {
       display: grid;
@@ -418,11 +444,18 @@
       background: #000;
       position: sticky;
       top: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .details-visual img,
     .details-visual video {
-      width: 100%;
+      max-width: 100%;
+      max-height: 600px;
+      width: auto;
+      height: auto;
       display: block;
+      object-fit: contain;
     }
 
     .prompt-text-area {
@@ -705,6 +738,59 @@
       max-height: 300px;
       border-radius: 8px;
       margin-top: 15px;
+    }
+
+    /* Notification toast */
+    .notification-toast {
+      position: fixed;
+      top: 100px;
+      right: 20px;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 242, 234, 0.5);
+      border-radius: 14px;
+      padding: 16px 20px;
+      box-shadow: var(--shadow);
+      z-index: 200;
+      display: none;
+      animation: slideInRight 0.4s ease;
+    }
+    .notification-toast.show {
+      display: block;
+    }
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(100px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    .notification-toast .toast-content {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .notification-toast .toast-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(0, 242, 234, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 1.2rem;
+    }
+    .notification-toast .toast-text h4 {
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+    .notification-toast .toast-text p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
     }
 
     /* Modal + loading + empty */
@@ -1016,6 +1102,12 @@
       .mobile-bottom-controls {
         display: block;
       }
+
+      .notification-toast {
+        right: 10px;
+        left: 10px;
+        top: 90px;
+      }
     }
 
     @media (min-width: 993px) {
@@ -1036,6 +1128,19 @@
 </head>
 
 <body>
+  <!-- Notification Toast -->
+  <div class="notification-toast" id="notificationToast">
+    <div class="toast-content">
+      <div class="toast-icon">
+        <i class="fas fa-star"></i>
+      </div>
+      <div class="toast-text">
+        <h4>+10 Points Earned!</h4>
+        <p>Great job uploading your prompt!</p>
+      </div>
+    </div>
+  </div>
+
   <!-- Drawer overlay -->
   <div class="drawer-overlay" id="drawerOverlay" onclick="app.closeMenu()"></div>
 
@@ -1135,6 +1240,15 @@
       <div class="profile-dropdown" id="profileDropdown">
         <img id="desktopProfileBtn" class="profile-btn" src="https://i.pravatar.cc/150?u=default" alt="Profile" onclick="app.toggleProfileDropdown()" />
         <div class="dropdown-menu" id="dropdownMenu">
+          <!-- Points Display -->
+          <div class="dropdown-points">
+            <div class="left">
+              <i class="fas fa-star"></i>
+              <span style="font-weight: 600;">Your Points</span>
+            </div>
+            <span class="points-value" id="dropdownPoints">0</span>
+          </div>
+
           <div class="dropdown-item" onclick="app.nav('my-profile'); app.toggleProfileDropdown();">
             <i class="fa-regular fa-user"></i>
             <span>My Profile</span>
@@ -1146,6 +1260,10 @@
           <div class="dropdown-item" onclick="app.nav('bookmarks'); app.toggleProfileDropdown();">
             <i class="fa-regular fa-bookmark"></i>
             <span>Bookmarks</span>
+          </div>
+          <div class="dropdown-item" onclick="app.nav('upload'); app.toggleProfileDropdown();">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <span>Upload</span>
           </div>
           <div class="dropdown-divider"></div>
           <div class="dropdown-item" onclick="app.requestLogout(); app.toggleProfileDropdown();">
@@ -1278,6 +1396,10 @@
               <div id="myUsername" style="color:var(--text-muted); font-size:0.86rem;">@username</div>
               <div id="myEmail" style="color:var(--text-muted); font-size:0.8rem;">—</div>
               <div id="myJoined" style="color:var(--text-muted); font-size:0.75rem; margin-top:2px;"><i class="far fa-calendar-alt"></i> Joined Recently</div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
+                <i class="fas fa-star" style="color: var(--primary); font-size: 0.9rem;"></i>
+                <span id="myPoints" style="font-weight: 900; color: var(--primary); font-size: 1rem;">0 Points</span>
+              </div>
             </div>
           </div>
 
@@ -1472,15 +1594,7 @@
           </select>
 
           <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Category</label>
-          <select class="input-f" id="up-cat">
-            <option>Realistic</option>
-            <option>Abstract</option>
-            <option>Cyberpunk</option>
-            <option>Anime</option>
-            <option>3D Render</option>
-            <option>Photography</option>
-            <option>Fantasy</option>
-          </select>
+          <select class="input-f" id="up-cat"></select>
 
           <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Prompt</label>
           <textarea class="input-f" id="up-prompt" rows="6" style="resize: vertical;" placeholder="Describe your masterpiece and the prompt used..."></textarea>
@@ -1667,7 +1781,7 @@
       currentUser: null,
       currentItem: null,
       prevSection: 'home',
-      categories: ['All', 'Realistic', 'Abstract', 'Cyberpunk', 'Anime', '3D Render', 'Photography', 'Fantasy'],
+      categories: ['All', 'Realistic', 'Abstract', 'Cyberpunk', 'Anime', '3D Render', 'Photography', 'Fantasy', 'Cinematic', 'Architecture', 'Nature', 'Portrait', 'Sci-Fi', 'Minimalist'],
       uploadedFileUrl: null,
       uploadWidget: null,
       restrictedSections: new Set(['bookmarks', 'upload', 'ai-generate', 'my-profile', 'settings', 'profile-menu']),
@@ -1676,6 +1790,7 @@
         this.setupAuthListener();
         this.initCloudinaryWidget();
         this.renderCategories();
+        this.populateUploadCategoryDropdown();
         this.loadAllPrompts();
 
         // Close dropdown when clicking outside
@@ -1756,6 +1871,18 @@
         document.getElementById('loading').classList.remove('active');
       },
 
+      showNotification(message, submessage = '') {
+        const toast = document.getElementById('notificationToast');
+        const h4 = toast.querySelector('h4');
+        const p = toast.querySelector('p');
+        h4.textContent = message;
+        p.textContent = submessage;
+        toast.classList.add('show');
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 3500);
+      },
+
       // Auth
       setupAuthListener() {
         onAuthStateChanged(auth, async (user) => {
@@ -1782,6 +1909,7 @@
             username: user.email.split('@')[0],
             photoURL: user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`,
             coverURL: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&w=1200',
+            points: 0,
             createdAt: new Date().toISOString(),
             lastLogin: new Date().toISOString()
           });
@@ -1819,9 +1947,13 @@
           const username = data.username || user.email.split('@')[0];
           const photoURL = data.photoURL || `https://i.pravatar.cc/150?u=default`;
           const joinDate = data.createdAt ? new Date(data.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Recently';
+          const points = data.points || 0;
 
           // Desktop profile button
           document.getElementById('desktopProfileBtn').src = photoURL;
+
+          // Points in dropdown
+          document.getElementById('dropdownPoints').textContent = points;
 
           // My profile page
           document.getElementById('myName').textContent = displayName;
@@ -1829,6 +1961,7 @@
           document.getElementById('myUsername').textContent = `@${username}`;
           document.getElementById('myAvatar').src = photoURL;
           document.getElementById('myJoined').innerHTML = `<i class="far fa-calendar-alt"></i> Joined ${joinDate}`;
+          document.getElementById('myPoints').textContent = `${points} Points`;
 
           // Settings
           document.getElementById('settingsDisplayName').value = displayName;
@@ -1986,7 +2119,17 @@
             timestamp: Date.now()
           });
 
-          alert("Prompt uploaded successfully!");
+          // Award 10 points
+          const userRef = ref(db, `users/${this.currentUser.uid}`);
+          await update(userRef, {
+            points: increment(10)
+          });
+
+          // Update UI
+          await this.updateUIForLoggedIn(this.currentUser);
+
+          this.showNotification('+10 Points Earned!', 'Great job uploading your prompt!');
+          
           this.resetUploadForm();
           this.nav('home');
           this.loadAllPrompts();
@@ -2037,7 +2180,7 @@
 
       async loadMostCopied() {
         try {
-          const promptsRef = query(ref(db, 'prompts'), orderByChild('copies'), limitToLast(30));
+          const promptsRef = ref(db, 'prompts');
           const snapshot = await get(promptsRef);
 
           if (snapshot.exists()) {
@@ -2064,7 +2207,7 @@
         }
       },
 
-            scrollRelated(dir) {
+      scrollRelated(dir) {
         const el = document.getElementById('relatedSlider');
         if (el) {
           el.scrollBy({ left: dir * 240, behavior: 'smooth' });
@@ -2112,7 +2255,7 @@
                <div class="video-overlay"><i class="fas fa-video"></i> Video</div>`
             : `<img src="${item.mediaUrl}" alt="prompt" />`;
 
-          return `
+         return `
             <div class="card" onclick="app.openDetails('${item.id}')">
               <div class="card-media">${mediaTag}</div>
               <div class="card-content">
@@ -2144,56 +2287,68 @@
         ['home-cats', 'image-cats', 'video-cats'].forEach(id => {
           const container = document.getElementById(id);
           if (container) {
-            container.innerHTML = this.categories.map(cat => 
-              `<div class="cat-tag ${cat === 'All' ? 'active' : ''}" onclick="app.filterByCategory('${id}', '${cat}')">${cat}</div>`
+            container.innerHTML = this.categories.map((cat, idx) => 
+              `<div class="cat-tag ${idx === 0 ? 'active' : ''}" onclick="app.filterByCategory('${id}', '${cat}')">${cat}</div>`
             ).join('');
           }
         });
       },
 
-      async filterByCategory(containerId, category) {
+      populateUploadCategoryDropdown() {
+        const select = document.getElementById('up-cat');
+        if (select) {
+          select.innerHTML = this.categories
+            .filter(c => c !== 'All')
+            .map(cat => `<option value="${cat}">${cat}</option>`)
+            .join('');
+        }
+      },
+
+      filterByCategory(containerId, category) {
         const container = document.getElementById(containerId);
         if (!container) return;
 
-        // Update active state
         container.querySelectorAll('.cat-tag').forEach(tag => {
           tag.classList.toggle('active', tag.textContent === category);
         });
 
-        try {
-          this.showLoading();
-          const promptsRef = ref(db, 'prompts');
-          const snapshot = await get(promptsRef);
+        const gridMap = {
+          'home-cats': 'home-grid',
+          'image-cats': 'image-grid',
+          'video-cats': 'video-grid'
+        };
 
+        const gridId = gridMap[containerId];
+        if (!gridId) return;
+
+        this.showLoading();
+        get(ref(db, 'prompts')).then(snapshot => {
           if (snapshot.exists()) {
-            let prompts = [];
-            snapshot.forEach((child) => {
+            const prompts = [];
+            snapshot.forEach(child => {
               prompts.push({ id: child.key, ...child.val() });
             });
 
-            prompts.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            let filtered = prompts;
+
+            if (gridId === 'image-grid') {
+              filtered = filtered.filter(p => p.type === 'image');
+            } else if (gridId === 'video-grid') {
+              filtered = filtered.filter(p => p.type === 'video');
+            }
 
             if (category !== 'All') {
-              prompts = prompts.filter(p => p.category === category);
+              filtered = filtered.filter(p => p.category === category);
             }
 
-            // Determine which grid to update
-            let gridId = 'home-grid';
-            if (containerId === 'image-cats') {
-              gridId = 'image-grid';
-              prompts = prompts.filter(p => p.type === 'image');
-            } else if (containerId === 'video-cats') {
-              gridId = 'video-grid';
-              prompts = prompts.filter(p => p.type === 'video');
-            }
-
-            this.renderGrid(gridId, prompts);
+            filtered.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            this.renderGrid(gridId, filtered);
+          } else {
+            this.showEmptyState(gridId, 'No prompts found');
           }
-        } catch (error) {
-          console.error("Filter error:", error);
-        } finally {
+        }).finally(() => {
           this.hideLoading();
-        }
+        });
       },
 
       // Details
@@ -2202,93 +2357,90 @@
           this.showLoading();
           this.stopAllVideos();
 
-          const itemRef = ref(db, `prompts/${promptId}`);
-          const snapshot = await get(itemRef);
-
+          const snapshot = await get(ref(db, `prompts/${promptId}`));
           if (!snapshot.exists()) {
             alert("Prompt not found");
             this.hideLoading();
             return;
           }
 
-          this.currentItem = { id: promptId, ...snapshot.val() };
-          const item = this.currentItem;
+          const item = { id: promptId, ...snapshot.val() };
+          this.currentItem = item;
 
-          // Get user data
-          let userData = null;
-          if (item.userId) {
-            const userSnap = await get(ref(db, `users/${item.userId}`));
-            if (userSnap.exists()) {
-              userData = userSnap.val();
-            }
-          }
-
-          // Render details
           const visual = document.getElementById('det-visual');
           if (item.type === 'video') {
-            visual.innerHTML = `<video src="${item.mediaUrl}" controls loop></video>`;
+            visual.innerHTML = `<video src="${item.mediaUrl}" controls style="max-width:100%; max-height:600px; width:auto; height:auto;"></video>`;
           } else {
-            visual.innerHTML = `<img src="${item.mediaUrl}" alt="prompt" />`;
+            visual.innerHTML = `<img src="${item.mediaUrl}" alt="prompt" style="max-width:100%; max-height:600px; width:auto; height:auto;" />`;
           }
 
-          const userDisplay = userData?.displayName || item.userEmail?.split('@')[0] || 'Anonymous';
-          const userAvatar = userData?.photoURL || 'https://i.pravatar.cc/150?u=default';
-          
-          document.getElementById('det-user').querySelector('span').textContent = `@${userDisplay}`;
-          const avatarImg = document.getElementById('det-user-avatar');
-          avatarImg.src = userAvatar;
-          avatarImg.style.display = 'block';
-          document.getElementById('det-user').onclick = () => {
-            if (item.userId) app.openUserProfile(item.userId);
-          };
+          // User info with avatar
+          const userSnap = await get(ref(db, `users/${item.userId}`));
+          let displayName = item.userEmail || 'Anonymous';
+          let userAvatar = '';
+          if (userSnap.exists()) {
+            const userData = userSnap.val();
+            displayName = userData.displayName || item.userEmail;
+            userAvatar = userData.photoURL || '';
+          }
 
+          const userNameEl = document.querySelector('#det-user span');
+          const userAvatarEl = document.getElementById('det-user-avatar');
+          userNameEl.textContent = displayName;
+          
+          if (userAvatar) {
+            userAvatarEl.src = userAvatar;
+            userAvatarEl.style.display = 'block';
+          } else {
+            userAvatarEl.style.display = 'none';
+          }
+
+          document.getElementById('det-user').onclick = () => this.nav('user-view', item.userId);
           document.getElementById('det-likes').textContent = item.likes || 0;
           document.getElementById('det-copies').textContent = item.copies || 0;
-          document.getElementById('det-category').textContent = item.category || 'Uncategorized';
-          document.getElementById('det-prompt').textContent = item.prompt || 'No prompt provided';
+          document.getElementById('det-category').textContent = item.category || 'General';
+          document.getElementById('det-prompt').textContent = item.prompt || '';
 
-          // Check bookmark status
-          if (this.currentUser) {
-            const bookmarkRef = ref(db, `bookmarks/${this.currentUser.uid}/${promptId}`);
-            const bookmarkSnap = await get(bookmarkRef);
-            const heartBtn = document.getElementById('det-heart');
-            if (bookmarkSnap.exists()) {
-              heartBtn.innerHTML = '<i class="fas fa-bookmark"></i> Bookmarked';
-            } else {
-              heartBtn.innerHTML = '<i class="far fa-bookmark"></i> Bookmark';
-            }
-          }
+          // Bookmark button
+          await this.updateBookmarkButton(promptId);
 
+          this.prevSection = document.querySelector('.section.active')?.id || 'home';
           this.nav('details');
+
           await this.loadMostCopied();
         } catch (error) {
           console.error("Open details error:", error);
-          alert("Failed to load prompt details");
+          alert("Failed to load details");
         } finally {
           this.hideLoading();
         }
       },
 
+      goBack() {
+        this.stopAllVideos();
+        this.nav(this.prevSection || 'home');
+      },
+
       async copyPrompt() {
         if (!this.currentItem) return;
 
+        const text = this.currentItem.prompt || '';
         try {
-          await navigator.clipboard.writeText(this.currentItem.prompt);
+          await navigator.clipboard.writeText(text);
           
-          // Increment copies counter
-          const itemRef = ref(db, `prompts/${this.currentItem.id}`);
-          await update(itemRef, {
+          // Increment copies
+          const promptRef = ref(db, `prompts/${this.currentItem.id}`);
+          await update(promptRef, {
             copies: increment(1)
           });
 
-          // Update UI
           this.currentItem.copies = (this.currentItem.copies || 0) + 1;
           document.getElementById('det-copies').textContent = this.currentItem.copies;
 
-          alert("Prompt copied to clipboard!");
-        } catch (error) {
-          console.error("Copy error:", error);
-          alert("Failed to copy prompt");
+          alert("✅ Prompt copied to clipboard!");
+        } catch (err) {
+          console.error("Copy error:", err);
+          alert("Failed to copy");
         }
       },
 
@@ -2302,28 +2454,60 @@
         try {
           const bookmarkRef = ref(db, `bookmarks/${this.currentUser.uid}/${this.currentItem.id}`);
           const snapshot = await get(bookmarkRef);
-          const heartBtn = document.getElementById('det-heart');
 
           if (snapshot.exists()) {
-            // Remove bookmark
+            // Remove bookmark & decrement likes
             await remove(bookmarkRef);
-            heartBtn.innerHTML = '<i class="far fa-bookmark"></i> Bookmark';
-            alert("Removed from bookmarks");
+            const promptRef = ref(db, `prompts/${this.currentItem.id}`);
+            await update(promptRef, {
+              likes: increment(-1)
+            });
+            this.currentItem.likes = Math.max(0, (this.currentItem.likes || 0) - 1);
           } else {
-            // Add bookmark
+            // Add bookmark & increment likes
             await set(bookmarkRef, {
               promptId: this.currentItem.id,
-              timestamp: Date.now()
+              savedAt: new Date().toISOString()
             });
-            heartBtn.innerHTML = '<i class="fas fa-bookmark"></i> Bookmarked';
-            alert("Added to bookmarks");
+            const promptRef = ref(db, `prompts/${this.currentItem.id}`);
+            await update(promptRef, {
+              likes: increment(1)
+            });
+            this.currentItem.likes = (this.currentItem.likes || 0) + 1;
           }
+
+          document.getElementById('det-likes').textContent = this.currentItem.likes;
+          await this.updateBookmarkButton(this.currentItem.id);
         } catch (error) {
           console.error("Bookmark error:", error);
           alert("Failed to update bookmark");
         }
       },
 
+      async updateBookmarkButton(promptId) {
+        const btn = document.getElementById('det-heart');
+        if (!btn) return;
+
+        if (!this.currentUser) {
+          btn.innerHTML = '<i class="far fa-bookmark"></i> Bookmark';
+          return;
+        }
+
+        const bookmarkRef = ref(db, `bookmarks/${this.currentUser.uid}/${promptId}`);
+        const snapshot = await get(bookmarkRef);
+
+        if (snapshot.exists()) {
+          btn.innerHTML = '<i class="fas fa-bookmark"></i> Bookmarked';
+          btn.style.background = 'var(--primary)';
+          btn.style.color = '#000';
+        } else {
+          btn.innerHTML = '<i class="far fa-bookmark"></i> Bookmark';
+          btn.style.background = 'var(--surface)';
+          btn.style.color = 'var(--text)';
+        }
+      },
+
+      // Bookmarks
       async loadBookmarks() {
         if (!this.currentUser) {
           this.showEmptyState('bookmark-grid', 'Please sign in to view bookmarks');
@@ -2335,22 +2519,27 @@
           const bookmarksRef = ref(db, `bookmarks/${this.currentUser.uid}`);
           const snapshot = await get(bookmarksRef);
 
-          if (snapshot.exists()) {
-            const bookmarkPromises = [];
-            snapshot.forEach((child) => {
-              const promptId = child.val().promptId;
-              bookmarkPromises.push(get(ref(db, `prompts/${promptId}`)));
-            });
-
-            const promptSnapshots = await Promise.all(bookmarkPromises);
-            const prompts = promptSnapshots
-              .filter(snap => snap.exists())
-              .map(snap => ({ id: snap.key, ...snap.val() }));
-
-            this.renderGrid('bookmark-grid', prompts);
-          } else {
+          if (!snapshot.exists()) {
             this.showEmptyState('bookmark-grid', 'No bookmarks yet');
+            this.hideLoading();
+            return;
           }
+
+          const promptIds = [];
+          snapshot.forEach(child => {
+            promptIds.push(child.key);
+          });
+
+          const prompts = [];
+          for (const id of promptIds) {
+            const promptSnap = await get(ref(db, `prompts/${id}`));
+            if (promptSnap.exists()) {
+              prompts.push({ id, ...promptSnap.val() });
+            }
+          }
+
+          prompts.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+          this.renderGrid('bookmark-grid', prompts);
         } catch (error) {
           console.error("Load bookmarks error:", error);
         } finally {
@@ -2358,89 +2547,68 @@
         }
       },
 
-      // User Profile
-      async openUserProfile(userId) {
+      // User profile view
+      async loadUserProfile(userId) {
         try {
           this.showLoading();
-          this.stopAllVideos();
 
-          const userRef = ref(db, `users/${userId}`);
-          const userSnap = await get(userRef);
-
+          const userSnap = await get(ref(db, `users/${userId}`));
           if (!userSnap.exists()) {
             alert("User not found");
+            this.nav('home');
             this.hideLoading();
             return;
           }
 
-          const userData = userSnap.val();
-          
-          // Update profile UI
-          document.getElementById('view-name').textContent = userData.displayName || 'User';
-          document.getElementById('view-username').textContent = `@${userData.username || 'username'}`;
-          document.getElementById('view-email').textContent = userData.email || '';
-          document.getElementById('viewProfileImage').src = userData.photoURL || 'https://i.pravatar.cc/150?u=default';
-          document.getElementById('viewCoverImage').src = userData.coverURL || 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&w=1200';
-          
-          const joinDate = userData.createdAt ? new Date(userData.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Recently';
+          const user = userSnap.val();
+          document.getElementById('view-name').textContent = user.displayName || 'User';
+          document.getElementById('view-username').textContent = `@${user.username || 'user'}`;
+          document.getElementById('view-email').textContent = user.email || '';
+          document.getElementById('viewProfileImage').src = user.photoURL || 'https://i.pravatar.cc/150?u=default';
+          document.getElementById('viewCoverImage').src = user.coverURL || 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&w=1200';
+
+          const joinDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Recently';
           document.getElementById('view-joined').textContent = `Joined ${joinDate}`;
 
           // Show edit button if own profile
-          const editBtn = document.getElementById('editProfileBtn');
           if (this.currentUser && this.currentUser.uid === userId) {
-            editBtn.style.display = 'block';
+            document.getElementById('editProfileBtn').style.display = 'block';
           } else {
-            editBtn.style.display = 'none';
+            document.getElementById('editProfileBtn').style.display = 'none';
           }
 
-          // Load user's artworks
-          const promptsRef = ref(db, 'prompts');
-          const promptsSnap = await get(promptsRef);
-          
+          // Load user's prompts
+          const promptsSnap = await get(ref(db, 'prompts'));
+          const userPrompts = [];
           if (promptsSnap.exists()) {
-            const userPrompts = [];
-            promptsSnap.forEach((child) => {
+            promptsSnap.forEach(child => {
               const data = child.val();
               if (data.userId === userId) {
                 userPrompts.push({ id: child.key, ...data });
               }
             });
-
-            userPrompts.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-            
-            document.getElementById('artworkCount').textContent = userPrompts.length;
-            this.renderGrid('user-art-grid', userPrompts);
-          } else {
-            document.getElementById('artworkCount').textContent = '0';
-            this.showEmptyState('user-art-grid', 'No artworks yet');
           }
 
-          this.nav('user-view');
+          userPrompts.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+          document.getElementById('artworkCount').textContent = userPrompts.length;
+          this.renderGrid('user-art-grid', userPrompts);
         } catch (error) {
-          console.error("Open user profile error:", error);
-          alert("Failed to load profile");
+          console.error("Load user profile error:", error);
         } finally {
           this.hideLoading();
         }
       },
 
       openMyPublicProfile() {
-        if (!this.currentUser) return;
-        this.openUserProfile(this.currentUser.uid);
+        if (this.currentUser) {
+          this.nav('user-view', this.currentUser.uid);
+        }
       },
 
       openEditProfile() {
-        if (!this.currentUser) return;
-        
-        // Populate modal with current values
-        get(ref(db, `users/${this.currentUser.uid}`)).then(snap => {
-          if (snap.exists()) {
-            const data = snap.val();
-            document.getElementById('editDisplayName').value = data.displayName || '';
-          }
-        });
-        
         this.openModal('editProfileModal');
+        const displayName = document.getElementById('myName').textContent;
+        document.getElementById('editDisplayName').value = displayName !== '—' ? displayName : '';
       },
 
       async saveProfileFromModal() {
@@ -2448,7 +2616,7 @@
 
         const displayName = document.getElementById('editDisplayName').value.trim();
         if (!displayName) {
-          alert("Please enter a display name");
+          alert("Display name cannot be empty");
           return;
         }
 
@@ -2456,11 +2624,9 @@
           this.showLoading();
           const userRef = ref(db, `users/${this.currentUser.uid}`);
           await update(userRef, { displayName });
-          
-          alert("Profile updated!");
-          this.closeModal('editProfileModal');
           await this.updateUIForLoggedIn(this.currentUser);
-          this.openMyPublicProfile();
+          this.closeModal('editProfileModal');
+          alert("Profile updated successfully!");
         } catch (error) {
           console.error("Save profile error:", error);
           alert("Failed to update profile");
@@ -2469,35 +2635,9 @@
         }
       },
 
-      async saveSettings() {
-        if (!this.currentUser) return;
-
-        const displayName = document.getElementById('settingsDisplayName').value.trim();
-        const username = document.getElementById('settingsUsername').value.trim();
-
-        if (!displayName || !username) {
-          alert("Please fill all fields");
-          return;
-        }
-
-        try {
-          this.showLoading();
-          const userRef = ref(db, `users/${this.currentUser.uid}`);
-          await update(userRef, { displayName, username });
-          
-          alert("Settings saved!");
-          await this.updateUIForLoggedIn(this.currentUser);
-        } catch (error) {
-          console.error("Save settings error:", error);
-          alert("Failed to save settings");
-        } finally {
-          this.hideLoading();
-        }
-      },
-
       uploadProfileImage() {
         if (!this.currentUser) {
-          alert("Please sign in first");
+          alert("Please sign in");
           return;
         }
 
@@ -2508,19 +2648,17 @@
           multiple: false,
           resourceType: 'image',
           clientAllowedFormats: ['jpg', 'png', 'gif'],
-          maxFileSize: 10000000,
-          cropping: true,
-          croppingAspectRatio: 1
+          maxFileSize: 5000000
         }, async (error, result) => {
           if (!error && result && result.event === "success") {
             try {
               this.showLoading();
               const userRef = ref(db, `users/${this.currentUser.uid}`);
               await update(userRef, { photoURL: result.info.secure_url });
-              alert("Profile picture updated!");
               await this.updateUIForLoggedIn(this.currentUser);
+              alert("Profile picture updated!");
             } catch (err) {
-              console.error("Update photo error:", err);
+              console.error("Update profile image error:", err);
               alert("Failed to update profile picture");
             } finally {
               this.hideLoading();
@@ -2533,7 +2671,7 @@
 
       uploadCoverImage() {
         if (!this.currentUser) {
-          alert("Please sign in first");
+          alert("Please sign in");
           return;
         }
 
@@ -2552,9 +2690,8 @@
               const userRef = ref(db, `users/${this.currentUser.uid}`);
               await update(userRef, { coverURL: result.info.secure_url });
               alert("Cover photo updated!");
-              await this.updateUIForLoggedIn(this.currentUser);
             } catch (err) {
-              console.error("Update cover error:", err);
+              console.error("Update cover image error:", err);
               alert("Failed to update cover photo");
             } finally {
               this.hideLoading();
@@ -2565,7 +2702,32 @@
         widget.open();
       },
 
-      // Contact Form (EmailJS)
+      async saveSettings() {
+        if (!this.currentUser) return;
+
+        const displayName = document.getElementById('settingsDisplayName').value.trim();
+        const username = document.getElementById('settingsUsername').value.trim();
+
+        if (!displayName || !username) {
+          alert("All fields are required");
+          return;
+        }
+
+        try {
+          this.showLoading();
+          const userRef = ref(db, `users/${this.currentUser.uid}`);
+          await update(userRef, { displayName, username });
+          await this.updateUIForLoggedIn(this.currentUser);
+          alert("Settings saved successfully!");
+        } catch (error) {
+          console.error("Save settings error:", error);
+          alert("Failed to save settings");
+        } finally {
+          this.hideLoading();
+        }
+      },
+
+      // Contact form
       async submitContact(e) {
         e.preventDefault();
 
@@ -2574,7 +2736,7 @@
         const message = document.getElementById('contactMessage').value.trim();
 
         if (!name || !email || !message) {
-          alert("Please fill all fields");
+          alert("All fields are required");
           return;
         }
 
@@ -2583,18 +2745,17 @@
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
 
         try {
-          // EmailJS service_id və template_id-ni öz məlumatlarınla əvəz et
-          await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
+          await emailjs.send("service_YOUR_SERVICE_ID", "template_YOUR_TEMPLATE_ID", {
             from_name: name,
             from_email: email,
             message: message
           });
 
-          alert("Message sent successfully!");
+          alert("✅ Message sent successfully!");
           document.getElementById('contactForm').reset();
         } catch (error) {
-          console.error("Contact form error:", error);
-          alert("Failed to send message. Please try again.");
+          console.error("EmailJS error:", error);
+          alert("❌ Failed to send message. Please try again.");
         } finally {
           btn.disabled = false;
           btn.innerHTML = '<i class="fa-regular fa-paper-plane"></i> Send message';
@@ -2602,46 +2763,45 @@
       },
 
       // Navigation
-      nav(section) {
-        // Check auth for restricted sections
-        if (this.restrictedSections.has(section) && !this.currentUser) {
-          alert("Please sign in to access this feature");
+      nav(sectionId, param = null) {
+        if (this.restrictedSections.has(sectionId) && !this.currentUser) {
+          alert("Please sign in to access this section");
           return;
         }
 
         this.stopAllVideos();
-        this.closeMenu();
 
-        // Hide all sections
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        
-        // Show target section
-        const target = document.getElementById(section);
-        if (target) {
-          target.classList.add('active');
-          this.prevSection = section;
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
 
-          // Update nav links active state
-          document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-          
-          // Load data if needed
-          if (section === 'bookmarks') {
-            this.loadBookmarks();
-          }
+        const section = document.getElementById(sectionId);
+        if (section) {
+          section.classList.add('active');
         }
 
-        window.scrollTo(0, 0);
-      },
+        const links = document.querySelectorAll('.nav-link');
+        links.forEach(link => {
+          if (link.textContent.toLowerCase().includes(sectionId.toLowerCase()) ||
+              link.onclick?.toString().includes(`'${sectionId}'`)) {
+            link.classList.add('active');
+          }
+        });
 
-      goBack() {
-        this.nav(this.prevSection);
+        this.closeMenu();
+
+        // Load data for specific sections
+        if (sectionId === 'bookmarks') {
+          this.loadBookmarks();
+        } else if (sectionId === 'user-view' && param) {
+          this.loadUserProfile(param);
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     };
 
-    // Initialize app
-    window.addEventListener('DOMContentLoaded', () => {
-      window.app.init();
-    });
+    // Initialize
+    window.app.init();
   </script>
 </body>
 </html>
