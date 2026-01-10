@@ -440,27 +440,8 @@
       gap: 50px;
       align-items: start; /* Məzmun az olsa belə şəkli yuxarıda saxlayır */
     }
-/* MOBİL RESPONSİVLİK ÜÇÜN XÜSUSİ DÜZƏLİŞLƏR */
-    @media (max-width: 768px) {
-      .details-wrapper {
-        gap: 20px;
-        width: 100%; /* Mobildə tam ekran tutsun */
-      }
-      
-      .details-visual {
-        border-radius: 14px; /* Mobildə künclər biraz daha az dairəvi */
-      }
 
-      .details-visual img,
-      .details-visual video {
-        max-height: 500px; /* Mobildə şəkil çox uzun olmasın */
-      }
-
-      .prompt-text-area {
-        padding: 16px;
-        font-size: 0.85rem;
-      }
-    }
+ 
     .details-visual {
       width: 100%;
       background: #000;
@@ -1178,6 +1159,29 @@
 
       footer {
         display: block;
+      }
+    }
+
+    
+    /* MOBİL RESPONSİVLİK ÜÇÜN XÜSUSİ DÜZƏLİŞLƏR */
+       @media (max-width: 768px) {
+      .details-wrapper {
+        gap: 20px;
+        width: 100%; /* Mobildə tam ekran tutsun */
+      }
+      
+      .details-visual {
+        border-radius: 14px; /* Mobildə künclər biraz daha az dairəvi */
+      }
+
+      .details-visual img,
+      .details-visual video {
+        max-height: 500px; /* Mobildə şəkil çox uzun olmasın */
+      }
+
+      .prompt-text-area {
+        padding: 16px;
+        font-size: 0.85rem;
       }
     }
   </style>
