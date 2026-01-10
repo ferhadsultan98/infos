@@ -1297,6 +1297,11 @@
       <!-- Sign In Button (desktop) -->
       <button id="signInBtn" class="btn-google" onclick="app.signIn()"><i class="fab fa-google"></i> Sign In</button>
 
+      <!-- YENİ: GitHub düyməsini bura əlavə edin -->
+<button class="btn-google" id="signInGithubBtn" onclick="app.signInWithGithub()" style="margin-left: 10px; background: #333; color: white;">
+  <i class="fab fa-github"></i> GitHub
+</button>
+      
       <!-- Desktop Profile Dropdown -->
       <div class="profile-dropdown" id="profileDropdown">
         <img id="desktopProfileBtn" class="profile-btn" src="https://i.pravatar.cc/150?u=default" alt="Profile" onclick="app.toggleProfileDropdown()" />
@@ -1858,7 +1863,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut as firebaseSignOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider,  GithubAuthProvider, onAuthStateChanged, signOut as firebaseSignOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getDatabase, ref, set, get, push, update, increment, query, orderByChild, limitToLast, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const firebaseConfig = {
@@ -1875,7 +1880,8 @@
     const auth = getAuth(firebaseApp);
     const db = getDatabase(firebaseApp);
     const provider = new GoogleAuthProvider();
-
+    const githubProvider = new GithubAuthProvider();
+    
     const CLOUDINARY_CLOUD_NAME = "dbiltdpxh";
     const CLOUDINARY_UPLOAD_PRESET = "farhadsultan";
 
@@ -2030,7 +2036,7 @@
       async updateUIForLoggedIn(user) {
         // Hide Sign In
         document.getElementById('signInBtn').style.display = 'none';
-        
+        document.getElementById('signInGithubBtn').style.display = 'none';
         // Show desktop profile dropdown
         const profileDropdown = document.getElementById('profileDropdown');
         profileDropdown.classList.add('active');
@@ -2079,7 +2085,7 @@
       updateUIForLoggedOut() {
         // Show Sign In
         document.getElementById('signInBtn').style.display = 'flex';
-
+document.getElementById('signInGithubBtn').style.display = 'flex';
         // Hide desktop dropdown
         const profileDropdown = document.getElementById('profileDropdown');
         profileDropdown.classList.remove('active');
@@ -2113,6 +2119,24 @@
         }
       },
 
+async signInWithGithub() {
+  try {
+    this.showLoading();
+    // GitHub provider ilə giriş pəncərəsi açılır
+    await signInWithPopup(auth, githubProvider);
+    // Uğurlu olsa, onAuthStateChanged avtomatik işə düşüb istifadəçini qarşılayacaq
+  } catch (err) {
+    console.error("GitHub Sign in error:", err);
+    if (err.code === 'auth/account-exists-with-different-credential') {
+      alert("Bu email ilə artıq Google vasitəsilə qeydiyyatdan keçmisiniz. Zəhmət olmasa Google ilə daxil olun.");
+    } else {
+      alert("GitHub ilə giriş zamanı xəta baş verdi.");
+    }
+  } finally {
+    this.hideLoading();
+  }
+},
+      
       // Called by buttons - open a modal
       requestLogout() {
         this.openModal('logoutModal');
