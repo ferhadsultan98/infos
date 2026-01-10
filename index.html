@@ -1010,16 +1010,9 @@
     }
 
     @media (max-width: 992px) {
-       .nav-right {
-    display: none !important;
-  }
-      /* Navbar (yan menyuda) Sign In buttonlarını göstər */
-  #signInBtn,
-  #signInGithubBtn {
-    display: block !important;
-    width: 100%;
-    margin-bottom: 10px;
-  }
+     .nav-right { display: none !important; }
+    .hamburger { display: block !important; }
+
 
       .details-wrapper {
         grid-template-columns: 1fr; /* Alt-alta düzülüş */
@@ -1557,7 +1550,17 @@
       <!-- FAQ + Privacy&Terms desktop headerdə yox, responsive headerdə var -->
       <li><a class="nav-link hide-desktop" onclick="app.nav('faq')">FAQ</a></li>
       <li><a class="nav-link hide-desktop" onclick="app.nav('privacy-terms')">Privacy &amp; Terms</a></li>
-
+<!-- TƏZƏ: Sign In buttonlarını bura əlavə edin -->
+    <li class="hide-desktop" style="margin-top: 20px;">
+        <button class="btn-google" onclick="app.signIn()" style="width: 100%; justify-content: center;">
+            <i class="fab fa-google"></i> Sign In
+        </button>
+    </li>
+    <li class="hide-desktop" style="margin-top: 10px;">
+        <button class="btn-google" onclick="app.signInWithGithub()" style="width: 100%; justify-content: center; background: #333; color: white;">
+            <i class="fab fa-github"></i> GitHub
+        </button>
+    </li>
       <div class="mobile-bottom-controls">
         <button style="background: var(--secondary); margin-top: 8px; color: #fff; width: 100%; justify-content:center;" class="btn-google" id="signOutMobile" onclick="app.requestLogout()">
           <i class="fas fa-sign-out-alt"></i> Logout
@@ -1611,10 +1614,11 @@
         </div>
       </div>
 
-      <div class="hamburger" id="hamBtn" onclick="app.toggleMenu()">
+      
+    </div>
+    <div class="hamburger" id="hamBtn" onclick="app.toggleMenu()">
         <span></span><span></span><span></span>
       </div>
-    </div>
   </nav>
 
   <!-- Bottom nav (profile & auth actions burada) -->
@@ -2385,28 +2389,7 @@
 document.getElementById('signInGithubBtn').style.display = 'flex';
 
 
-// Mobile navbar-a button əlavə et (əgər mövcud deyilsə)
-  const navLinks = document.getElementById('navLinks');
-  if (window.innerWidth <= 992) {
-    // Əgər navbar-da Sign In buttonları yoxdursa, əlavə et
-    if (!document.getElementById('mobileSignInBtn')) {
-      const signInLi = document.createElement('li');
-      signInLi.innerHTML = `
-        <button id="mobileSignInBtn" class="btn-google nav-link" onclick="app.signIn()" style="width: 100%; justify-content: center; margin-bottom: 10px;">
-          <i class="fab fa-google"></i> Sign In
-        </button>
-      `;
-      navLinks.appendChild(signInLi);
-      
-      const githubLi = document.createElement('li');
-      githubLi.innerHTML = `
-        <button id="mobileGithubBtn" class="btn-google nav-link" onclick="app.signInWithGithub()" style="width: 100%; justify-content: center; background: #333; color: white;">
-          <i class="fab fa-github"></i> GitHub
-        </button>
-      `;
-      navLinks.appendChild(githubLi);
-    }
-  }
+
         
         // Hide desktop dropdown
         const profileDropdown = document.getElementById('profileDropdown');
