@@ -424,35 +424,36 @@
       align-items: center;
       gap: 10px;
       cursor: pointer;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       color: var(--primary);
       font-weight: 700;
-      transition: 0.3s ease;
+      transition: 0.3s;
     }
     .back-nav:hover {
       opacity: 0.8;
-      transform: translateX(-5px);
+      transform: translateX(-4px);
     }
 
+    /* DETAILS WRAPPER - Əsas Düzəliş */
     .details-wrapper {
-      display: grid;
-      grid-template-columns: 1.3fr 0.7fr; /* Şəkil hissəsi biraz daha geniş */
-      gap: 50px;
-      align-items: start; /* Məzmun az olsa belə şəkli yuxarıda saxlayır */
+      display: flex;
+      flex-direction: column; /* Həm mobildə, həm desktopda alt-alta düzür */
+      gap: 30px;
+      width: 100%;
+      max-width: 1000px; /* Çox geniş ekranlarda həddindən artıq yayılmasın */
+      margin: 0 auto; /* Mərkəzləşdirir */
     }
 
- 
+    /* Visual (Şəkil/Video) Hissəsi */
     .details-visual {
       width: 100%;
       background: #000;
       border-radius: 20px;
       border: 1px solid var(--border);
       overflow: hidden;
-      position: sticky; /* Masaüstündə aşağı scroll edərkən şəkil sabit qalır */
-      top: 100px; 
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       box-shadow: var(--shadow);
     }
 
@@ -460,22 +461,21 @@
     .details-visual video {
       width: 100%;
       height: auto;
-      max-height: 75vh; /* Ekran hündürlüyünün 75%-ni keçmir */
-      object-fit: contain;
+      max-height: 70vh; /* Ekranın 70%-dən çox yer tutmasın */
+      object-fit: contain; /* Şəkil kəsilmədən tam görünsün */
       display: block;
     }
 
+    /* Məlumat Hissəsi */
     .details-info {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+      width: 100%;
     }
 
     .prompt-text-area {
       background: var(--surface);
-      padding: 24px;
-      border-radius: 16px;
-      max-height: 350px;
+      padding: 20px;
+      border-radius: 14px;
+      max-height: 300px;
       overflow-y: auto;
       font-family: "Fira Code", monospace;
       font-size: 0.9rem;
@@ -483,19 +483,20 @@
       line-height: 1.7;
       margin: 20px 0;
       color: var(--text-muted);
+      word-break: break-word; /* Uzun sözlərin daşmasının qarşısını alır */
     }
 
-    /* Scrollbar dizaynı (Prompt text üçün) */
+    /* Scrollbar */
     .prompt-text-area::-webkit-scrollbar {
       width: 6px;
     }
     .prompt-text-area::-webkit-scrollbar-thumb {
-      background: var(--border);
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 10px;
     }
 
     .related-prompts {
-      margin-top: 60px;
+      margin-top: 50px;
       padding-top: 30px;
       border-top: 1px solid var(--border);
     }
