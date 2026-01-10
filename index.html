@@ -1010,6 +1010,17 @@
     }
 
     @media (max-width: 992px) {
+       .nav-right {
+    display: none !important;
+  }
+      /* Navbar (yan menyuda) Sign In buttonlarını göstər */
+  #signInBtn,
+  #signInGithubBtn {
+    display: block !important;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
       .details-wrapper {
         grid-template-columns: 1fr; /* Alt-alta düzülüş */
         gap: 30px;
@@ -2372,6 +2383,31 @@
         // Show Sign In
         document.getElementById('signInBtn').style.display = 'flex';
 document.getElementById('signInGithubBtn').style.display = 'flex';
+
+
+// Mobile navbar-a button əlavə et (əgər mövcud deyilsə)
+  const navLinks = document.getElementById('navLinks');
+  if (window.innerWidth <= 992) {
+    // Əgər navbar-da Sign In buttonları yoxdursa, əlavə et
+    if (!document.getElementById('mobileSignInBtn')) {
+      const signInLi = document.createElement('li');
+      signInLi.innerHTML = `
+        <button id="mobileSignInBtn" class="btn-google nav-link" onclick="app.signIn()" style="width: 100%; justify-content: center; margin-bottom: 10px;">
+          <i class="fab fa-google"></i> Sign In
+        </button>
+      `;
+      navLinks.appendChild(signInLi);
+      
+      const githubLi = document.createElement('li');
+      githubLi.innerHTML = `
+        <button id="mobileGithubBtn" class="btn-google nav-link" onclick="app.signInWithGithub()" style="width: 100%; justify-content: center; background: #333; color: white;">
+          <i class="fab fa-github"></i> GitHub
+        </button>
+      `;
+      navLinks.appendChild(githubLi);
+    }
+  }
+        
         // Hide desktop dropdown
         const profileDropdown = document.getElementById('profileDropdown');
         profileDropdown.classList.remove('active');
