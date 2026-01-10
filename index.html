@@ -1674,7 +1674,40 @@
     </section>
 
     <!-- AI Generate (Coming Soon) -->
-    <section id="ai-generate" class="section">
+<section id="ai-generate" class="section">
+      <div class="page-hero">
+        <h2>AI Generate</h2>
+        <p>Create amazing visuals with our AI engine.</p>
+      </div>
+
+      <div class="form-box">
+        <label style="font-size:0.85rem; color:var(--text-muted); display:block; margin-bottom:5px;">Enter your prompt</label>
+        
+        <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+          <input type="text" class="input-f" id="gen-prompt" placeholder="A cyberpunk city in rain, neon lights, realistic..." style="margin-bottom:0; flex:1; min-width: 200px;">
+          <button class="btn-google" style="background:var(--primary); color:#000; font-weight:bold;" onclick="app.generateAIImage()">
+            <i class="fas fa-magic"></i> Generate
+          </button>
+        </div>
+
+        <div id="gen-result" style="display:none; text-align:center; margin-top:20px;">
+          <div id="gen-loading" style="color:var(--primary); margin-bottom:15px; display:none;">
+            <i class="fas fa-spinner fa-spin"></i> Creating magic...
+          </div>
+          
+          <div style="position:relative; display:inline-block; max-width:100%;">
+            <img id="gen-image" src="" style="width:100%; max-height:500px; border-radius:12px; border:1px solid var(--border); box-shadow:var(--shadow); display:none;" />
+            <a id="gen-download" href="#" target="_blank" class="btn-google" style="margin-top:10px; justify-content:center; background:var(--surface); color:var(--text); text-decoration:none; display:none;">
+              <i class="fas fa-download"></i> Download High Quality
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    
+    <!-- <section id="ai-generate" class="section">
       <div class="page-hero">
         <h2>AI Generate</h2>
         <p>Next-gen generation experience for prompts &amp; assets.</p>
@@ -1698,7 +1731,7 @@
           </p>
         </div>
       </div>
-    </section>
+    </section> -->
 
     <!-- About -->
     <section id="about" class="section">
@@ -2823,6 +2856,57 @@
         }
       },
 
+// AI Image Generation Function
+      generateAIImage() {
+        const promptInput = document.getElementById('gen-prompt');
+        const prompt = promptInput.value.trim();
+        const resultDiv = document.getElementById('gen-result');
+        const img = document.getElementById('gen-image');
+        const loading = document.getElementById('gen-loading');
+        const downloadBtn = document.getElementById('gen-download');
+
+        if (!this.currentUser) {
+          alert("Please sign in to generate images!");
+          return;
+        }
+
+        if (!prompt) {
+          alert("Please enter a prompt description!");
+          return;
+        }
+
+        // UI-ni hazirlayiriq
+        resultDiv.style.display = 'block';
+        loading.style.display = 'block';
+        img.style.display = 'none';
+        downloadBtn.style.display = 'none';
+
+        // Senin API Key-in
+        const apiKey = "pk_KzTVzDt50CYcZqcY"; 
+        
+        // Promptu URL ucun hazirlayiriq
+        const encodedPrompt = encodeURIComponent(prompt);
+        
+        // URL yaradiriq (Flux modeli keyfiyyet ucun secildi)
+        const apiUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&model=flux&nologo=true&token=${apiKey}&seed=${Math.random()}`;
+
+        img.src = apiUrl;
+
+        // Sekil yuklenende
+        img.onload = () => {
+          loading.style.display = 'none';
+          img.style.display = 'block';
+          downloadBtn.href = apiUrl; // Download linkini yenileyirik
+          downloadBtn.style.display = 'flex';
+        };
+
+        // Xeta olarsa
+        img.onerror = () => {
+          loading.style.display = 'none';
+          alert("Error generating image. Please try again.");
+        };
+      },
+          
       // Navigation
       nav(sectionId, param = null) {
         if (this.restrictedSections.has(sectionId) && !this.currentUser) {
