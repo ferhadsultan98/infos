@@ -419,59 +419,82 @@
     }
 
     /* Back nav & details */
-    .back-nav {
-      display: flex;
+   .back-nav {
+      display: inline-flex;
       align-items: center;
       gap: 10px;
       cursor: pointer;
-      margin-bottom: 30px;
+      margin-bottom: 24px;
       color: var(--primary);
       font-weight: 700;
+      transition: 0.3s ease;
     }
     .back-nav:hover {
       opacity: 0.8;
+      transform: translateX(-5px);
     }
 
     .details-wrapper {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 40px;
+      grid-template-columns: 1.3fr 0.7fr; /* Şəkil hissəsi biraz daha geniş */
+      gap: 50px;
+      align-items: start; /* Məzmun az olsa belə şəkli yuxarıda saxlayır */
     }
+
     .details-visual {
-      border-radius: 15px;
-      overflow: hidden;
-      border: 1px solid var(--border);
+      width: 100%;
       background: #000;
-      position: sticky;
-      top: 100px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: sticky; /* Masaüstündə aşağı scroll edərkən şəkil sabit qalır */
+      top: 100px; 
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: var(--shadow);
     }
+
     .details-visual img,
     .details-visual video {
-      max-width: 100%;
-      max-height: 600px;
-      width: auto;
+      width: 100%;
       height: auto;
-      display: block;
+      max-height: 75vh; /* Ekran hündürlüyünün 75%-ni keçmir */
       object-fit: contain;
+      display: block;
+    }
+
+    .details-info {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
     .prompt-text-area {
       background: var(--surface);
-      padding: 25px;
-      border-radius: 12px;
-      max-height: 300px;
+      padding: 24px;
+      border-radius: 16px;
+      max-height: 350px;
       overflow-y: auto;
-      font-family: "Fira Code";
+      font-family: "Fira Code", monospace;
+      font-size: 0.9rem;
       border: 1px solid var(--border);
       line-height: 1.7;
       margin: 20px 0;
+      color: var(--text-muted);
+    }
+
+    /* Scrollbar dizaynı (Prompt text üçün) */
+    .prompt-text-area::-webkit-scrollbar {
+      width: 6px;
+    }
+    .prompt-text-area::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 10px;
     }
 
     .related-prompts {
-      margin-top: 50px;
+      margin-top: 60px;
       padding-top: 30px;
       border-top: 1px solid var(--border);
     }
@@ -986,11 +1009,24 @@
 
     @media (max-width: 992px) {
       .details-wrapper {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* Alt-alta düzülüş */
+        gap: 30px;
       }
+
       .details-visual {
-        position: relative;
+        position: relative; /* Mobildə sticky ləğv olunur */
         top: 0;
+        max-height: 500px;
+      }
+      
+      .details-visual img,
+      .details-visual video {
+        max-height: 500px;
+      }
+
+      .prompt-text-area {
+        padding: 20px;
+        font-size: 0.85rem;
       }
 
       .nav-links {
