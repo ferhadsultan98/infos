@@ -11,7 +11,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
   <style>
-    :root {
+        :root {
       --bg: #050508;
       --surface: rgba(255, 255, 255, 0.05);
       --border: rgba(255, 255, 255, 0.1);
@@ -93,7 +93,7 @@
       font-size: 0.9rem;
       font-weight: 500;
       transition: 0.2s;
-      padding: 8px 10px;
+      padding: 8px 12px;
       border-radius: 10px;
       border: 1px solid transparent;
       display: inline-block;
@@ -102,13 +102,12 @@
     .nav-link.active {
       color: var(--primary);
       background: rgba(255, 255, 255, 0.04);
-      border-color: rgba(255, 255, 255, 0.03);
     }
 
     .nav-right {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 15px;
     }
 
     .btn-google {
@@ -130,10 +129,10 @@
       transform: translateY(-2px);
     }
 
-    /* Desktop Profile Dropdown */
-   .profile-dropdown {
+    /* Profile Dropdown (Desktop & Mobile) */
+    .profile-dropdown {
       position: relative;
-      display: none;
+      display: none; /* JS ile acilacaq ve ya giris edende */
     }
     .profile-dropdown.active {
       display: block;
@@ -221,7 +220,6 @@
     }
     .dropdown-points .left i {
       color: var(--primary);
-      width: auto;
     }
     .dropdown-points .points-value {
       font-weight: 900;
@@ -433,45 +431,53 @@
       opacity: 0.8;
     }
 
+    /* --- DETAILS REDESIGN START --- */
     .details-wrapper {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 40px;
+      align-items: start;
     }
-.details-visual {
-  border-radius: 15px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  background: #000;
-  position: sticky;
-  top: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  max-height: 700px;
-}
-.details-visual img,
-.details-visual video {
-  width: 100%;
-  height: 100%;
-  max-width: 100%;
-  max-height: 700px;
-  display: block;
-  object-fit: contain;
-}
+    .details-visual {
+      width: 100%;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      position: sticky;
+      top: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* Image olcusunu duzeltmek ucun max-height ve aspekt */
+      max-height: 550px;
+      aspect-ratio: auto;
+      backdrop-filter: blur(10px);
+    }
+    .details-visual img,
+    .details-visual video {
+      width: 100%;
+      height: 100%;
+      max-height: 550px;
+      display: block;
+      object-fit: contain; /* Image ezilməsin deyə */
+    }
 
     .prompt-text-area {
       background: var(--surface);
       padding: 25px;
-      border-radius: 12px;
-      max-height: 300px;
+      border-radius: 16px;
+      max-height: 400px;
       overflow-y: auto;
-      font-family: "Fira Code";
+      font-family: "Fira Code", monospace;
       border: 1px solid var(--border);
-      line-height: 1.7;
+      line-height: 1.8;
       margin: 20px 0;
+      font-size: 0.95rem;
+      color: var(--text);
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
     }
+    /* --- DETAILS REDESIGN END --- */
 
     .related-prompts {
       margin-top: 50px;
@@ -664,215 +670,7 @@
     .two-col {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-    .mini-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
-    }
-    .action-list {
-      display: grid;
-      gap: 10px;
-      margin-top: 12px;
-    }
-    .action-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 14px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.03);
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .action-item:hover {
-      border-color: rgba(0, 242, 234, 0.35);
-      transform: translateY(-1px);
-    }
-    .action-item .left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .action-item .left i {
-      color: var(--text-muted);
-      width: 18px;
-    }
-
-    .badge-soon {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 0, 85, 0.25);
-      background: rgba(255, 0, 85, 0.1);
-      color: #ff9ab3;
-      font-weight: 800;
-      font-size: 0.85rem;
-      width: fit-content;
-      margin-top: 12px;
-    }
-
-    /* Upload */
-    .upload-zone {
-      border: 2px dashed var(--border);
-      padding: 40px;
-      text-align: center;
-      border-radius: 12px;
-      margin-bottom: 15px;
-      cursor: pointer;
-      transition: 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-    .upload-zone:hover {
-      border-color: var(--primary);
-    }
-    .upload-zone.has-file {
-      border-color: var(--primary);
-      background: var(--surface);
-    }
-    .preview-image {
-      max-width: 100%;
-      max-height: 300px;
-      border-radius: 8px;
-      margin-top: 15px;
-    }
-
-    /* Notification toast */
-    .notification-toast {
-      position: fixed;
-      top: 100px;
-      right: 20px;
-      background: var(--glass);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(0, 242, 234, 0.5);
-      border-radius: 14px;
-      padding: 16px 20px;
-      box-shadow: var(--shadow);
-      z-index: 200;
-      display: none;
-      animation: slideInRight 0.4s ease;
-    }
-    .notification-toast.show {
-      display: block;
-    }
-    @keyframes slideInRight {
-      from {
-        opacity: 0;
-        transform: translateX(100px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-    .notification-toast .toast-content {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .notification-toast .toast-icon {
-      width: 40px;
-      height: 40px;
-      background: rgba(0, 242, 234, 0.2);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--primary);
-      font-size: 1.2rem;
-    }
-    .notification-toast .toast-text h4 {
-      font-size: 0.95rem;
-      margin-bottom: 4px;
-    }
-    .notification-toast .toast-text p {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    /* Modal + loading + empty */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      z-index: 200;
-      backdrop-filter: blur(5px);
-    }
-    .modal.active {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      animation: fadeIn 0.3s;
-    }
-    .modal-content {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 32px 28px;
-      max-width: 420px;
-      width: 92%;
-      position: relative;
-      box-shadow: var(--shadow);
-    }
-    .modal-close {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      cursor: pointer;
-      font-size: 1.5rem;
-      color: var(--text-muted);
-    }
-    .modal-close:hover {
-      color: var(--primary);
-    }
-
-    .loading {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 190;
-    }
-    .loading.active {
-      display: block;
-    }
-    .spinner {
-      border: 4px solid var(--surface);
-      border-top: 4px solid var(--primary);
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text-muted);
-    }
-    .empty-state i {
-      font-size: 4rem;
-      margin-bottom: 20px;
-      opacity: 0.5;
+      gap: 20px;
     }
 
     /* Bottom nav (mobile only) */
@@ -987,164 +785,156 @@
       display: none;
     }
 
+    /* 
+      ========================================
+      RESPONSIVE FIXES 
+      ========================================
+    */
     @media (max-width: 992px) {
-     .details-wrapper {
-    grid-template-columns: 1fr;
-  }
-  .details-visual {
-    position: relative;
-    top: 0;
-    min-height: 300px;
-    max-height: 500px;
-  }
-      .details-visual img,
-  .details-visual video {
-    max-height: 500px;
-  }
-
+      .details-wrapper {
+        grid-template-columns: 1fr; /* Details tek sutun */
+      }
+      .details-visual {
+        position: relative;
+        top: 0;
+        max-height: 400px; /* Mobilde cox uzun olmasin */
+      }
+      
+      /* NAV LINKS (Sidebar) Redesign */
       .nav-links {
-    position: fixed;
-    top: 0;
-    left: -100%;
-    width: 78%;
-    max-width: 340px;
-    height: 100vh;
-    background: var(--bg);
-    flex-direction: column;
-    padding: 85px 20px 28px;
-    transition: 0.4s cubic-bezier(0.77, 0, 0.175, 1);
-    align-items: flex-start;
-    z-index: 99;
-    border-right: 1px solid var(--border);
-    box-shadow: var(--shadow);
-    gap: 6px;
-    overflow-y: auto;
-  }
-  .nav-links.open {
-    left: 0;
-  }
-  .nav-link {
-    width: 100%;
-    padding: 11px 14px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    background: rgba(255, 255, 255, 0.03);
-    font-size: 0.88rem;
-  }
-  .hamburger {
-    display: block;
-  }
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 75%; /* Width azaldildi (evvel 86% idi) */
+        max-width: 280px; /* Maksimum en azaldildi (evvel 420px idi) */
+        height: 100vh;
+        background: var(--glass); /* Glass effekt */
+        backdrop-filter: blur(25px);
+        flex-direction: column;
+        padding: 95px 20px 20px; /* Padding tenzimlemesi */
+        transition: 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+        align-items: flex-start;
+        z-index: 99;
+        border-right: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        gap: 10px; /* Araliq azaldildi */
+      }
+      .nav-links.open {
+        left: 0;
+      }
+      
+      /* Menu items redesign (Cox arali olmasin, border yigisdirildi) */
+      .nav-link {
+        width: 100%;
+        padding: 10px 15px; /* Daha kompakt */
+        border: none; /* Border silindi */
+        background: transparent;
+        border-radius: 12px;
+        color: var(--text-muted);
+        font-weight: 500;
+        transition: 0.2s;
+      }
+      .nav-link:hover, .nav-link.active {
+        background: rgba(255, 255, 255, 0.05); /* Zerif hover */
+        color: var(--primary);
+      }
 
-  .profile-dropdown {
-    display: none !important;
-  }
+      .hamburger {
+        display: block;
+      }
 
-     /* Responsive: navbar-da Images / Videos / Bookmarks / AI Generate olmayacaq */
-  .nav-tab-desktop-only {
-    display: none !important;
-  }
+      /* Point Yeri (Profile Dropdown) Mobilde Gorunsun */
+      /* Eger "point yeri" profil menyusudursa, onu aktiv edirik */
+      .profile-dropdown {
+        display: block !important; 
+      }
+      /* Dropdown menyunu biraz saga cekmek ve ya duzgun yerlesdirmek ucun */
+      .dropdown-menu {
+        right: -10px; /* Saga yaxinlasdirma */
+        width: 260px;
+      }
 
-  /* Desktop-only header extra links (FAQ, PrivacyTerms) yox, amma mobile-da var */
-  .hide-desktop {
-    display: inline-block;
-  }
+      .nav-tab-desktop-only {
+        display: none !important;
+      }
 
-  .bottom-nav {
-    display: block;
-  }
-  .container {
-    padding-bottom: 110px;
-  }
-  .two-col {
-    grid-template-columns: 1fr;
-  }
+      .hide-desktop {
+        display: inline-block;
+      }
 
-  /* Profile page responsive fixes */
-  .profile-info-box {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 10px;
-    margin-top: -50px;
-    padding: 0 20px;
-  }
-  .profile-pfp {
-    width: 80px;
-    height: 80px;
-    border: 3px solid var(--bg);
-  }
-  .profile-meta h2 {
-    font-size: 1.3rem;
-  }
-  .profile-meta p {
-    font-size: 0.8rem;
-  }
-  .edit-profile-btn {
-    top: auto;
-    bottom: -45px;
-    right: 50%;
-    transform: translateX(50%);
-    font-size: 0.8rem;
-    padding: 6px 12px;
-  }
+      .bottom-nav {
+        display: block;
+      }
+      .container {
+        padding-bottom: 110px;
+      }
+      .two-col {
+        grid-template-columns: 1fr;
+      }
 
-  /* My Profile page responsive fixes */
-  .mini-card div[style*="display:flex"] {
-    flex-direction: row;
-    align-items: center !important;
-    text-align: left;
-    gap: 14px;
-  }
-  #myAvatar {
-    width: 56px !important;
-    height: 56px !important;
-    border-radius: 14px !important;
-    flex-shrink: 0;
-  }
-  #myName {
-    font-size: 1rem !important;
-  }
-  #myUsername, #myEmail {
-    font-size: 0.78rem !important;
-  }
-  #myJoined {
-    font-size: 0.72rem !important;
-  }
+      /* Profile page responsive fixes */
+      .profile-info-box {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+        margin-top: -50px;
+        padding: 0 20px;
+      }
+      .profile-pfp {
+        width: 80px;
+        height: 80px;
+        border: 3px solid var(--bg);
+      }
+      .profile-meta h2 {
+        font-size: 1.3rem;
+      }
+      .profile-meta p {
+        font-size: 0.8rem;
+      }
+      .edit-profile-btn {
+        top: auto;
+        bottom: -45px;
+        right: 50%;
+        transform: translateX(50%);
+        font-size: 0.8rem;
+        padding: 6px 12px;
+      }
 
-  /* Card details responsive */
-  .details-info {
-    padding: 0;
-  }
-  .prompt-text-area {
-    max-height: 250px;
-    padding: 18px;
-    font-size: 0.85rem;
-  }
-  .details-info h2 {
-    font-size: 1.2rem;
-  }
-  .details-info h2 img {
-    width: 32px !important;
-    height: 32px !important;
-  }
+      /* My Profile page responsive fixes */
+      .mini-card div[style*="display:flex"] {
+        flex-direction: column;
+        align-items: center !important;
+        text-align: center;
+      }
+      #myAvatar {
+        width: 48px !important;
+        height: 48px !important;
+        border-radius: 12px !important;
+      }
+      #myName {
+        font-size: 0.95rem !important;
+      }
+      #myUsername, #myEmail {
+        font-size: 0.75rem !important;
+      }
 
-  /* Footer mobilde olmayacaq */
-  footer {
-    display: none;
-  }
+      footer {
+        display: none;
+      }
 
-  .mobile-bottom-controls {
-    display: block;
-  }
+      .mobile-bottom-controls {
+        display: block;
+      }
 
-  .notification-toast {
-    right: 10px;
-    left: 10px;
-    top: 90px;
-  }
+      .notification-toast {
+        right: 10px;
+        left: 10px;
+        top: 90px;
+      }
     }
 
     @media (min-width: 993px) {
-      /* Desktop: Upload, FAQ, Privacy&Terms headerdə olmayacaq */
       .nav-mobile-only {
         display: none !important;
       }
@@ -1157,6 +947,7 @@
         display: block;
       }
     }
+
   </style>
 </head>
 
