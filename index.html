@@ -1185,6 +1185,267 @@
         font-size: 0.85rem;
       }
     }
+
+
+/* AI STUDIO STYLES */
+
+/* Container & Layout */
+.ai-studio-container {
+  max-width: 800px;
+  margin: 0 auto;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.ai-glow-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(0, 242, 234, 0.05) 0%, transparent 70%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Input Area */
+.ai-input-wrapper {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 10px;
+  width: 100%;
+  position: relative;
+  transition: 0.3s;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+.ai-input-wrapper:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 30px rgba(0, 242, 234, 0.15);
+}
+
+.ai-prompt-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  padding: 15px 20px;
+  font-family: var(--font-main);
+  font-size: 1.1rem;
+  resize: none;
+  outline: none;
+}
+
+.ai-generate-btn {
+  width: 100%;
+  margin-top: 10px;
+  background: linear-gradient(135deg, var(--primary), #00c2bb);
+  color: #000;
+  border: none;
+  padding: 14px;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.ai-generate-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(0, 242, 234, 0.4);
+}
+
+.ai-tags {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 25px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+.ai-tags span {
+  background: rgba(255,255,255,0.05);
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+
+/* STATE MANAGEMENT */
+.ai-state-hidden { display: none !important; }
+.ai-state-active { display: block !important; animation: fadeIn 0.5s ease; }
+
+/* CHATGPT VOICE ORB ANIMATION */
+.ai-voice-orb {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.orb-core {
+  width: 60px;
+  height: 60px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 40px var(--primary);
+  z-index: 10;
+  animation: breathe 3s infinite ease-in-out;
+}
+
+.orb-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 2px solid var(--primary);
+  opacity: 0;
+  z-index: 1;
+}
+
+.orb-ring:nth-child(1) { width: 60px; height: 60px; animation: ripple 2s infinite ease-out; }
+.orb-ring:nth-child(2) { width: 60px; height: 60px; animation: ripple 2s infinite ease-out 0.6s; }
+.orb-ring:nth-child(3) { width: 60px; height: 60px; animation: ripple 2s infinite ease-out 1.2s; }
+
+@keyframes breathe {
+  0%, 100% { transform: scale(0.95); opacity: 0.9; }
+  50% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 60px var(--primary); }
+}
+
+@keyframes ripple {
+  0% { width: 60px; height: 60px; opacity: 0.8; border-width: 4px; }
+  100% { width: 200px; height: 200px; opacity: 0; border-width: 0px; }
+}
+
+/* TYPEWRITER TEXT */
+.ai-status-text {
+  font-family: "Fira Code", monospace;
+  font-size: 1.1rem;
+  color: var(--primary);
+  min-height: 1.5em;
+  text-shadow: 0 0 10px rgba(0, 242, 234, 0.4);
+}
+.cursor {
+  animation: blink 1s step-end infinite;
+  color: #fff;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* IMAGE REVEAL (SCANLINE EFFECT) */
+.result-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: var(--shadow);
+}
+
+.image-reveal-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 300px;
+  background: #000;
+  /* MASK-IMAGE ANIMATION: Açılma effekti */
+  mask-image: linear-gradient(to bottom, black 50%, transparent 50%);
+  mask-size: 100% 200%;
+  mask-position: 0% 100%; /* Başlanğıcda gizli */
+  -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 50%);
+  -webkit-mask-size: 100% 200%;
+  -webkit-mask-position: 0% 100%;
+}
+
+.image-reveal-wrapper.revealing {
+  animation: scanReveal 3.5s linear forwards;
+}
+
+@keyframes scanReveal {
+  0% { mask-position: 0% 100%; -webkit-mask-position: 0% 100%; }
+  100% { mask-position: 0% 0%; -webkit-mask-position: 0% 0%; }
+}
+
+.image-reveal-wrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Scanline Overlay (Yaşıl xətt) */
+.scan-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--primary);
+  box-shadow: 0 0 15px var(--primary);
+  opacity: 0;
+  z-index: 5;
+}
+.image-reveal-wrapper.revealing .scan-overlay {
+  animation: scanLineMove 3.5s linear forwards;
+  opacity: 1;
+}
+
+@keyframes scanLineMove {
+  0% { top: 0%; opacity: 1; }
+  98% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.result-actions {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+}
+.result-info {
+  text-align: left;
+}
+.badge-ai {
+  font-size: 0.7rem;
+  color: var(--primary);
+  background: rgba(0, 242, 234, 0.1);
+  padding: 4px 8px;
+  border-radius: 6px;
+  margin-bottom: 5px;
+  display: inline-block;
+  font-weight: 700;
+}
+.result-prompt {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .ai-studio-container { justify-content: flex-start; padding-top: 40px; }
+  .result-actions { flex-direction: column; gap: 15px; text-align: center; }
+  .result-info { text-align: center; }
+}
+
+    
   </style>
 </head>
 
@@ -1678,51 +1939,76 @@
       <div class="grid" id="bookmark-grid"></div>
     </section>
 
-    <!-- AI Generate (Coming Soon) -->
+<!-- AI Studio Section -->
 <section id="ai-generate" class="section">
-      <div class="page-hero">
-        <h2>AI Studio</h2>
-        <p>Generate ultra-realistic assets with our neural engine.</p>
+  <!-- Background Glow Effect -->
+  <div class="ai-glow-bg"></div>
+
+  <div class="ai-studio-container">
+    
+    <!-- State 1: Input Area (Başlanğıc) -->
+    <div id="ai-input-state" class="ai-state-active">
+      <div class="page-hero" style="background: transparent; border: none; padding: 0; margin-bottom: 40px;">
+        <h2 style="font-size: 2.5rem; text-shadow: 0 0 20px rgba(0, 242, 234, 0.3);">AI Studio</h2>
+        <p>Təxəyyülünüzü reallığa çevirin.</p>
       </div>
 
-      <div class="form-box">
-        <div class="gen-tabs">
-          <div class="gen-tab active"><i class="fas fa-image"></i> Image</div>
-          <div class="gen-tab locked" title="Coming Soon">
-            <i class="fas fa-video"></i> Video <span style="font-size:0.7rem; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; margin-left:5px;">SOON</span>
-          </div>
+      <div class="ai-input-wrapper">
+        <textarea id="gen-prompt" class="ai-prompt-input" rows="3" placeholder="Futuristic city in neon rain, cinematic lighting, 8k resolution..."></textarea>
+        <button class="ai-generate-btn" onclick="app.generateAIImage()">
+          <i class="fas fa-sparkles"></i> Generate
+        </button>
+      </div>
+
+      <!-- Capabilities Tags -->
+      <div class="ai-tags">
+        <span><i class="fas fa-bolt"></i> Flux Model</span>
+        <span><i class="fas fa-layer-group"></i> Ultra HD</span>
+        <span><i class="fas fa-magic"></i> Creative</span>
+      </div>
+    </div>
+
+    <!-- State 2: Generating Animation (ChatGPT Voice Style) -->
+    <div id="ai-processing-state" class="ai-state-hidden">
+      <!-- Pulsing Orb Animation -->
+      <div class="ai-voice-orb">
+        <div class="orb-ring"></div>
+        <div class="orb-ring"></div>
+        <div class="orb-ring"></div>
+        <div class="orb-core"></div>
+      </div>
+      
+      <!-- Typewriter Status -->
+      <div class="ai-status-text">
+        <span id="typewriter-output"></span><span class="cursor">|</span>
+      </div>
+    </div>
+
+    <!-- State 3: Result (Slow Reveal) -->
+    <div id="ai-result-state" class="ai-state-hidden">
+      <div class="result-card">
+        <div class="image-reveal-wrapper">
+          <img id="gen-image" src="" alt="AI Generated Art" />
+          <div class="scan-overlay"></div>
         </div>
-
-        <label style="font-size:0.85rem; color:var(--text-muted); display:block; margin-bottom:8px;">Describe your imagination</label>
-        <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
-          <input type="text" class="input-f" id="gen-prompt" placeholder="E.g. A futuristic samurai in neon rain, 8k resolution, cinematic lighting..." style="margin-bottom:0; flex:1; min-width: 250px;">
-          
-          <button class="btn-google" style="background:var(--primary); color:#000; font-weight:800; min-width: 140px; justify-content: center;" onclick="app.generateAIImage()">
-            <i class="fas fa-bolt"></i> Generate
-          </button>
-        </div>
-
-        <div id="gen-console" class="console-box" style="display:none;">
-          </div>
-
-        <div id="gen-result" style="display:none; margin-top:25px;">
-           <div class="result-container">
-             <img id="gen-image" src="" style="width:100%; display:block;" />
-             
-             <div style="position:absolute; bottom:0; left:0; right:0; padding:20px; background:linear-gradient(to top, rgba(0,0,0,0.9), transparent); display:flex; justify-content:space-between; align-items:flex-end;">
-                <div>
-                   <div style="color:white; font-weight:bold; font-size:0.9rem;">Generation Complete</div>
-                   <div style="color:var(--primary); font-size:0.8rem;">Flux Model • 1024x1024</div>
-                </div>
-                <a id="gen-download" href="#" target="_blank" class="btn-google" style="background:white; color:black; border:none; padding:8px 16px; font-size:0.85rem;">
-                  <i class="fas fa-download"></i> Save
-                </a>
-             </div>
+        
+        <div class="result-actions">
+           <div class="result-info">
+             <span class="badge-ai">Flux 1.0</span>
+             <span class="result-prompt" id="result-prompt-text"></span>
+           </div>
+           <div style="display:flex; gap:10px;">
+             <button class="btn-google" onclick="app.resetAI()"><i class="fas fa-undo"></i> New</button>
+             <a id="gen-download" href="#" target="_blank" class="btn-google" style="background: var(--primary); color:#000;">
+               <i class="fas fa-download"></i> Save
+             </a>
            </div>
         </div>
-
       </div>
-    </section>
+    </div>
+
+  </div>
+</section>
 
     
     <!-- <section id="ai-generate" class="section">
@@ -2895,62 +3181,67 @@ async signInWithGithub() {
 
 // AI Image Generation Function
    // AI Image Generation Function (Avtomatik Firebase Yaddaşla)
-      async generateAIImage() {
-        // Firebase funksiyalarini module scope-dan gotururuk
-        // (import { ref, push, set, update, increment } ... yuxarida olduguna emin ol)
+  async generateAIImage() {
+        // Firebase funksiyaları (ref, push, set, update, increment) yuxarıda import edilməlidir.
         
         const promptInput = document.getElementById('gen-prompt');
         const prompt = promptInput.value.trim();
         
         // Elementlər
-        const consoleBox = document.getElementById('gen-console');
-        const resultDiv = document.getElementById('gen-result');
+        const inputState = document.getElementById('ai-input-state');
+        const processingState = document.getElementById('ai-processing-state');
+        const resultState = document.getElementById('ai-result-state');
+        const revealWrapper = document.querySelector('.image-reveal-wrapper');
         const img = document.getElementById('gen-image');
         const downloadBtn = document.getElementById('gen-download');
+        const resultPromptText = document.getElementById('result-prompt-text');
 
         if (!this.currentUser) {
-          alert("Please sign in to access the Neural Engine.");
+          alert("Zəhmət olmasa AI Studio-dan istifadə etmək üçün daxil olun.");
           return;
         }
 
         if (!prompt) {
-          alert("Enter a prompt to start generation.");
+          alert("Zəhmət olmasa bir təsvir yazın.");
           return;
         }
 
-        // 1. Reset və UI hazırlığı
-        resultDiv.style.display = 'none';
-        consoleBox.style.display = 'flex';
-        consoleBox.innerHTML = ''; 
-        img.src = ''; 
+        // 1. UI: Inputu gizlət, Prosesi göstər
+        inputState.classList.remove('ai-state-active');
+        inputState.classList.add('ai-state-hidden');
+        
+        processingState.classList.remove('ai-state-hidden');
+        processingState.classList.add('ai-state-active');
+        
+        // Reset old image state
+        revealWrapper.classList.remove('revealing');
+        resultState.classList.add('ai-state-hidden');
 
-        // Log funksiyası
-        const addLog = async (text, delay = 500) => {
-           const div = document.createElement('div');
-           div.className = 'log-line processing';
-           div.innerHTML = `<i class="fas fa-terminal"></i> ${text}`;
-           consoleBox.appendChild(div);
-           consoleBox.scrollTop = consoleBox.scrollHeight;
-           
-           await new Promise(r => setTimeout(r, delay));
-           
-           div.className = 'log-line done';
-           div.innerHTML = `<i class="fas fa-check"></i> ${text}`;
+        // 2. Typewriter Effect Function
+        const typeWriter = async (text, speed = 50) => {
+           const el = document.getElementById('typewriter-output');
+           el.textContent = "";
+           for(let i=0; i<text.length; i++) {
+               el.textContent += text.charAt(i);
+               await new Promise(r => setTimeout(r, speed));
+           }
+           await new Promise(r => setTimeout(r, 600)); // Pause after text
         };
 
         try {
-            // 2. Simulyasiya edilmiş proses
-            await addLog("Connecting to Neural Cloud...", 600);
-            await addLog("Analyzing prompt semantics...", 800);
-            await addLog("Selecting model: Flux Realism v1.0...", 600);
-            
-            // 3. Şəkli URL-dən yükləyirik
-            const apiKey = "pk_KzTVzDt50CYcZqcY"; 
+            // Animasiyalı status mesajları
+            await typeWriter("AI Neyron şəbəkəsinə qoşulur...");
+            await typeWriter("Prompt analiz edilir: " + prompt.substring(0, 20) + "...");
+            await typeWriter("Flux Model v1.0 işə salınır...");
+            await typeWriter("Piksellər yaradılır...");
+
+            // 3. API Sorğusu
+            const apiKey = "pk_KzTVzDt50CYcZqcY"; // Pollinations API
             const encodedPrompt = encodeURIComponent(prompt);
             const seed = Math.floor(Math.random() * 1000000);
             const apiUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&model=flux&nologo=true&token=${apiKey}&seed=${seed}`;
 
-            // Şəklin real yüklənməsini gözləyirik
+            // Şəklin arxa planda tam yüklənməsini gözləyirik
             await new Promise((resolve, reject) => {
                 const tempImg = new Image();
                 tempImg.onload = () => {
@@ -2961,20 +3252,16 @@ async signInWithGithub() {
                 tempImg.src = apiUrl;
             });
 
-            await addLog("Rendering pixels...", 400);
+            // 4. Firebase Saxlanması
+            await typeWriter("Qalereyaya yaddaş verilir...");
             
-            // --- YENİ HİSSƏ: FIREBASE-Ə YAZILMA ---
-            await addLog("Saving to cloud database...", 600);
-
-            // Bura firebase importlarindan istifade edir (global module-da olanlar)
-            // Bu promptu esas 'prompts' bazasina elave edirik
             const newPromptRef = push(ref(db, 'prompts'));
             await set(newPromptRef, {
                 userId: this.currentUser.uid,
                 userEmail: this.currentUser.email,
-                mediaUrl: apiUrl, // Yaradilan seklin linki
+                mediaUrl: apiUrl,
                 prompt: prompt,
-                category: 'AI Generated', // Avtomatik kategoriya
+                category: 'AI Generated',
                 type: 'image',
                 likes: 0,
                 copies: 0,
@@ -2982,31 +3269,46 @@ async signInWithGithub() {
                 timestamp: Date.now()
             });
 
-            // Istifadeciye xal veririk (+5 xal)
             const userRef = ref(db, `users/${this.currentUser.uid}`);
-            await update(userRef, {
-                points: increment(5)
-            });
+            await update(userRef, { points: increment(5) });
 
-            await addLog("Profile updated (+5 XP)...", 300);
-            // ----------------------------------------
-
-            // 4. Nəticəni göstər
-            consoleBox.style.display = 'none'; 
-            resultDiv.style.display = 'block'; 
+            // 5. Nəticəni Göstər (Reveal Animation)
+            processingState.classList.remove('ai-state-active');
+            processingState.classList.add('ai-state-hidden');
+            
+            resultState.classList.remove('ai-state-hidden');
+            resultState.classList.add('ai-state-active');
+            
+            resultPromptText.textContent = prompt;
             downloadBtn.href = apiUrl;
 
-            this.showNotification("Success!", "Image generated & saved to gallery.");
+            // Start CSS Reveal Animation
+            setTimeout(() => {
+                revealWrapper.classList.add('revealing');
+            }, 100);
             
-            // Qalereyani yenile ki, yeni sekil ana sehifede gorunsun
-            this.loadAllPrompts();
+            this.showNotification("Hazırdır!", "+5 Xal qazandınız");
+            this.loadAllPrompts(); // Home grid yenilənsin
 
         } catch (error) {
             console.error(error);
-            consoleBox.innerHTML += `<div class="log-line" style="color:red"><i class="fas fa-times"></i> Error: ${error.message}</div>`;
+            alert("Xəta baş verdi: " + error.message);
+            this.resetAI();
         }
       },
-          
+          // Yeni Reset Funksiyası
+      resetAI() {
+        document.getElementById('ai-result-state').classList.remove('ai-state-active');
+        document.getElementById('ai-result-state').classList.add('ai-state-hidden');
+        
+        document.getElementById('ai-processing-state').classList.remove('ai-state-active');
+        document.getElementById('ai-processing-state').classList.add('ai-state-hidden');
+
+        document.getElementById('ai-input-state').classList.remove('ai-state-hidden');
+        document.getElementById('ai-input-state').classList.add('ai-state-active');
+        
+        document.getElementById('gen-prompt').value = "";
+      },
       // Navigation
       nav(sectionId, param = null) {
         if (this.restrictedSections.has(sectionId) && !this.currentUser) {
