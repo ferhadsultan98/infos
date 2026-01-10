@@ -1676,35 +1676,48 @@
     <!-- AI Generate (Coming Soon) -->
 <section id="ai-generate" class="section">
       <div class="page-hero">
-        <h2>AI Generate</h2>
-        <p>Create amazing visuals with our AI engine.</p>
+        <h2>AI Studio</h2>
+        <p>Generate ultra-realistic assets with our neural engine.</p>
       </div>
 
       <div class="form-box">
-        <label style="font-size:0.85rem; color:var(--text-muted); display:block; margin-bottom:5px;">Enter your prompt</label>
-        
+        <div class="gen-tabs">
+          <div class="gen-tab active"><i class="fas fa-image"></i> Image</div>
+          <div class="gen-tab locked" title="Coming Soon">
+            <i class="fas fa-video"></i> Video <span style="font-size:0.7rem; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; margin-left:5px;">SOON</span>
+          </div>
+        </div>
+
+        <label style="font-size:0.85rem; color:var(--text-muted); display:block; margin-bottom:8px;">Describe your imagination</label>
         <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
-          <input type="text" class="input-f" id="gen-prompt" placeholder="A cyberpunk city in rain, neon lights, realistic..." style="margin-bottom:0; flex:1; min-width: 200px;">
-          <button class="btn-google" style="background:var(--primary); color:#000; font-weight:bold;" onclick="app.generateAIImage()">
-            <i class="fas fa-magic"></i> Generate
+          <input type="text" class="input-f" id="gen-prompt" placeholder="E.g. A futuristic samurai in neon rain, 8k resolution, cinematic lighting..." style="margin-bottom:0; flex:1; min-width: 250px;">
+          
+          <button class="btn-google" style="background:var(--primary); color:#000; font-weight:800; min-width: 140px; justify-content: center;" onclick="app.generateAIImage()">
+            <i class="fas fa-bolt"></i> Generate
           </button>
         </div>
 
-        <div id="gen-result" style="display:none; text-align:center; margin-top:20px;">
-          <div id="gen-loading" style="color:var(--primary); margin-bottom:15px; display:none;">
-            <i class="fas fa-spinner fa-spin"></i> Creating magic...
+        <div id="gen-console" class="console-box" style="display:none;">
           </div>
-          
-          <div style="position:relative; display:inline-block; max-width:100%;">
-            <img id="gen-image" src="" style="width:100%; max-height:500px; border-radius:12px; border:1px solid var(--border); box-shadow:var(--shadow); display:none;" />
-            <a id="gen-download" href="#" target="_blank" class="btn-google" style="margin-top:10px; justify-content:center; background:var(--surface); color:var(--text); text-decoration:none; display:none;">
-              <i class="fas fa-download"></i> Download High Quality
-            </a>
-          </div>
+
+        <div id="gen-result" style="display:none; margin-top:25px;">
+           <div class="result-container">
+             <img id="gen-image" src="" style="width:100%; display:block;" />
+             
+             <div style="position:absolute; bottom:0; left:0; right:0; padding:20px; background:linear-gradient(to top, rgba(0,0,0,0.9), transparent); display:flex; justify-content:space-between; align-items:flex-end;">
+                <div>
+                   <div style="color:white; font-weight:bold; font-size:0.9rem;">Generation Complete</div>
+                   <div style="color:var(--primary); font-size:0.8rem;">Flux Model • 1024x1024</div>
+                </div>
+                <a id="gen-download" href="#" target="_blank" class="btn-google" style="background:white; color:black; border:none; padding:8px 16px; font-size:0.85rem;">
+                  <i class="fas fa-download"></i> Save
+                </a>
+             </div>
+           </div>
         </div>
+
       </div>
     </section>
-
 
     
     <!-- <section id="ai-generate" class="section">
@@ -2857,54 +2870,117 @@
       },
 
 // AI Image Generation Function
-      generateAIImage() {
+   // AI Image Generation Function (Avtomatik Firebase Yaddaşla)
+      async generateAIImage() {
+        // Firebase funksiyalarini module scope-dan gotururuk
+        // (import { ref, push, set, update, increment } ... yuxarida olduguna emin ol)
+        
         const promptInput = document.getElementById('gen-prompt');
         const prompt = promptInput.value.trim();
+        
+        // Elementlər
+        const consoleBox = document.getElementById('gen-console');
         const resultDiv = document.getElementById('gen-result');
         const img = document.getElementById('gen-image');
-        const loading = document.getElementById('gen-loading');
         const downloadBtn = document.getElementById('gen-download');
 
         if (!this.currentUser) {
-          alert("Please sign in to generate images!");
+          alert("Please sign in to access the Neural Engine.");
           return;
         }
 
         if (!prompt) {
-          alert("Please enter a prompt description!");
+          alert("Enter a prompt to start generation.");
           return;
         }
 
-        // UI-ni hazirlayiriq
-        resultDiv.style.display = 'block';
-        loading.style.display = 'block';
-        img.style.display = 'none';
-        downloadBtn.style.display = 'none';
+        // 1. Reset və UI hazırlığı
+        resultDiv.style.display = 'none';
+        consoleBox.style.display = 'flex';
+        consoleBox.innerHTML = ''; 
+        img.src = ''; 
 
-        // Senin API Key-in
-        const apiKey = "pk_KzTVzDt50CYcZqcY"; 
-        
-        // Promptu URL ucun hazirlayiriq
-        const encodedPrompt = encodeURIComponent(prompt);
-        
-        // URL yaradiriq (Flux modeli keyfiyyet ucun secildi)
-        const apiUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&model=flux&nologo=true&token=${apiKey}&seed=${Math.random()}`;
-
-        img.src = apiUrl;
-
-        // Sekil yuklenende
-        img.onload = () => {
-          loading.style.display = 'none';
-          img.style.display = 'block';
-          downloadBtn.href = apiUrl; // Download linkini yenileyirik
-          downloadBtn.style.display = 'flex';
+        // Log funksiyası
+        const addLog = async (text, delay = 500) => {
+           const div = document.createElement('div');
+           div.className = 'log-line processing';
+           div.innerHTML = `<i class="fas fa-terminal"></i> ${text}`;
+           consoleBox.appendChild(div);
+           consoleBox.scrollTop = consoleBox.scrollHeight;
+           
+           await new Promise(r => setTimeout(r, delay));
+           
+           div.className = 'log-line done';
+           div.innerHTML = `<i class="fas fa-check"></i> ${text}`;
         };
 
-        // Xeta olarsa
-        img.onerror = () => {
-          loading.style.display = 'none';
-          alert("Error generating image. Please try again.");
-        };
+        try {
+            // 2. Simulyasiya edilmiş proses
+            await addLog("Connecting to Neural Cloud...", 600);
+            await addLog("Analyzing prompt semantics...", 800);
+            await addLog("Selecting model: Flux Realism v1.0...", 600);
+            
+            // 3. Şəkli URL-dən yükləyirik
+            const apiKey = "pk_KzTVzDt50CYcZqcY"; 
+            const encodedPrompt = encodeURIComponent(prompt);
+            const seed = Math.floor(Math.random() * 1000000);
+            const apiUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&model=flux&nologo=true&token=${apiKey}&seed=${seed}`;
+
+            // Şəklin real yüklənməsini gözləyirik
+            await new Promise((resolve, reject) => {
+                const tempImg = new Image();
+                tempImg.onload = () => {
+                    img.src = apiUrl;
+                    resolve();
+                };
+                tempImg.onerror = reject;
+                tempImg.src = apiUrl;
+            });
+
+            await addLog("Rendering pixels...", 400);
+            
+            // --- YENİ HİSSƏ: FIREBASE-Ə YAZILMA ---
+            await addLog("Saving to cloud database...", 600);
+
+            // Bura firebase importlarindan istifade edir (global module-da olanlar)
+            // Bu promptu esas 'prompts' bazasina elave edirik
+            const newPromptRef = push(ref(db, 'prompts'));
+            await set(newPromptRef, {
+                userId: this.currentUser.uid,
+                userEmail: this.currentUser.email,
+                mediaUrl: apiUrl, // Yaradilan seklin linki
+                prompt: prompt,
+                category: 'AI Generated', // Avtomatik kategoriya
+                type: 'image',
+                likes: 0,
+                copies: 0,
+                createdAt: new Date().toISOString(),
+                timestamp: Date.now()
+            });
+
+            // Istifadeciye xal veririk (+5 xal)
+            const userRef = ref(db, `users/${this.currentUser.uid}`);
+            await update(userRef, {
+                points: increment(5)
+            });
+
+            await addLog("Profile updated (+5 XP)...", 300);
+            // ----------------------------------------
+
+            // 4. Nəticəni göstər
+            consoleBox.style.display = 'none'; 
+            resultDiv.style.display = 'block'; 
+            downloadBtn.href = apiUrl;
+
+            this.showNotification("Success!", "Image generated & saved to gallery.");
+            
+            // Qalereyani yenile ki, yeni sekil ana sehifede gorunsun
+            this.loadAllPrompts();
+
+        } catch (error) {
+            console.error(error);
+            consoleBox.innerHTML += `<div class="log-line" style="color:red"><i class="fas fa-times"></i> Error: ${error.message}</div>`;
+        }
       },
           
       // Navigation
