@@ -3538,7 +3538,7 @@ await typeWriter("Generating pixels...");
             await set(newPromptRef, {
                 userId: this.currentUser.uid,
                 userEmail: this.currentUser.email,
-                mediaUrl: apiUrl,
+                mediaUrl: img.src,
                 prompt: prompt,
                 category: 'AI Generated',
                 type: 'image',
@@ -3559,7 +3559,7 @@ await typeWriter("Generating pixels...");
             resultState.classList.add('ai-state-active');
             
             resultPromptText.textContent = prompt;
-            downloadBtn.href = apiUrl;
+            // downloadBtn.href = apiUrl;
 
             // Start CSS Reveal Animation
             setTimeout(() => {
