@@ -2369,30 +2369,39 @@
     const CLOUDINARY_UPLOAD_PRESET = "farhadsultan";
 
 async function addWatermark(imageSrc, logoSrc) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     const img = new Image();
-    img.crossOrigin = "Anonymous";
+    img.crossOrigin = "Anonymous"; // Vacib
     img.src = imageSrc;
+
     img.onload = () => {
       canvas.width = img.width;
       canvas.height = img.height;
       ctx.drawImage(img, 0, 0);
+
       const logo = new Image();
-      logo.src = logoSrc;
       logo.crossOrigin = "Anonymous";
+      logo.src = logoSrc;
+
       logo.onload = () => {
-        // Loqo olcusu (seklin 15%-i)
+        // Loqo ölçüsü (şəklin 15%-i)
         const w = canvas.width * 0.15;
         const h = (logo.height / logo.width) * w;
-        // Loqo yeri (sag asagi kunc)
+        // Loqonu yapışdırırıq (sağ aşağı künc)
         ctx.drawImage(logo, canvas.width - w - 20, canvas.height - h - 20, w, h);
+        // Hazır faylı qaytarırıq
         resolve(canvas.toDataURL('image/jpeg', 1.0));
       };
+      // Loqo tapılmasa orijinal şəkli qaytar
+      logo.onerror = () => resolve(imageSrc);
     };
+    // Şəkil yüklənməsə orijinalı qaytar
+    img.onerror = () => resolve(imageSrc);
   });
 }
+
 
     
     // EmailJS init (öz service_id-ni qoy)
@@ -3483,25 +3492,26 @@ await typeWriter("Generating pixels...");
             //     tempImg.src = apiUrl;
             // });
 
-          try {
-    // 1. Loqonun yerini bura yaz (meselen: "logo.png" faylın yanındadırsa)
-    const myLogo = "./kinetlogo.png"; 
-    
-    // 2. Şəkil + Loqo birləşdirilir
-    const finalImage = await addWatermark(apiUrl, myLogo);
+        try {
+                // Sənin loqonun adı (dəqiq yaz!)
+                const myLogo = "./kinetlogo.png"; 
 
-    // 3. Ekrana və Save düyməsinə qoyulur
-    img.src = finalImage;
-    downloadBtn.href = finalImage;
-    downloadBtn.download = `kinet-ai-${Date.now()}.jpg`;
+                // Gözləyirik ki, şəkil+loqo birləşib təzə fayl yaransın
+                const finalImage = await addWatermark(apiUrl, myLogo);
 
-} catch (e) {
-    console.error("Logo xetasi:", e);
-    img.src = apiUrl; // Xeta olsa loqosuz goster
-}
+                // İndi həm ekrana, həm də yükləməyə həmin TƏZƏ faylı veririk
+                img.src = finalImage;
+                
+                downloadBtn.href = finalImage;
+                downloadBtn.download = `kinet-ai-${Date.now()}.jpg`;
+
+            } catch (error) {
+                console.log("Xəta oldu, loqosuz qoyuruq:", error);
+                img.src = apiUrl;
+            }
 
             // 4. Firebase Saxlanması
-            await typeWriter("Qalereyaya yaddaş verilir...");
+            await typeWriter("Gallery is given memory...");
             
             const newPromptRef = push(ref(db, 'prompts'));
             await set(newPromptRef, {
