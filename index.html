@@ -2373,8 +2373,9 @@ async function addWatermark(imageSrc, logoSrc) {
   return new Promise((resolve) => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
+    
     const img = new Image();
-    img.crossOrigin = "Anonymous"; // Vacib
+    img.crossOrigin = "Anonymous"; // Bu vacibdir, yoxsa şəkli yaddaşa yaza bilmir
     img.src = imageSrc;
 
     img.onload = () => {
@@ -2387,19 +2388,34 @@ async function addWatermark(imageSrc, logoSrc) {
       logo.src = logoSrc;
 
       logo.onload = () => {
-        // Loqo ölçüsü (şəklin 15%-i)
-        const w = canvas.width * 0.15;
+        // Loqo ölçüsü (şəklin 20%-i)
+        const w = canvas.width * 0.20;
         const h = (logo.height / logo.width) * w;
-        // Loqonu yapışdırırıq (sağ aşağı künc)
-        ctx.drawImage(logo, canvas.width - w - 20, canvas.height - h - 20, w, h);
-        // Hazır faylı qaytarırıq
-        resolve(canvas.toDataURL('image/jpeg', 1.0));
+        
+        // Sağ aşağı künc (30px boşluqla)
+        const x = canvas.width - w - 30;
+        const y = canvas.height - h - 30;
+
+        // Kölgə effekti (loqo itməsin deyə)
+        ctx.shadowColor = "rgba(0,0,0,0.5)";
+        ctx.shadowBlur = 10;
+        ctx.drawImage(logo, x, y, w, h);
+        
+        // YENİ ŞƏKİL HAZIRDIR (Base64 formatında)
+        resolve(canvas.toDataURL('image/jpeg', 0.95));
       };
-      // Loqo tapılmasa orijinal şəkli qaytar
-      logo.onerror = () => resolve(imageSrc);
+
+      // Loqo tapılmasa orijinalı qaytar
+      logo.onerror = () => {
+          console.warn("Loqo tapılmadı!");
+          resolve(imageSrc);
+      }
     };
-    // Şəkil yüklənməsə orijinalı qaytar
-    img.onerror = () => resolve(imageSrc);
+
+    img.onerror = () => {
+        console.error("Şəkil yüklənmədi");
+        resolve(imageSrc);
+    }
   });
 }
 
@@ -3420,141 +3436,266 @@ async signInWithGithub() {
         }
       },
 
-// AI Image Generation Function
-   // AI Image Generation Function (Avtomatik Firebase Yaddaşla)
-  async generateAIImage() {
-        // Firebase funksiyaları (ref, push, set, update, increment) yuxarıda import edilməlidir.
-        
-        const promptInput = document.getElementById('gen-prompt');
-        const prompt = promptInput.value.trim();
-        
-        // Elementlər
-        const inputState = document.getElementById('ai-input-state');
-        const processingState = document.getElementById('ai-processing-state');
-        const resultState = document.getElementById('ai-result-state');
-        const revealWrapper = document.querySelector('.image-reveal-wrapper');
-        const img = document.getElementById('gen-image');
-        const downloadBtn = document.getElementById('gen-download');
-        const resultPromptText = document.getElementById('result-prompt-text');
 
-        if (!this.currentUser) {
-          alert("Zəhmət olmasa AI Studio-dan istifadə etmək üçün daxil olun.");
-          return;
-        }
+async generateAIImage() {
+    const promptInput = document.getElementById('gen-prompt');
+    const prompt = promptInput.value.trim();
+    
+    // UI Elementləri
+    const inputState = document.getElementById('ai-input-state');
+    const processingState = document.getElementById('ai-processing-state');
+    const resultState = document.getElementById('ai-result-state');
+    const revealWrapper = document.querySelector('.image-reveal-wrapper');
+    const img = document.getElementById('gen-image');
+    const downloadBtn = document.getElementById('gen-download');
+    const resultPromptText = document.getElementById('result-prompt-text');
 
-        if (!prompt) {
-          alert("Zəhmət olmasa bir təsvir yazın.");
-          return;
-        }
+    if (!this.currentUser) {
+      alert("Zəhmət olmasa AI Studio-dan istifadə etmək üçün daxil olun.");
+      return;
+    }
 
-        // 1. UI: Inputu gizlət, Prosesi göstər
-        inputState.classList.remove('ai-state-active');
-        inputState.classList.add('ai-state-hidden');
-        
-        processingState.classList.remove('ai-state-hidden');
-        processingState.classList.add('ai-state-active');
-        
-        // Reset old image state
-        revealWrapper.classList.remove('revealing');
-        resultState.classList.add('ai-state-hidden');
+    if (!prompt) {
+      alert("Zəhmət olmasa bir təsvir yazın.");
+      return;
+    }
 
-        // 2. Typewriter Effect Function
-        const typeWriter = async (text, speed = 50) => {
-           const el = document.getElementById('typewriter-output');
-           el.textContent = "";
-           for(let i=0; i<text.length; i++) {
-               el.textContent += text.charAt(i);
-               await new Promise(r => setTimeout(r, speed));
-           }
-           await new Promise(r => setTimeout(r, 600)); // Pause after text
-        };
+    // 1. UI: Inputu gizlət, Prosesi göstər
+    inputState.classList.remove('ai-state-active');
+    inputState.classList.add('ai-state-hidden');
+    processingState.classList.remove('ai-state-hidden');
+    processingState.classList.add('ai-state-active');
+    
+    revealWrapper.classList.remove('revealing');
+    resultState.classList.add('ai-state-hidden');
 
-        try {
-            // Animasiyalı status mesajları
-await typeWriter("Connecting to the kinetAI neural network..."); 
-await typeWriter("Analyzing prompt: " + prompt.substring(0, 20) + "...");
-await typeWriter("Launching Kinet Model v1.0..."); 
-await typeWriter("Generating pixels...");
+    // Yazı effekti funksiyası
+    const typeWriter = async (text, speed = 30) => {
+       const el = document.getElementById('typewriter-output');
+       el.textContent = "";
+       for(let i=0; i<text.length; i++) {
+           el.textContent += text.charAt(i);
+           await new Promise(r => setTimeout(r, speed));
+       }
+       await new Promise(r => setTimeout(r, 400)); 
+    };
 
-            // 3. API Sorğusu
-            const apiKey = "pk_KzTVzDt50CYcZqcY"; // Pollinations API
-            const encodedPrompt = encodeURIComponent(prompt);
-            const seed = Math.floor(Math.random() * 1000000);
-            const apiUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&model=flux&nologo=true&token=${apiKey}&seed=${seed}`;
+    try {
+        await typeWriter("KinetAI Neural Network işə düşür..."); 
+        await typeWriter("Prompt analiz edilir...");
+        await typeWriter("Piksellər yaradılır..."); 
 
-            // Şəklin arxa planda tam yüklənməsini gözləyirik
-            // await new Promise((resolve, reject) => {
-            //     const tempImg = new Image();
-            //     tempImg.onload = () => {
-            //         img.src = apiUrl;
-            //         resolve();
-            //     };
-            //     tempImg.onerror = reject;
-            //     tempImg.src = apiUrl;
-            // });
+        // 3. API Sorğusu
+        const apiKey = "pk_KzTVzDt50CYcZqcY"; 
+        const encodedPrompt = encodeURIComponent(prompt);
+        const seed = Math.floor(Math.random() * 1000000);
+        // nologo=true vacibdir ki, API öz loqosunu vurmasın
+        const apiUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&model=flux&nologo=true&token=${apiKey}&seed=${seed}`;
+
+        let finalImage = apiUrl; // Defolt olaraq orijinal
 
         try {
-                // Sənin loqonun adı (dəqiq yaz!)
-                const myLogo = "./kinetlogo.png"; 
-
-                // Gözləyirik ki, şəkil+loqo birləşib təzə fayl yaransın
-                const finalImage = await addWatermark(apiUrl, myLogo);
-
-                // İndi həm ekrana, həm də yükləməyə həmin TƏZƏ faylı veririk
-                img.src = finalImage;
-                
-                downloadBtn.href = finalImage;
-                downloadBtn.download = `kinet-ai-${Date.now()}.jpg`;
-
-            } catch (error) {
-                console.log("Xəta oldu, loqosuz qoyuruq:", error);
-                img.src = apiUrl;
-            }
-
-            // 4. Firebase Saxlanması
-            await typeWriter("Gallery is given memory...");
+            await typeWriter("Watermark əlavə edilir..."); 
             
-            const newPromptRef = push(ref(db, 'prompts'));
-            await set(newPromptRef, {
-                userId: this.currentUser.uid,
-                userEmail: this.currentUser.email,
-                mediaUrl: apiUrl,
-                prompt: prompt,
-                category: 'AI Generated',
-                type: 'image',
-                likes: 0,
-                copies: 0,
-                createdAt: new Date().toISOString(),
-                timestamp: Date.now()
-            });
+            // LOQO URL-ini DƏQİQ YAZ (Şəkil faylın layihə qovluğunda olmalıdır)
+            const myLogo = "./kinetlogo.png"; 
 
-            const userRef = ref(db, `users/${this.currentUser.uid}`);
-            await update(userRef, { points: increment(5) });
+            // Loqonu birləşdiririk
+            finalImage = await addWatermark(apiUrl, myLogo);
 
-            // 5. Nəticəni Göstər (Reveal Animation)
-            processingState.classList.remove('ai-state-active');
-            processingState.classList.add('ai-state-hidden');
-            
-            resultState.classList.remove('ai-state-hidden');
-            resultState.classList.add('ai-state-active');
-            
-            resultPromptText.textContent = prompt;
-            downloadBtn.href = apiUrl;
-
-            // Start CSS Reveal Animation
-            setTimeout(() => {
-                revealWrapper.classList.add('revealing');
-            }, 100);
-            
-            this.showNotification("Hazırdır!", "+5 Xal qazandınız");
-            this.loadAllPrompts(); // Home grid yenilənsin
+            // Ekrana və Yükləmə düyməsinə loqolu versiyanı veririk
+            img.src = finalImage;
+            downloadBtn.href = finalImage;
+            downloadBtn.download = `kinet-ai-${Date.now()}.jpg`;
 
         } catch (error) {
-            console.error(error);
-            alert("Xəta baş verdi: " + error.message);
-            this.resetAI();
+            console.log("Watermark xətası:", error);
+            img.src = apiUrl;
         }
-      },
+
+        // 4. Firebase Saxlanması - ƏSAS DÜZƏLİŞ BURDADIR
+        await typeWriter("Qalereyaya yazılır...");
+        
+        const newPromptRef = push(ref(db, 'prompts'));
+        await set(newPromptRef, {
+            userId: this.currentUser.uid,
+            userEmail: this.currentUser.email,
+            
+            // DİQQƏT: Bura 'apiUrl' yox, 'finalImage' yazırıq!
+            // Bu, şəkli Base64 kodu kimi bazaya yazacaq.
+            mediaUrl: finalImage, 
+            
+            prompt: prompt,
+            category: 'AI Generated',
+            type: 'image',
+            likes: 0,
+            copies: 0,
+            createdAt: new Date().toISOString(),
+            timestamp: Date.now()
+        });
+
+        const userRef = ref(db, `users/${this.currentUser.uid}`);
+        await update(userRef, { points: increment(5) });
+
+        // 5. Nəticəni Göstər
+        processingState.classList.remove('ai-state-active');
+        processingState.classList.add('ai-state-hidden');
+        
+        resultState.classList.remove('ai-state-hidden');
+        resultState.classList.add('ai-state-active');
+        
+        resultPromptText.textContent = prompt;
+
+        setTimeout(() => {
+            revealWrapper.classList.add('revealing');
+        }, 100);
+        
+        this.showNotification("Hazırdır!", "+5 Xal qazandınız");
+        this.loadAllPrompts(); 
+
+    } catch (error) {
+        console.error(error);
+        alert("Xəta: " + error.message);
+        this.resetAI();
+    }
+}
+
+      
+// AI Image Generation Function
+   // AI Image Generation Function (Avtomatik Firebase Yaddaşla)
+//   async generateAIImage() {
+//         // Firebase funksiyaları (ref, push, set, update, increment) yuxarıda import edilməlidir.
+        
+//         const promptInput = document.getElementById('gen-prompt');
+//         const prompt = promptInput.value.trim();
+        
+//         // Elementlər
+//         const inputState = document.getElementById('ai-input-state');
+//         const processingState = document.getElementById('ai-processing-state');
+//         const resultState = document.getElementById('ai-result-state');
+//         const revealWrapper = document.querySelector('.image-reveal-wrapper');
+//         const img = document.getElementById('gen-image');
+//         const downloadBtn = document.getElementById('gen-download');
+//         const resultPromptText = document.getElementById('result-prompt-text');
+
+//         if (!this.currentUser) {
+//           alert("Zəhmət olmasa AI Studio-dan istifadə etmək üçün daxil olun.");
+//           return;
+//         }
+
+//         if (!prompt) {
+//           alert("Zəhmət olmasa bir təsvir yazın.");
+//           return;
+//         }
+
+//         // 1. UI: Inputu gizlət, Prosesi göstər
+//         inputState.classList.remove('ai-state-active');
+//         inputState.classList.add('ai-state-hidden');
+        
+//         processingState.classList.remove('ai-state-hidden');
+//         processingState.classList.add('ai-state-active');
+        
+//         // Reset old image state
+//         revealWrapper.classList.remove('revealing');
+//         resultState.classList.add('ai-state-hidden');
+
+//         // 2. Typewriter Effect Function
+//         const typeWriter = async (text, speed = 50) => {
+//            const el = document.getElementById('typewriter-output');
+//            el.textContent = "";
+//            for(let i=0; i<text.length; i++) {
+//                el.textContent += text.charAt(i);
+//                await new Promise(r => setTimeout(r, speed));
+//            }
+//            await new Promise(r => setTimeout(r, 600)); // Pause after text
+//         };
+
+//         try {
+//             // Animasiyalı status mesajları
+// await typeWriter("Connecting to the kinetAI neural network..."); 
+// await typeWriter("Analyzing prompt: " + prompt.substring(0, 20) + "...");
+// await typeWriter("Launching Kinet Model v1.0..."); 
+// await typeWriter("Generating pixels...");
+
+//             // 3. API Sorğusu
+//             const apiKey = "pk_KzTVzDt50CYcZqcY"; // Pollinations API
+//             const encodedPrompt = encodeURIComponent(prompt);
+//             const seed = Math.floor(Math.random() * 1000000);
+//             const apiUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&model=flux&nologo=true&token=${apiKey}&seed=${seed}`;
+
+//             // Şəklin arxa planda tam yüklənməsini gözləyirik
+//             // await new Promise((resolve, reject) => {
+//             //     const tempImg = new Image();
+//             //     tempImg.onload = () => {
+//             //         img.src = apiUrl;
+//             //         resolve();
+//             //     };
+//             //     tempImg.onerror = reject;
+//             //     tempImg.src = apiUrl;
+//             // });
+
+//         try {
+//                 // Sənin loqonun adı (dəqiq yaz!)
+//                 const myLogo = "./kinetlogo.png"; 
+
+//                 // Gözləyirik ki, şəkil+loqo birləşib təzə fayl yaransın
+//                 const finalImage = await addWatermark(apiUrl, myLogo);
+
+//                 // İndi həm ekrana, həm də yükləməyə həmin TƏZƏ faylı veririk
+//                 img.src = finalImage;
+                
+//                 downloadBtn.href = finalImage;
+//                 downloadBtn.download = `kinet-ai-${Date.now()}.jpg`;
+
+//             } catch (error) {
+//                 console.log("Xəta oldu, loqosuz qoyuruq:", error);
+//                 img.src = apiUrl;
+//             }
+
+//             // 4. Firebase Saxlanması
+//             await typeWriter("Gallery is given memory...");
+            
+//             const newPromptRef = push(ref(db, 'prompts'));
+//             await set(newPromptRef, {
+//                 userId: this.currentUser.uid,
+//                 userEmail: this.currentUser.email,
+//                 mediaUrl: apiUrl,
+//                 prompt: prompt,
+//                 category: 'AI Generated',
+//                 type: 'image',
+//                 likes: 0,
+//                 copies: 0,
+//                 createdAt: new Date().toISOString(),
+//                 timestamp: Date.now()
+//             });
+
+//             const userRef = ref(db, `users/${this.currentUser.uid}`);
+//             await update(userRef, { points: increment(5) });
+
+//             // 5. Nəticəni Göstər (Reveal Animation)
+//             processingState.classList.remove('ai-state-active');
+//             processingState.classList.add('ai-state-hidden');
+            
+//             resultState.classList.remove('ai-state-hidden');
+//             resultState.classList.add('ai-state-active');
+            
+//             resultPromptText.textContent = prompt;
+//             downloadBtn.href = apiUrl;
+
+//             // Start CSS Reveal Animation
+//             setTimeout(() => {
+//                 revealWrapper.classList.add('revealing');
+//             }, 100);
+            
+//             this.showNotification("Hazırdır!", "+5 Xal qazandınız");
+//             this.loadAllPrompts(); // Home grid yenilənsin
+
+//         } catch (error) {
+//             console.error(error);
+//             alert("Xəta baş verdi: " + error.message);
+//             this.resetAI();
+//         }
+//       },
           // Yeni Reset Funksiyası
       resetAI() {
         document.getElementById('ai-result-state').classList.remove('ai-state-active');
