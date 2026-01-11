@@ -3624,11 +3624,17 @@ await typeWriter("Generating pixels...");
         }
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.location.hash = sectionId;
       }
     };
 
     // Initialize
-    window.app.init();
+    window.app.init(const hash = window.location.hash.substring(1); // '#' işarəsini silirik
+if (hash) {
+    this.nav(hash); // Əgər linkdə nəsə varsa, ora get
+} else {
+    this.nav('home'); // Yoxdursa, ana səhifəyə get
+});
   </script>
 </body>
 </html>
