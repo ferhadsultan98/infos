@@ -2336,8 +2336,11 @@
 
       async updateUIForLoggedIn(user) {
         // Hide Sign In
-        document.getElementById('signInBtn').style.display = 'none';
-        document.getElementById('signInGithubBtn').style.display = 'none';
+        // document.getElementById('signInBtn').style.display = 'none';
+        // document.getElementById('signInGithubBtn').style.display = 'none';
+        document.querySelectorAll('#signInBtn, #signInGithubBtn').forEach(btn => {
+    btn.style.display = 'none';
+});
         // Show desktop profile dropdown
         const profileDropdown = document.getElementById('profileDropdown');
         profileDropdown.classList.add('active');
