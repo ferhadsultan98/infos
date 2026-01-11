@@ -2439,8 +2439,8 @@
 
         // Mobile drawer actions
         document.getElementById('signOutMobile').style.display = 'flex';
-        document.getElementById('uploadNavLink').style.display = 'block';
-        document.getElementById('aiGenerateNavLink').style.display = 'inline-block';
+        // document.getElementById('uploadNavLink').style.display = 'block';
+        // document.getElementById('aiGenerateNavLink').style.display = 'inline-block';
 
         // Fetch user data
         const snap = await get(ref(db, `users/${user.uid}`));
@@ -2492,8 +2492,8 @@ document.getElementById('desktopAiBtn').style.display = 'none';
 
         // Mobile drawer
         document.getElementById('signOutMobile').style.display = 'none';
-        document.getElementById('uploadNavLink').style.display = 'none';
-        document.getElementById('aiGenerateNavLink').style.display = 'none';
+        // document.getElementById('uploadNavLink').style.display = 'none';
+        // document.getElementById('aiGenerateNavLink').style.display = 'none';
 
         const current = document.querySelector('.section.active');
         if (current && this.restrictedSections.has(current.id)) {
