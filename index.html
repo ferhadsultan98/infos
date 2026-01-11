@@ -26,6 +26,7 @@
       --radius-xl: 20px;
       --radius-lg: 14px;
       --radius-md: 12px;
+      --notice-height: 36px;
     }
 
     body.light-mode {
@@ -56,9 +57,10 @@
     /* NAV */
     nav {
       position: fixed;
-      top: 0;
+      top: var(--notice-height) !important; /* Menyunu panelin altına salır */
+  height: 70px 
       width: 100%;
-      height: 75px;
+      /* height: 75px; */
       background: var(--glass);
       backdrop-filter: blur(15px);
       border-bottom: 1px solid var(--border);
@@ -1527,6 +1529,78 @@
         display: none !important;
     }
 }
+
+
+
+
+
+
+
+
+    /* Panelin Dizaynı */
+.ai-notice-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--notice-height);
+  z-index: 25;
+  background: linear-gradient(270deg, #050508, #ff0055, #00f2ea, #050508);
+  background-size: 400% 400%;
+  animation: aiNeonBg 10s ease infinite; /* Rəngli fon animasiyası */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0, 242, 234, 0.15);
+}
+
+.ai-notice-track {
+  display: flex;
+  white-space: nowrap;
+  animation: scrollText 25s linear infinite; /* Yazı axını sürəti */
+}
+
+.ai-notice-content {
+  font-family: 'Fira Code', monospace; /* Sizin şriftdən istifadə edir */
+  font-size: 13px;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding-right: 50px; /* Təkrar üçün boşluq */
+  display: flex;
+  align-items: center;
+}
+
+/* Animasiyalar */
+@keyframes aiNeonBg {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes scrollText {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+.blink {
+  animation: blinkCursor 1s infinite;
+  color: var(--primary);
+  margin-left: 5px;
+}
+
+@keyframes blinkCursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Mobil üçün tənzimləmə */
+@media (max-width: 768px) {
+  nav {
+    top: var(--notice-height) !important;
+  }
+}
   </style>
 </head>
 
@@ -1596,6 +1670,28 @@
     </div>
   </div>
 
+
+  <!-- AI Notification Bar -->
+<div class="ai-notice-bar">
+  <div class="ai-notice-track">
+    <span class="ai-notice-content">
+      SYSTEM STATUS: UPDATE IN PROGRESS <span class="blink">▮</span> 
+      &nbsp;&nbsp;///&nbsp;&nbsp; Site functionality is currently limited due to core upgrades. 
+      &nbsp;&nbsp;///&nbsp;&nbsp; Please submit any bugs, recommendations, or complaints via the <strong style="color:var(--primary)">Contact</strong> section. 
+      &nbsp;&nbsp;///&nbsp;&nbsp; AI OPTIMIZATION: LOADING NEW FEATURES... 
+    </span>
+    <!-- Təkrar (smooth loop üçün) -->
+    <span class="ai-notice-content">
+      SYSTEM STATUS: UPDATE IN PROGRESS <span class="blink">▮</span> 
+      &nbsp;&nbsp;///&nbsp;&nbsp; Site functionality is currently limited due to core upgrades. 
+      &nbsp;&nbsp;///&nbsp;&nbsp; Please submit any bugs, recommendations, or complaints via the <strong style="color:var(--primary)">Contact</strong> section. 
+      &nbsp;&nbsp;///&nbsp;&nbsp; AI OPTIMIZATION: LOADING NEW FEATURES... 
+    </span>
+  </div>
+</div>
+
+
+  
   <nav>
     <div class="logo" onclick="app.nav('home')">kinet<span>AI.</span></div>
 
